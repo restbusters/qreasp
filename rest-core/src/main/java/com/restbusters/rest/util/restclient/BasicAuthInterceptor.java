@@ -1,0 +1,28 @@
+package com.restbusters.rest.util.restclient;
+
+import okhttp3.*;
+
+import java.io.IOException;
+
+/**
+ * @author amatsaylo on 9/17/19
+ * @project qreasp
+ */
+
+public class BasicAuthInterceptor implements Interceptor {
+
+    private String credentials;
+
+    public BasicAuthInterceptor(String user, String password) {
+        this.credentials = Credentials.basic(user, password);
+    }
+
+    @Override
+    public Response intercept(Chain chain) throws IOException {
+        Request request = chain.request();
+        Request authenticatedRequest = request.newBuilder()
+                .header("Authorization", credentials).build();
+        return chain.proceed(authenticatedRequest);
+    }
+
+}
