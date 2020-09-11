@@ -23,6 +23,7 @@ test {
 
     include 'com/restbusters/core/util/common/**'
     exclude 'com/restbusters/core/util/cmd/**'
+    exclude 'com/restbusters/core/integration/jira/**'
 
     // set heap size for the test JVM(s)
     minHeapSize = "128m"

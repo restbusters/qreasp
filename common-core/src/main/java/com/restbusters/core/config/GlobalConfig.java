@@ -12,6 +12,15 @@ public interface GlobalConfig extends Config {
     @DefaultValue("${ENV_NAME}")
     String env();
 
+    @DefaultValue("${JIRA_URL}")
+    String jiraUrl();
+
+    @DefaultValue("${JIRA_USER}")
+    String jiraUser();
+
+    @DefaultValue("${JIRA_PASSWORD}")
+    String jiraPassword();
+
     @DefaultValue("true")
     boolean sendTestResultToElastic();
 

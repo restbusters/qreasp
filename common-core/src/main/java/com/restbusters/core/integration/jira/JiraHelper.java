@@ -1,9 +1,7 @@
-package com.restbusters.core.jira;
+package com.restbusters.core.integration.jira;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
-import com.atlassian.jira.rest.client.api.domain.Issue;
-import com.atlassian.jira.rest.client.api.domain.Transition;
+import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.TransitionInput;
@@ -19,7 +17,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -59,7 +59,7 @@ public class JiraHelper {
     }
 
    //start to move jira helper methods here
-   protected Optional<Issue> findIssueByIssueId(String issueKey){
+   public Optional<Issue> findIssueByIssueId(String issueKey){
        Promise issuePromise = jiraRestClient.getIssueClient().getIssue(issueKey);
        Issue issue = (Issue) issuePromise.claim();
        if(issue != null){
@@ -108,6 +108,21 @@ public class JiraHelper {
             logger.warn( "JIRA REST createIssue error: " + e.getMessage(), e);
             return null;
         }
+
+    }
+
+    public BasicIssue createIssue(IssueInput issueInput) {
+
+        try {
+            return jiraRestClient.getIssueClient().createIssue(issueInput).get(60, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            logger.warn("JIRA REST createIssue error: " + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public Iterable<Version> getVersionListByProject(String projectName, String test){
+        return jiraRestClient.getProjectClient().getProject(projectName).claim().getVersions();
     }
 
 
@@ -138,5 +153,24 @@ public class JiraHelper {
             }
         }
         return Optional.empty();
+    }
+
+    public List<Issue> searchJiraWithJQL(String jqlSearch, @Nullable int maxBatchSize, int startAt){
+        List<Issue> totalResult = new ArrayList<>();
+        SearchResult searchResult = jiraRestClient.getSearchClient().searchJql(jqlSearch, maxBatchSize, startAt, null).claim();
+        if(searchResult.getTotal() > 0){
+            int totalRetrieved = Iterators.size(searchResult.getIssues().iterator());
+            totalResult.addAll((Collection<? extends Issue>) searchResult.getIssues());
+            while (totalRetrieved < searchResult.getTotal()){
+                searchResult = jiraRestClient.getSearchClient().searchJql(jqlSearch, maxBatchSize, totalRetrieved, null).claim();
+                totalRetrieved += Iterators.size(searchResult.getIssues().iterator());
+                totalResult.addAll((Collection<? extends Issue>) searchResult.getIssues());
+            }
+            return totalResult;
+        }
+        else {
+            return totalResult;
+        }
+
     }
 }
