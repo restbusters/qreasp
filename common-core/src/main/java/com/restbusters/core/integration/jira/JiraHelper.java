@@ -68,7 +68,7 @@ public class JiraHelper {
        return Optional.empty();
    }
 
-    protected Optional<Iterable<Transition>> getIssueTransitions(String issueKey) throws RecordNotFound {
+    public Optional<Iterable<Transition>> getIssueTransitions(String issueKey) throws RecordNotFound {
         Optional<Issue> optionalIssue = findIssueByIssueId(issueKey);
         if(!optionalIssue.isPresent()){
             throw new RecordNotFound("Issue not found: " + issueKey);
@@ -126,7 +126,7 @@ public class JiraHelper {
     }
 
 
-    protected void transitIssue(String issueKey, String transitionState) throws RecordNotFound {
+    public void transitIssue(String issueKey, String transitionState) throws RecordNotFound {
         Optional<Issue> optionalIssue = findIssueByIssueId(issueKey);
         if(!optionalIssue.isPresent()){
             throw new RecordNotFound("Issue not found: " + issueKey);
@@ -144,7 +144,7 @@ public class JiraHelper {
 
     }
 
-    private Optional<Integer> getTransitionId(Iterable<Transition> transitions, String transitionState) {
+    public Optional<Integer> getTransitionId(Iterable<Transition> transitions, String transitionState) {
         for (Transition transition : transitions) {
             System.out.println(transition.getName());
 

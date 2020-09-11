@@ -82,7 +82,7 @@ subprojects {
         compile group: 'org.raml', name: 'raml-parser', version: '0.8.21'
         compile group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.30'
         compile group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
-        //compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
         compile group: 'org.apache.commons', name: 'commons-text', version: '1.8'
         compile group: 'org.fluttercode.datafactory', name: 'datafactory', version: '0.8'
         compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
