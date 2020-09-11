@@ -30,7 +30,7 @@ plugins {
 allprojects {
     task listProjects { task -> println "I'm $task.project.name" }
     group = 'com.restbusters'
-    version = '0.0.1'
+    version = '0.0.2'
 
     repositories {
         mavenCentral()
@@ -41,11 +41,9 @@ allprojects {
     }
 }
 
-/*group = 'com.restbusters'
-version = '0.0.1'*/
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 rootProject.description = 'Automation and Release API and intergration support; supports REST APIs and external systems.'
 
