@@ -6,6 +6,10 @@ buildscript {
         //mavenLocal()
         mavenCentral()
         jcenter()
+        maven {url "https://m2proxy.atlassian.com/repository/public"}
+        maven {url 'https://maven.atlassian.com/content/repositories/atlassian-public'}
+        maven{url 'https://packages.atlassian.com/maven-public/'}
+        maven{url "https://maven.atlassian.com/repository/public"}
     }
     dependencies {
         classpath 'com.adarshr:gradle-test-logger-plugin:2.0.0'
@@ -104,6 +108,10 @@ subprojects {
         compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
         compileOnly 'org.projectlombok:lombok:1.18.12'
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
+        //jira
+        compile 'io.atlassian.fugue:fugue:4.7.2'
+        compile 'com.atlassian.jira:jira-rest-java-client-core:5.2.1'
+        compile 'com.atlassian.jira:jira-rest-java-client-api:5.2.1'
         testCompile group: 'org.assertj', name: 'assertj-core', version: '3.13.2'
     }
 }
