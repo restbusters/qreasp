@@ -24,8 +24,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author smatsaylo on 8/28/20
- * @project rest-support
+ * @author Sasha matsaylo on 2020-09-10
+ * @project qreasp
  */
 public class JiraHelper {
 
