@@ -74,7 +74,7 @@ public class GlobalResourceManager {
     }
 
     private void createSumoLogicClient() throws MalformedURLException {
-        Credentials credential = new Credentials("suaFcml4FWzzYw", "ipTgYq3h7k6IuO66bu3It1iPiRi7wd5pF7JVptbs59k4Id1qkvQxPfbo9QNmDFvd");
+        Credentials credential = new Credentials("findme", "findMe");
         this.sumoClient = new SumoLogicClient(credential);
         this.sumoClient.setURL("https://api.us2.sumologic.com");
     }
