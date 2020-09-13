@@ -8,4 +8,5 @@
  */
 
 rootProject.name = 'qreasp'
-include('common-core', 'rest-core')
+include('common-core', 'rest-core', 'core-integration')
+
