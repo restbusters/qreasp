@@ -1,4 +1,4 @@
-package com.restbusters.core.integration.jira;
+package com.restbusters.integration.jira;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.*;
@@ -39,10 +39,10 @@ public class JiraHelper {
 
 
 
-    private JiraHelper() throws Exception {
+    private JiraHelper() {
     }
 
-    public static synchronized JiraHelper getInstance() throws Exception {
+    public static synchronized JiraHelper getInstance() {
         if (instance == null) {
             instance = new JiraHelper();
         }

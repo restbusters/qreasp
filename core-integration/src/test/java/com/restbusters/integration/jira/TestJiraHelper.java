@@ -1,4 +1,4 @@
-package com.restbusters.core.integration.jira;
+package com.restbusters.integration.jira;
 
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 public class TestJiraHelper {
 
-    private JiraHelper jiraHelper;
+    private JiraHelper jiraHelper = JiraHelper.getInstance();
     private GlobalConfig prop;
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -37,7 +37,7 @@ public class TestJiraHelper {
     private void setUp(){
         prop = GlobalResourceManager.getInstance().getGlobalConfig();
         try {
-            JiraHelper.getInstance().init(prop.jiraUrl(), prop.jiraUser(), prop.jiraPassword());
+            jiraHelper.init(prop.jiraUrl(), prop.jiraUser(), prop.jiraPassword());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,39 +45,39 @@ public class TestJiraHelper {
 
     @Test(enabled = false)
     private void find_isse_by_id() throws Exception {
-        Optional<Issue> optionalIssue = JiraHelper.getInstance().findIssueByIssueId("PORT-13364");
+        Optional<Issue> optionalIssue = jiraHelper.findIssueByIssueId("PROJECT_KEY-13364");
         Assert.assertTrue(optionalIssue.get() != null);
     }
 
     @Test(enabled = true)
     private void jql_search() throws Exception {
-        String search = "project ='PORT' and issueType=Bug";
-        List<Issue> issueList = JiraHelper.getInstance().searchJiraWithJQL(search, 50, 0);
+        String search = "project ='PROJECT_KEY' and issueType=Bug";
+        List<Issue> issueList = jiraHelper.searchJiraWithJQL(search, 50, 0);
         logger.info(String.valueOf(issueList));
     }
 
     @Test(enabled = false)
     private void create_issue() throws Exception {
-            Optional<Issue> optionalIssue = JiraHelper.getInstance().findIssueByIssueId("PORT-13364");
+        Optional<Issue> optionalIssue = jiraHelper.findIssueByIssueId("PROJECT_KEY-13364");
         List<String> comps = Arrays.asList("Automation");
         Long issueTypeId = new Long(10050);
         Long priorityId = new Long(3);
-        BasicIssue basicIssue = JiraHelper.getInstance().createIssue("PORT", "TEST1", "sasha matsaylo", comps, "summary", issueTypeId, priorityId);
+        BasicIssue basicIssue = jiraHelper.createIssue("PROJECT_KEY", "TEST1", "sasha matsaylo", comps, "summary", issueTypeId, priorityId);
         Assert.assertNotNull(basicIssue);
         logger.info(String.valueOf(basicIssue.getKey()));
     }
 
     @Test(enabled = false)
     private void create_issue_2() throws Exception {
-        Optional<Issue> optionalIssue = JiraHelper.getInstance().findIssueByIssueId("RU-3307");
+        Optional<Issue> optionalIssue = jiraHelper.findIssueByIssueId("RU-3307");
         List<String> comps = Arrays.asList("Automation");
         List<String> affectedVersionNames = Arrays.asList("IS 10.0.3");
         //bug 10004 bug
         //action item 10050
         Long issueTypeId = new Long(10004);
         Long priorityId = new Long(3);
-        IssueInput issueInput = buildIssueInput("PORT", "TEST1", "sasha matsaylo", comps, "summary", issueTypeId, priorityId, affectedVersionNames);
-        BasicIssue basicIssue = JiraHelper.getInstance().createIssue(issueInput);
+        IssueInput issueInput = buildIssueInput("PROJECT_KEY", "TEST1", "sasha matsaylo", comps, "summary", issueTypeId, priorityId, affectedVersionNames);
+        BasicIssue basicIssue = jiraHelper.createIssue(issueInput);
         Assert.assertNotNull(basicIssue, "Failed to create jira");
     }
 

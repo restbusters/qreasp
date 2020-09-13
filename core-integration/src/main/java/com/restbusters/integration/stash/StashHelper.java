@@ -1,4 +1,4 @@
-package com.restbusters.core.integration.stash;
+package com.restbusters.integration.stash;
 
 import com.restbusters.rest.util.restclient.RestClientHelper;
 import okhttp3.OkHttpClient;
