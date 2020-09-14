@@ -30,7 +30,7 @@ plugins {
 allprojects {
     task listProjects { task -> println "I'm $task.project.name" }
     group = 'com.restbusters'
-    version = '0.0.2'
+    version = '0.0.3'
 
     repositories {
         mavenCentral()
@@ -81,7 +81,7 @@ subprojects {
 
         //implementation group: 'org.raml', name: 'raml-parser', version: '0.8.21'
         //implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.30'
-        //implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
+        //implementation group:     'org.jsoup', name: 'jsoup', version: '1.11.2'
         implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
         implementation group: 'org.apache.commons', name: 'commons-text', version: '1.8'
         //implementation group: 'org.fluttercode.datafactory', name: 'datafactory', version: '0.8'
