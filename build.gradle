@@ -214,4 +214,3 @@ task release() {
     dependsOn javadoc
     //dependsOn jacocoTestReport
 }
-
