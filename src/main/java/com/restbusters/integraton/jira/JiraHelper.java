@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Sasha matsaylo on 2020-09-10
@@ -106,7 +108,7 @@ public class JiraHelper {
     }
 
 
-    public Iterable<Version> getVersionListByProject(String projectName, String test) {
+    public Iterable<Version> getVersionListByProject(String projectName) {
         return jiraRestClient.getProjectClient().getProject(projectName).claim().getVersions();
     }
 
@@ -179,5 +181,37 @@ public class JiraHelper {
 
         return builder.build();
 
+    }
+
+    public Optional<Project> getProjectByProjectKey(String projectKey) {
+        try {
+            return Optional.ofNullable(jiraRestClient.getProjectClient().getProject(projectKey).claim());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
+    }
+
+    public Optional<String> getProjectLead(String projectKey) {
+        try {
+            return Optional.ofNullable(getProjectByProjectKey(projectKey).get().getLead().getDisplayName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
+    }
+
+
+    public Optional<List<Version>> getProjectVersionByName(String projectKey, String versionName){
+        try {
+            return Optional.of(StreamSupport.stream(getProjectByProjectKey(projectKey).get().getVersions().spliterator(), false)
+                    .filter( version -> version.getName().equalsIgnoreCase(versionName))
+                    .collect(Collectors.toList()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 }
