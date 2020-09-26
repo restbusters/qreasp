@@ -51,7 +51,7 @@ public class TestJiraHelper {
     }
 
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     private void test_get_project() {
         //Optional project = this.jiraHelper.getProjectByProjectKey("ss");
         String user = this.jiraHelper.getProjectLead("sss").get();
@@ -59,7 +59,7 @@ public class TestJiraHelper {
         System.out.println("");
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     private void create_issue() throws Exception {
         List<String> comps = Arrays.asList("auto");
         Long issueTypeId = new Long(10004);
