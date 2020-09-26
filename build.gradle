@@ -23,7 +23,7 @@ repositories {
 }
 
 group = 'com.restbusters'
-version = '0.0.6'
+version = '0.0.7'
 
 dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.0'
