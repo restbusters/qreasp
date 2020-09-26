@@ -51,11 +51,23 @@ public class TestJiraHelper {
     }
 
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     private void test_get_project() {
         //Optional project = this.jiraHelper.getProjectByProjectKey("ss");
-        //String user = this.jiraHelper.getProjectLead("sss").get();
+        String user = this.jiraHelper.getProjectLead("sss").get();
         jiraHelper.getProjectVersionByName("ss", "ss");
+        System.out.println("");
+    }
+
+    @Test(enabled = true)
+    private void create_issue() throws Exception {
+        List<String> comps = Arrays.asList("auto");
+        Long issueTypeId = new Long(10004);
+        Long priorityId = new Long(3);
+        List<String> versions = Arrays.asList("versionName");
+        BasicIssue basicIssue = jiraHelper.createIssue("project", "TEST1", "sasha matsaylo", comps, "summary", issueTypeId, priorityId, versions);
+        Assert.assertNotNull(basicIssue);
+        logger.info(String.valueOf(basicIssue.getKey()));
     }
 
 }
