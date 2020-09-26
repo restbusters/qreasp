@@ -9,6 +9,8 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import com.google.common.collect.Iterators;
 import com.restbusters.exception.RecordNotFound;
 import io.atlassian.util.concurrent.Promise;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,11 +86,11 @@ public class JiraHelper {
     }
 
     public BasicIssue createIssue(String projectKey, String description, String assignee, Iterable<String> issueComponents, String summary,
-                                  @Nonnull Long issueTypeId, @Nullable Long priorityId) {
+                                  @Nonnull Long issueTypeId, @Nullable Long priorityId, @Nullable Iterable<String> versions) {
 
         try {
             return jiraRestClient.getIssueClient()
-                    .createIssue(buildIssueInput(projectKey, description, assignee, issueComponents, summary, issueTypeId, priorityId))
+                    .createIssue(buildIssueInput(projectKey, description, assignee, issueComponents, summary, issueTypeId, priorityId, versions))
                     .get(60, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.warn("FAILED to create issue: {} {}", e.getMessage(), e);
@@ -161,7 +163,7 @@ public class JiraHelper {
     }
 
     public IssueInput buildIssueInput(String projectKey, String description, String assignee, Iterable<String> components, String summary,
-                                      @Nonnull Long issueTypeId, @Nullable Long priorityId) {
+                                      @Nonnull Long issueTypeId, @Nullable Long priorityId, @Nullable Iterable<String> versions) {
 
         IssueInputBuilder builder = new IssueInputBuilder();
         builder.setProjectKey(projectKey)
@@ -171,6 +173,9 @@ public class JiraHelper {
 
         if (Iterators.size(components.iterator()) > 0) {
             builder.setComponentsNames(components);
+        }
+        if (versions != null && Iterators.size(versions.iterator()) > 0) {
+            builder.setAffectedVersionsNames(versions);
         }
         if (priorityId != null) {
             builder.setPriorityId(priorityId);
