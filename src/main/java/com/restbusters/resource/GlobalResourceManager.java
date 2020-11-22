@@ -1,6 +1,7 @@
 package com.restbusters.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
@@ -26,6 +27,7 @@ public class GlobalResourceManager {
             .mappingProvider(new JacksonMappingProvider())
             .build();
     private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper yamlObjectMapper = new ObjectMapper(new YAMLFactory());
 
 
     private GlobalResourceManager() {
@@ -51,6 +53,10 @@ public class GlobalResourceManager {
 
     public ObjectMapper getObjectMapper() {
         return objectMapper;
+    }
+
+    public ObjectMapper getYamlObjectMapper() {
+        return yamlObjectMapper;
     }
 }
 
