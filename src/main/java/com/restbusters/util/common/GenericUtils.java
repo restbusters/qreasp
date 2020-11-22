@@ -1,11 +1,14 @@
 package com.restbusters.util.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,17 +34,16 @@ public class GenericUtils {
         }
         Pattern pattern = Pattern.compile("\\{(.+?)\\}");
         Matcher matcher = pattern.matcher(template);
-        if(matcher.groupCount() > 0 ){
-            return processMatcher(matcher,variables);
-        }
-        else {
+        if (matcher.groupCount() > 0) {
+            return processMatcher(matcher, variables);
+        } else {
             Pattern pattern2 = Pattern.compile("%7B(.+?)%7D");
             Matcher matcher2 = pattern2.matcher(template);
             return processMatcher(matcher2, variables);
         }
     }
 
-    private static String processMatcher(Matcher matcher, Map<String, String> variables){
+    private static String processMatcher(Matcher matcher, Map<String, String> variables) {
         StringBuffer buffer = new StringBuffer();
         while (matcher.find()) {
             if (variables.containsKey(matcher.group(1))) {
@@ -51,6 +53,17 @@ public class GenericUtils {
         }
         matcher.appendTail(buffer);
         return buffer.toString();
+    }
+
+
+    public static Optional<String> convertYamlToJson(ObjectMapper objectMapper, ObjectMapper yamlObjectMapper, String yaml) {
+        try {
+            Object obj = yamlObjectMapper.readValue(yaml, Object.class);
+            return Optional.of(objectMapper.writeValueAsString(obj));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
 }
