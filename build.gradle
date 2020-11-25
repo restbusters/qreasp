@@ -212,6 +212,11 @@ def customizePom(pom, gradleProject) {
     }
 }
 
+testlogger {
+    theme 'mocha' // project level
+    slowThreshold 5000
+}
+
 task install(dependsOn: publishToMavenLocal) {
     group = 'Publishing'
     description = 'Installs artifacts to local Maven repository'
