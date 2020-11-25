@@ -1,4 +1,4 @@
-package com.restbusters.rest.restclient;
+package com.restbusters.rest.client;
 
 /**
  * @author amatsaylo on 9/17/19

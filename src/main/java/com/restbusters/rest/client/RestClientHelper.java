@@ -1,4 +1,4 @@
-package com.restbusters.rest.restclient;
+package com.restbusters.rest.client;
 
 import com.restbusters.util.common.GenericUtils;
 import okhttp3.*;

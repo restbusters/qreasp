@@ -1,6 +1,6 @@
 package com.restbusters.rest;
 
-import com.restbusters.rest.restclient.RestClientHelper;
+import com.restbusters.rest.client.RestClientHelper;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

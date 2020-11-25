@@ -1,13 +1,11 @@
 package com.restbusters.integraton.swagger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restbusters.exception.SwaggerTitleNotSet;
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import com.restbusters.resource.GlobalResourceManager;
-import com.restbusters.rest.restclient.RestClientHelper;
+import com.restbusters.rest.client.RestClientHelper;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
@@ -15,7 +13,6 @@ import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.parser.v3.OpenAPIV3Parser;
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -23,7 +20,9 @@ import v2.io.swagger.models.HttpMethod;
 import v2.io.swagger.parser.SwaggerException;
 
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -33,10 +32,8 @@ import java.util.*;
 public class SwaggerHelper {
 
     private static SwaggerHelper instance;
-    private OkHttpClient okHttpClient;
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
 
 
     private SwaggerHelper() {
@@ -49,9 +46,6 @@ public class SwaggerHelper {
         return instance;
     }
 
-    public void init() {
-        this.okHttpClient = RestClientHelper.getInstance().buildNoAuthClient();
-    }
 
     private List<com.restbusters.integration.swagger.model.SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
         List<com.restbusters.integration.swagger.model.SwaggerApiResource> apiResourceList = new ArrayList<>();
@@ -81,9 +75,11 @@ public class SwaggerHelper {
     }
 
     public SwaggerDescriptor getSwaggerDescriptor(String url) {
-        OpenAPI openAPI = new OpenAPIV3Parser().read(url);
-        if (StringUtils.isEmpty(openAPI.getInfo().getTitle())) {
-            throw new SwaggerException("Title for Swagger has not been set for url: " + url);
+        OpenAPI openAPI = null;
+
+        openAPI = new OpenAPIV3Parser().read(url);
+        if(openAPI == null){
+            throw new SwaggerException("Failed to obtain swagger for url: " + url);
         }
 
         SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
@@ -92,17 +88,24 @@ public class SwaggerHelper {
         swaggerDescriptor.setSwaggerApiResources(buildSwaggerResources(openAPI));
         return swaggerDescriptor;
 
+
     }
 
     public List<SwaggerDescriptor> getSwaggerApiResources(List<String> swaggerUrls) {
         List<SwaggerDescriptor> swaggerDescriptors = new ArrayList<>();
         swaggerUrls.stream().parallel().forEach(url -> {
-            swaggerDescriptors.add(getSwaggerDescriptor(url));
+            SwaggerDescriptor swaggerDescriptor = null;
+            try {
+                swaggerDescriptors.add(getSwaggerDescriptor(url));
+            } catch (Exception e) {
+                logger.error("Failed to obtains swagger resource for url: {}", url);
+                e.printStackTrace();
+            }
         });
         return swaggerDescriptors;
 
     }
-    
+
 
     private com.restbusters.integration.swagger.model.SwaggerApiResource createSwaggerApiResource(Operation operation, String resourcePath, String httpVerb) {
         com.restbusters.integration.swagger.model.SwaggerApiResource apiResource = new com.restbusters.integration.swagger.model.SwaggerApiResource();
@@ -125,7 +128,7 @@ public class SwaggerHelper {
                     operationParameters.setDescription(parameter.getDescription());
                     operationParameters.setIn(parameter.getIn());
                     operationParameters.setName(parameter.getName());
-                    if(!StringUtils.isEmpty(parameter.getRequired())){
+                    if (!StringUtils.isEmpty(parameter.getRequired())) {
                         operationParameters.setRequired(parameter.getRequired());
                     }
                     operationParametersList.add(operationParameters);

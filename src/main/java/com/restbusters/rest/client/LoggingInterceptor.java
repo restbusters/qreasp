@@ -1,4 +1,4 @@
-package com.restbusters.rest.restclient;
+package com.restbusters.rest.client;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
