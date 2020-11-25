@@ -2,6 +2,7 @@ package com.restbusters.integration.swagger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restbusters.exception.SwaggerTitleNotSet;
 import com.restbusters.integraton.swagger.SwaggerHelper;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import com.restbusters.resource.GlobalResourceManager;
@@ -32,14 +33,13 @@ public class TestSwaggerHelper {
 
     @BeforeClass
     private void setUp() {
-        swaggerHelper.init();
         swaggerUrls.add(this.url);
-        swaggerUrls.add(this.url);
+        swaggerUrls.add(this.url + "s");
     }
 
 
     @Test(enabled = true)
-    public void build_api_resource() {
+    public void build_api_resource() throws SwaggerTitleNotSet {
         SwaggerDescriptor swaggerDescriptor = this.swaggerHelper.getSwaggerDescriptor(url);
         Assert.assertEquals(swaggerDescriptor.getApiTitle(), "Swagger Petstore");
         try {
@@ -51,8 +51,8 @@ public class TestSwaggerHelper {
 
     @Test(enabled = true)
     public void build_api_resources_list() {
-        List<SwaggerDescriptor> swaggerDescriptors = (List<SwaggerDescriptor>) this.swaggerHelper.getSwaggerApiResources(swaggerUrls);
-        Assert.assertTrue(swaggerDescriptors.size() == 2);
+        List<SwaggerDescriptor> swaggerDescriptors = this.swaggerHelper.getSwaggerApiResources(swaggerUrls);
+        Assert.assertEquals(swaggerDescriptors.size(), 1, "2 swagger descriptors");
 
     }
 

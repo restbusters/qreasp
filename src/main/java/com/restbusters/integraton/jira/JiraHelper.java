@@ -9,8 +9,6 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import com.google.common.collect.Iterators;
 import com.restbusters.exception.RecordNotFound;
 import io.atlassian.util.concurrent.Promise;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
