@@ -14,5 +14,7 @@ public class SwaggerDescriptor {
 
     private String apiTitle;
     private String serverUrl;
+    private String apiType;
+    private String apiVersion;
     private List<com.restbusters.integration.swagger.model.SwaggerApiResource> swaggerApiResources;
 }
