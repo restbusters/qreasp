@@ -2,12 +2,12 @@ package com.restbusters.integraton.swagger;
 
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
-import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.PathItem;
-import io.swagger.oas.models.Paths;
-import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -24,19 +24,19 @@ import java.util.List;
  * @author Sasha matsaylo on 2020-09-10
  * @project qreasp
  */
-public class SwaggerHelper {
+public class OpenApiHelper {
 
-    private static SwaggerHelper instance;
+    private static OpenApiHelper instance;
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
-    private SwaggerHelper() {
+    private OpenApiHelper() {
     }
 
-    public static synchronized SwaggerHelper getInstance() {
+    public static synchronized OpenApiHelper getInstance() {
         if (instance == null) {
-            instance = new SwaggerHelper();
+            instance = new OpenApiHelper();
         }
         return instance;
     }
@@ -69,18 +69,15 @@ public class SwaggerHelper {
         return apiResourceList;
     }
 
-    public SwaggerDescriptor getSwaggerDescriptor(String body) {
-        OpenAPI openAPI = null;
-        //openAPI = new OpenAPIV3Parser().read(url);
-        openAPI = new OpenAPIParser().readContents(body, null, null).getOpenAPI();
+    public SwaggerDescriptor getSwaggerDescriptor(String swaggerContent) {
+        io.swagger.v3.oas.models.OpenAPI openAPI = new OpenAPIV3Parser().readContents(swaggerContent, null, null).getOpenAPI();
         if(openAPI == null){
-            throw new SwaggerException("Failed to build OpenApi");
+            throw new SwaggerException("Failed to build openapi");
         }
 
         SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
         swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
         swaggerDescriptor.setServerUrl(openAPI.getServers().get(0).getUrl());
-        swaggerDescriptor.setApiVersion(openAPI.getOpenapi());
         swaggerDescriptor.setSwaggerApiResources(buildSwaggerResources(openAPI));
         return swaggerDescriptor;
 

@@ -21,6 +21,7 @@ repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
 }
 
 group = 'com.restbusters'
@@ -57,6 +58,10 @@ dependencies {
     //swagger
     implementation group: 'io.swagger', name: 'swagger-core', version: '2.0.0-rc2'
     implementation group: 'io.swagger', name: 'swagger-parser', version: '2.0.0-rc1'
+    //openapi
+    compile group:  'io.swagger.core.v3', name: 'swagger-core', version: '2.1.5'
+    compile group:  'io.swagger.core.v3', name: 'swagger-models', version: '2.1.5'
+    compile group: 'io.swagger.parser.v3', name: 'swagger-parser-v3', version: '2.0.23'
 
     //lombok
     compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
@@ -64,6 +69,7 @@ dependencies {
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
+    testCompile group: 'com.github.tomakehurst', name: 'wiremock-standalone', version: '2.26.3'
 }
 
 configurations {
