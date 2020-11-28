@@ -1,12 +1,21 @@
 package com.restbusters.integraton.swagger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
+import io.swagger.oas.inflector.examples.ExampleBuilder;
+import io.swagger.oas.inflector.examples.models.Example;
+import io.swagger.oas.inflector.processors.JsonNodeExampleSerializer;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
+import com.restbusters.integration.swagger.model.SwaggerApiResource;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +27,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -42,9 +52,10 @@ public class OpenApiHelper {
     }
 
 
-    private List<com.restbusters.integration.swagger.model.SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
+    private List<SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
         List<com.restbusters.integration.swagger.model.SwaggerApiResource> apiResourceList = new ArrayList<>();
         Paths path = openAPI.getPaths();
+        Map<String, Schema> schemas = openAPI.getComponents().getSchemas();
         String serverUrl = openAPI.getServers().get(0).getUrl();
         path.entrySet().forEach(entry -> {
             PathItem pathItem = entry.getValue();
@@ -53,20 +64,44 @@ public class OpenApiHelper {
                 apiResourceList.add(createSwaggerApiResource(pathItem.getGet(), resourcePath, HttpMethod.GET.name()));
             }
             if (pathItem.getPost() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getPost(), resourcePath, HttpMethod.POST.name()));
+                Operation postOperation = pathItem.getPost();
+                SwaggerApiResource postSwaggerApiResource = createSwaggerApiResource(postOperation, resourcePath, HttpMethod.POST.name());
+                apiResourceList.add(setSwaggerApiResource(schemas, postSwaggerApiResource, postOperation));
             }
             if (pathItem.getPut() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getPut(), resourcePath, HttpMethod.PUT.name()));
+                Operation putOperation = pathItem.getPut();
+                SwaggerApiResource putSwaggerApiResource = createSwaggerApiResource(putOperation, resourcePath, HttpMethod.PUT.name());
+                apiResourceList.add(setSwaggerApiResource(schemas, putSwaggerApiResource, putOperation));
             }
             if (pathItem.getPatch() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getPatch(), resourcePath, HttpMethod.PATCH.name()));
+                Operation patchOperation = pathItem.getPatch();
+                SwaggerApiResource patchSwaggerApiResource = createSwaggerApiResource(patchOperation, resourcePath, HttpMethod.PATCH.name());
+                apiResourceList.add(setSwaggerApiResource(schemas, patchSwaggerApiResource, patchOperation));
             }
             if (pathItem.getDelete() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getDelete(), resourcePath, HttpMethod.DELETE.name()));
+                Operation deleteOperation = pathItem.getDelete();
+                SwaggerApiResource deleteSwaggerApiResource = createSwaggerApiResource(deleteOperation, resourcePath, HttpMethod.DELETE.name());
+                apiResourceList.add(setSwaggerApiResource(schemas, deleteSwaggerApiResource, deleteOperation));
             }
 
         });
         return apiResourceList;
+    }
+
+    private SwaggerApiResource setSwaggerApiResource(Map<String, Schema> schemas, SwaggerApiResource swaggerApiResource, Operation operation){
+        if(schemas != null){
+            if(operation.getRequestBody() != null){
+                String requestBody = buildRequestBody(schemas, operation);
+                if(requestBody != null){
+                    swaggerApiResource.setBody(requestBody);
+                }
+            }
+            else {
+                logger.warn("Request body not set");
+                swaggerApiResource.setBody("Body has not been set");
+            }
+        }
+        return swaggerApiResource;
     }
 
     public SwaggerDescriptor getSwaggerDescriptor(String swaggerContent) {
@@ -127,5 +162,44 @@ public class OpenApiHelper {
                     operationParametersList.add(operationParameters);
                 });
         return operationParametersList;
+    }
+
+    private String buildRequestBody(Map<String, Schema> schemas, Operation operation){
+        if(operation.getRequestBody() != null){
+            Schema model = buildSchema(schemas, operation);
+            if(model != null){
+                Example example = ExampleBuilder.fromSchema(model, schemas);
+                SimpleModule simpleModule = new SimpleModule().addSerializer(new JsonNodeExampleSerializer());
+                Json.mapper().registerModule(simpleModule);
+                try {
+                    return Json.mapper().writeValueAsString(example);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            else {
+                //here we can provide predefined schema
+                return "our predined schema";
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    private Schema buildSchema(Map<String, Schema> schemas, Operation operation){
+        if(operation.getRequestBody().get$ref() != null){
+            return schemas.get(operation.getRequestBody().get$ref().split("/")[operation.getRequestBody().get$ref().split("/").length-1]);
+        }
+        if(operation.getRequestBody().getContent() != null){
+            String contentKey = operation.getRequestBody().getContent().keySet().toArray()[0].toString();
+            if(contentKey != null){
+                if(operation.getRequestBody().getContent().get(contentKey).getSchema().get$ref() != null){
+                    return schemas.get(operation.getRequestBody().getContent().get(contentKey).getSchema().get$ref().split("/")[3]);
+                }
+            }
+        }
+        return null;
     }
 }
