@@ -45,7 +45,8 @@ public class SwaggerManager {
                                     String body = response.body().string().replaceAll("\\s", "");
                                     if(body.matches(".*\"swagger.+\\:.+(\\d).*")){
                                         logger.info("The requested url {} is swagger");
-                                        SwaggerDescriptor swaggerDescriptor = SwaggerHelper.getInstance().getSwaggerDescriptor(body);
+                                        //grebaniy swagger does not work with getContent but works with readUrl method
+                                        SwaggerDescriptor swaggerDescriptor = SwaggerHelper.getInstance().getSwaggerDescriptor(url.toString());
                                         swaggerDescriptor.setApiType("swagger");
                                         this.swaggerDescriptor.add(swaggerDescriptor);
                                     }

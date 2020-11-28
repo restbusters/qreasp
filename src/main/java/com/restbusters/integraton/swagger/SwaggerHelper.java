@@ -2,12 +2,24 @@ package com.restbusters.integraton.swagger;
 
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
+//import io.swagger.oas.models.OpenAPI;
+//import io.swagger.oas.models.Operation;
+//import io.swagger.oas.models.PathItem;
+//import io.swagger.oas.models.Paths;
+//import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.parser.OpenAPIParser;
+import io.swagger.parser.v3.OpenAPIV3Parser;
+//import io.swagger.v3.oas.models.OpenAPI;
+//import io.swagger.v3.oas.models.Operation;
+//import io.swagger.v3.oas.models.PathItem;
+//import io.swagger.v3.oas.models.Paths;
+//import io.swagger.v3.oas.models.parameters.Parameter;
+//import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -69,10 +81,10 @@ public class SwaggerHelper {
         return apiResourceList;
     }
 
-    public SwaggerDescriptor getSwaggerDescriptor(String body) {
+    public SwaggerDescriptor getSwaggerDescriptor(String url) {
         OpenAPI openAPI = null;
-        //openAPI = new OpenAPIV3Parser().read(url);
-        openAPI = new OpenAPIParser().readContents(body, null, null).getOpenAPI();
+        openAPI = new OpenAPIV3Parser().read(url);
+        //openAPI = new OpenAPIV3Parser().readContents(body, null, null).getOpenAPI();
         if(openAPI == null){
             throw new SwaggerException("Failed to build OpenApi");
         }
