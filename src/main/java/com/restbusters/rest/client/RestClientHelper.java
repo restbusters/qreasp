@@ -1,5 +1,6 @@
 package com.restbusters.rest.client;
 
+import com.restbusters.integraton.swagger.model.HttpRestRequest;
 import com.restbusters.util.common.GenericUtils;
 import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;
@@ -74,6 +75,15 @@ public class RestClientHelper {
                 .build();
     }
 
+    public OkHttpClient buildNoAuthClient(Map<String,String> headers) {
+        return sharedOkHttpClient.newBuilder()
+                .connectTimeout(180, TimeUnit.SECONDS)
+                .writeTimeout(180, TimeUnit.SECONDS)
+                .readTimeout(180, TimeUnit.SECONDS)
+                .addNetworkInterceptor(new LoggingInterceptor())
+                .build();
+    }
+
     private OkHttpClient buildClientFromSharedWithBearerInterceptor(Object auth, Map<String, String> headers) {
         return sharedOkHttpClient.newBuilder()
                 .connectTimeout(180, TimeUnit.SECONDS)
@@ -94,17 +104,17 @@ public class RestClientHelper {
 
 
     //we can pass headers
-    public OkHttpClient getOkHttpClient(String userName, String password, Map<String, String> headers) {
+    public OkHttpClient buildBasicAuthClient(String userName, String password, Map<String, String> headers) {
         return buildClientFromShared(new BasicAuthInterceptor(userName, password), headers);
     }
 
     //we can pass headers
-    public OkHttpClient getOkHttpClient(String userName, String password) {
+    public OkHttpClient buildBasicAuthClient(String userName, String password) {
         Map<String, String> headers = new HashMap<>();
         return buildClientFromShared(new BasicAuthInterceptor(userName, password), headers);
     }
 
-    public OkHttpClient getOkHttpClientBearerWithToken(String token) throws Exception {
+    public OkHttpClient buildBearerClient(String token) throws Exception {
         Map<String, String> headers = new HashMap<>();
         return buildClientFromSharedWithBearerInterceptor(new BearerAuthInterceptor(token), headers);
     }
@@ -164,6 +174,18 @@ public class RestClientHelper {
         }
         Request request = new Request.Builder()
                 .url(substituteUrlParams(url, urlParams))
+                .build();
+        return okHttpClient.newCall(request).execute();
+
+    }
+
+    public Response doGetRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
+        String url = httpRestRequest.getUrl();
+        if(MapUtils.isNotEmpty(httpRestRequest.getQueryParams())){
+            url = addQueryParams(url, httpRestRequest.getQueryParams());
+        }
+        Request request = new Request.Builder()
+                .url(substituteUrlParams(url, httpRestRequest.getUrlParams()))
                 .build();
         return okHttpClient.newCall(request).execute();
 

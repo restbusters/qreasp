@@ -8,6 +8,8 @@ import com.jayway.jsonpath.JsonPath;
 import com.restbusters.exception.SwaggerTitleNotSet;
 import com.restbusters.integraton.swagger.SwaggerHelper;
 import com.restbusters.integraton.swagger.SwaggerManager;
+import com.restbusters.integraton.swagger.model.HttpRestRequest;
+import com.restbusters.integraton.swagger.model.HttpRestResponse;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.RestClientHelper;
@@ -48,6 +50,9 @@ public class TestSwaggerHelper {
     private final int wireMockPort = 8090;
     private final String wireMockAdminUrl = "http://localhost:8090/__admin/mappings";
     private OkHttpClient okHttpClient;
+    private SwaggerManager swaggerManager;
+    private final String swaggetTitle = "SwaggerPetstore";
+    private final String swaggerOperationId = "addPet";
 
 
 
@@ -80,14 +85,55 @@ public class TestSwaggerHelper {
     }
 
     @Test(enabled = true)
-    public void test_swagger_manager(){
+    public void build_swagger_descriptor_list(){
         List<Map<String,Object>> swaggers = new ArrayList<>();
         Map<String,Object> swagger1 = new HashMap<>();
         swagger1.put("url", this.swaggerUrls);
         swaggers.add(swagger1);
         SwaggerManager swaggerManager = new SwaggerManager(swaggers);
         Assert.assertEquals(swaggerManager.getSwaggerDescriptor().size(), 3);
+        this.swaggerManager = swaggerManager;
+        Assert.assertNotNull(swaggerManager.findSwaggerResource("SwaggerPetstore","addPet"));
     }
+
+    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
+    public void test_swagger_filter(){
+        Assert.assertNotNull(swaggerManager.findSwaggerResource(this.swaggetTitle, this.swaggerOperationId));
+    }
+
+    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
+    public void test_swagger_filter_invalid_swagger_title(){
+        Assert.assertNull(swaggerManager.findSwaggerResource("invalid",this.swaggerOperationId));
+    }
+
+    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
+    public void filter_invalid_operationId(){
+        Assert.assertNull(swaggerManager.findSwaggerResource(this.swaggetTitle,"invalid"));
+    }
+
+    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
+    public void find_descriptor(){
+        Assert.assertNotNull(swaggerManager.findSwaggerDescriptor(this.swaggetTitle));
+    }
+
+    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
+    public void execute_rest_get(){
+        String swaggetTitle = "Swagger Petstore";
+        String operationId = "getPetById";
+        Map<String,String> headers = new HashMap<>();
+        headers.put("test", "test");
+        swaggerManager.setNoneAuthHttpClientForSwagger(swaggetTitle, headers);
+        Map<String,String> urlParams = new HashMap<>();
+        urlParams.put("petId", "1");
+        HttpRestRequest httpRestRequest = new HttpRestRequest();
+        httpRestRequest.setUrlParams(urlParams);
+        httpRestRequest.setApiTitle(swaggetTitle);
+        httpRestRequest.setOperationId(operationId);
+        HttpRestResponse httpRestResponse = this.swaggerManager.executeSwaggerEndPoint(httpRestRequest);
+        Assert.assertEquals(httpRestResponse.getHttpCode(), 200);
+        Assert.assertEquals(httpRestResponse.getStatus(), "FINISHED");
+    }
+
 
     private void startWireMock() {
         this.wireMockServer.start();
@@ -101,7 +147,7 @@ public class TestSwaggerHelper {
         this.wireMockServer.resetAll();
     }
 
-    public void wireMockSetInitialState() throws IOException {
+    private void wireMockSetInitialState() throws IOException {
         wireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort));
         startWireMock();
         URL url = Resources.getResource("swagger/wiremock-stub.json");

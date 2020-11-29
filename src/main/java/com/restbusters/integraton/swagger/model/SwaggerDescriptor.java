@@ -1,6 +1,7 @@
 package com.restbusters.integraton.swagger.model;
 
 import lombok.Data;
+import okhttp3.OkHttpClient;
 
 import java.util.List;
 
@@ -16,5 +17,6 @@ public class SwaggerDescriptor {
     private String serverUrl;
     private String apiType;
     private String apiVersion;
+    private OkHttpClient httpClient;
     private List<com.restbusters.integration.swagger.model.SwaggerApiResource> swaggerApiResources;
 }

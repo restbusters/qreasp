@@ -35,7 +35,7 @@ public class TestRestHelper {
 
     @Test
     public void testCreateNewRestClient(){
-        OkHttpClient okHttpClient = RestClientHelper.getInstance().getOkHttpClient(userName, password);
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
         Assert.assertTrue( okHttpClient instanceof  OkHttpClient);
     }
 
@@ -44,24 +44,8 @@ public class TestRestHelper {
         Map<String,String> headers = new HashMap<>();
         headers.put("headerName", "headerValue");
         RestClientHelper.getInstance().registerLoggerInterceptor2();
-        OkHttpClient okHttpClient1 = RestClientHelper.getInstance().getOkHttpClient(userName, password);
-        OkHttpClient okHttpClient2 = RestClientHelper.getInstance().getOkHttpClient("myUser", "mypassword", headers);
-        Request request = new Request.Builder()
-                .url("https://httpbin.org/get")
-                .header("fromRequest", "fromRequest")
-                .headers(Headers.of(headers))
-                .build();
-
-        Response response1 = null;
-        Response response2 = null;
-        try {
-            response1 = okHttpClient1.newCall(request).execute();
-            response2 = okHttpClient2.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        response1.body().close();
-        response2.body().close();
+        OkHttpClient okHttpClient1 = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
+        OkHttpClient okHttpClient2 = RestClientHelper.getInstance().buildBasicAuthClient("myUser", "mypassword", headers);
         Assert.assertFalse( okHttpClient1.equals(okHttpClient2));
     }
 
@@ -70,7 +54,7 @@ public class TestRestHelper {
     @Test//(threadPoolSize = 3, invocationCount = 6)
     public void testDoGetRequest() throws IOException {
         String url = "https://httpbin.org/get";
-        OkHttpClient okHttpClient = RestClientHelper.getInstance().getOkHttpClient(userName, password, headers);
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, headers);
         Response response = RestClientHelper.getInstance().doGetRequest(okHttpClient, url, null, null);
         Assert.assertTrue(response.code() == 200);
 
@@ -79,7 +63,7 @@ public class TestRestHelper {
     @Test
     public void testDoPostRequest() throws IOException {
         String url = "https://httpbin.org/anything";
-        OkHttpClient okHttpClient = RestClientHelper.getInstance().getOkHttpClient(userName, password, headers);
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, headers);
         Response response = RestClientHelper.getInstance().doPostRequest(okHttpClient, url, this.requestBody, null);
         Assert.assertTrue(response.code() == 200);
     }
@@ -87,7 +71,7 @@ public class TestRestHelper {
     @Test
     public void testDoPutRequest() throws IOException {
         String url = "https://httpbin.org/anything";
-        OkHttpClient okHttpClient = RestClientHelper.getInstance().getOkHttpClient(userName, password, headers);
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, headers);
         Response response = RestClientHelper.getInstance().doPutRequest(okHttpClient, url, this.requestBody, null);
         Assert.assertTrue(response.code() == 200);
     }
@@ -95,7 +79,7 @@ public class TestRestHelper {
     @Test
     public void testDoPatchRequest() throws IOException {
         String url = "https://httpbin.org/anything";
-        OkHttpClient okHttpClient = RestClientHelper.getInstance().getOkHttpClient(userName, password, headers);
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, headers);
         Response response = RestClientHelper.getInstance().doPatchRequest(okHttpClient, url, this.requestBody, null);
         Assert.assertTrue(response.code() == 200);
     }
@@ -103,7 +87,7 @@ public class TestRestHelper {
     @Test
     public void testDoDeleteRequest() throws IOException {
         String url = "https://httpbin.org/anything";
-        OkHttpClient okHttpClient = RestClientHelper.getInstance().getOkHttpClient(userName, password, headers);
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, headers);
         Response response = RestClientHelper.getInstance().doDeleteRequest(okHttpClient, url, null, null);
         Assert.assertTrue(response.code() == 200);
     }
