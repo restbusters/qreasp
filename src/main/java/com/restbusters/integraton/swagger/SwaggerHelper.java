@@ -2,24 +2,12 @@ package com.restbusters.integraton.swagger;
 
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
-//import io.swagger.oas.models.OpenAPI;
-//import io.swagger.oas.models.Operation;
-//import io.swagger.oas.models.PathItem;
-//import io.swagger.oas.models.Paths;
-//import io.swagger.oas.models.parameters.Parameter;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
 import io.swagger.oas.models.PathItem;
 import io.swagger.oas.models.Paths;
 import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.parser.OpenAPIParser;
 import io.swagger.parser.v3.OpenAPIV3Parser;
-//import io.swagger.v3.oas.models.OpenAPI;
-//import io.swagger.v3.oas.models.Operation;
-//import io.swagger.v3.oas.models.PathItem;
-//import io.swagger.v3.oas.models.Paths;
-//import io.swagger.v3.oas.models.parameters.Parameter;
-//import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -30,6 +18,18 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+//import io.swagger.oas.models.OpenAPI;
+//import io.swagger.oas.models.Operation;
+//import io.swagger.oas.models.PathItem;
+//import io.swagger.oas.models.Paths;
+//import io.swagger.oas.models.parameters.Parameter;
+//import io.swagger.v3.oas.models.OpenAPI;
+//import io.swagger.v3.oas.models.Operation;
+//import io.swagger.v3.oas.models.PathItem;
+//import io.swagger.v3.oas.models.Paths;
+//import io.swagger.v3.oas.models.parameters.Parameter;
+//import io.swagger.v3.parser.OpenAPIV3Parser;
 
 
 /**
