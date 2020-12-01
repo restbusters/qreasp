@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.invoke.MethodHandles;
@@ -65,7 +64,7 @@ public class PayloadManager {
             try {
                 StringTemplateLoader templateLoader = new StringTemplateLoader();
                 templateLoader.putTemplate(payloadName, payloadTemplate.getPayload().replaceAll("\\\\", ""));
-                Configuration cfg = new Configuration( Configuration.VERSION_2_3_21 );
+                Configuration cfg = new Configuration( Configuration.VERSION_2_3_30);
                 cfg.setTemplateLoader(templateLoader);
                 Template template = cfg.getTemplate(payloadName, StandardCharsets.UTF_8.toString());
                 Writer out = new StringWriter();

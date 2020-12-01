@@ -1,17 +1,14 @@
 package com.restbusters.integration.swagger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.google.common.io.Resources;
 import com.jayway.jsonpath.JsonPath;
-import com.restbusters.exception.SwaggerTitleNotSet;
 import com.restbusters.integraton.swagger.PayloadManager;
 import com.restbusters.integraton.swagger.SwaggerHelper;
 import com.restbusters.integraton.swagger.SwaggerManager;
 import com.restbusters.integraton.swagger.model.HttpRestRequest;
 import com.restbusters.integraton.swagger.model.HttpRestResponse;
-import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.RestClientHelper;
 import net.minidev.json.JSONArray;
@@ -120,7 +117,7 @@ public class TestSwaggerHelper {
         Assert.assertNotNull(swaggerManager.findSwaggerDescriptor(this.swaggetTitle));
     }
 
-    @Test(enabled = true, dependsOnMethods = "send_post_request")
+    @Test(enabled = true, dependsOnMethods = "execute_rest_post")
     public void execute_rest_get(){
         String swaggetTitle = "SwaggerPetstore";
         String operationId = "getPetById";
@@ -139,20 +136,22 @@ public class TestSwaggerHelper {
     public void create_template_from_swagger(){
         String actualName = "myName";
         Map<String,Object>payload = new HashMap<>();
-        payload.put("name", "myName");
+        payload.put("categoryName", actualName);
+        payload.put("petName", actualName);
         String requestBody = pm.getPayload(this.swaggetTitle, this.swaggerOperationId, null, payload);
         String expectedName = JsonPath.read(requestBody, "$.category.name");
         Assert.assertEquals(actualName, expectedName);
     }
 
     @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void send_post_request(){
+    public void execute_rest_post(){
         String swaggerTitle = "SwaggerPetstore";
         String operationId = "addPet";
         String actualName = "Iva";
         Map<String,Object>payload = new HashMap<>();
-        payload.put("name", actualName);
-        String requestBody = pm.getPayload(this.swaggetTitle, this.swaggerOperationId, null, payload);
+        payload.put("categoryName", actualName);
+        payload.put("petName", actualName);
+        String requestBody = pm.getPayload(this.swaggetTitle, operationId, null, payload);
         //run post
         HttpRestRequest httpRestRequest = new HttpRestRequest();
         httpRestRequest.setApiTitle(swaggetTitle);
@@ -163,6 +162,26 @@ public class TestSwaggerHelper {
         Assert.assertEquals(httpRestResponse.getStatus(), "FINISHED");
         Long id = JsonPath.read(httpRestResponse.getResponseBody(), "$.id");
         this.petIdFromPost = String.valueOf(id);
+    }
+
+    @Test(enabled = true, dependsOnMethods = "execute_rest_get")
+    public void send_put_request(){
+        String swaggerTitle = "SwaggerPetstore";
+        String operationId = "updatePet";
+        String actualName = "Iva2";
+        Map<String,Object>payload = new HashMap<>();
+        payload.put("categoryName", actualName);
+        payload.put("petName", actualName);
+        payload.put("id", this.petIdFromPost);
+        String requestBody = pm.getPayload(this.swaggetTitle, operationId, null, payload);
+        //run post
+        HttpRestRequest httpRestRequest = new HttpRestRequest();
+        httpRestRequest.setApiTitle(swaggerTitle);
+        httpRestRequest.setOperationId(operationId);
+        httpRestRequest.setRequestBody(requestBody);
+        HttpRestResponse httpRestResponse = this.swaggerManager.executeSwaggerEndPoint(httpRestRequest);
+        Assert.assertEquals(httpRestResponse.getHttpCode(), 200);
+        Assert.assertEquals(httpRestResponse.getStatus(), "FINISHED");
     }
 
 

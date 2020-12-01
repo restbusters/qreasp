@@ -1,7 +1,6 @@
 package com.restbusters.integraton.swagger.model;
 
 import lombok.Data;
-import com.restbusters.integration.swagger.model.SwaggerApiResource;
 
 
 /**

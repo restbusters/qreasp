@@ -4,6 +4,14 @@
     "operationId": "addPet",
     "name": "addPet",
     "type": "default",
-    "payload": "{\"category\":{\"name\":\"${name}\"},\"name\":\"doggie\",\"photoUrls\":[\"string\"],\"tags\":[{\"name\":\"string\"}],\"status\":\"available\"}"
+    "payload": "{\"category\":{\"name\":\"${categoryName}\"},\"name\":\"${petName}\",\"photoUrls\":[\"string\"],\"tags\":[{\"name\":\"string\"}],\"status\":\"available\"}"
+  },
+
+  {
+    "apiTitle": "SwaggerPetstore",
+    "operationId": "updatePet",
+    "name": "updatePet",
+    "type": "default",
+    "payload": "{\"id\":\"${id}\",\"category\":{\"id\":0,\"${categoryName}\":\"string\"},\"name\":\"${petName}\",\"photoUrls\":[\"string\"],\"tags\":[{\"id\":0,\"name\":\"string\"}],\"status\":\"available\"}"
   }
 ]

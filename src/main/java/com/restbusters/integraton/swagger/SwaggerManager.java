@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Sasha Matsaylo on 2020-11-26
@@ -146,6 +145,16 @@ public class SwaggerManager {
                     e.printStackTrace();
                 }
             case "POST":
+                try {
+                    response = RestClientHelper.getInstance().doPostRequest(okHttpClient, httpRestRequest, null);
+                    httpRestResponse.setResponseBody(response.body().string());
+                    httpRestResponse.setHttpCode(response.code());
+                    httpRestResponse.setStatus("FINISHED");
+                    return httpRestResponse;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            case "PUT":
                 try {
                     response = RestClientHelper.getInstance().doPostRequest(okHttpClient, httpRestRequest, null);
                     httpRestResponse.setResponseBody(response.body().string());

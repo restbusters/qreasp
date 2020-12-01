@@ -1,9 +1,7 @@
 package com.restbusters.rest;
 
 import com.restbusters.rest.client.RestClientHelper;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
