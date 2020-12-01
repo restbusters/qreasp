@@ -146,8 +146,15 @@ public class SwaggerManager {
                     e.printStackTrace();
                 }
             case "POST":
-                //Java code
-                ;
+                try {
+                    response = RestClientHelper.getInstance().doPostRequest(okHttpClient, httpRestRequest, null);
+                    httpRestResponse.setResponseBody(response.body().string());
+                    httpRestResponse.setHttpCode(response.code());
+                    httpRestResponse.setStatus("FINISHED");
+                    return httpRestResponse;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             default:
                 //Java code
                 ;
@@ -155,4 +162,5 @@ public class SwaggerManager {
         return httpRestResponse;
 
     }
+
 }

@@ -204,7 +204,24 @@ public class RestClientHelper {
         request = new Request.Builder()
                 .url(substituteUrlParams(url, urlParams))
                 .addHeader("accept", "application/json")
-                .addHeader("Content-Type", "application/x-yaml")
+                .addHeader("Content-Type", "application/json")
+                .post(requestBody)
+                .build();
+        return okHttpClient.newCall(request).execute();
+    }
+
+    public Response doPostRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest, @Nullable Map<String,String> urlParams) throws IOException {
+        String url = httpRestRequest.getUrl();
+        RequestBody requestBody = null;
+        Request request;
+        if(httpRestRequest.getRequestBody() == null){
+            requestBody = RequestBody.create("", null);
+        }
+        else {
+            requestBody = RequestBody.create(JSON, httpRestRequest.getRequestBody());
+        }
+        request = new Request.Builder()
+                .url(substituteUrlParams(url, urlParams))
                 .post(requestBody)
                 .build();
         return okHttpClient.newCall(request).execute();

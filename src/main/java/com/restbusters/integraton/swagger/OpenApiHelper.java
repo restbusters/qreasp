@@ -2,6 +2,7 @@ package com.restbusters.integraton.swagger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.restbusters.integration.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import io.swagger.oas.inflector.examples.ExampleBuilder;
@@ -14,8 +15,6 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.parameters.RequestBody;
-import com.restbusters.integration.swagger.model.SwaggerApiResource;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

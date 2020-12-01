@@ -1,0 +1,9 @@
+[
+  {
+    "apiTitle": "SwaggerPetstore",
+    "operationId": "addPet",
+    "name": "addPet",
+    "type": "default",
+    "payload": "{\"category\":{\"name\":\"${name}\"},\"name\":\"doggie\",\"photoUrls\":[\"string\"],\"tags\":[{\"name\":\"string\"}],\"status\":\"available\"}"
+  }
+]

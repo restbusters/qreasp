@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://petstore.swagger.io/v2"
+      "url": "https://petstore.swagger.io/v2"
     }
   ],
   "info": {
@@ -24,7 +24,7 @@
       "description": "Everything about your Pets",
       "externalDocs": {
         "description": "Find out more",
-        "url": "http://swagger.io"
+        "url": "https://swagger.io"
       }
     },
     {
@@ -1043,7 +1043,7 @@
         "type": "oauth2",
         "flows": {
           "implicit": {
-            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+            "authorizationUrl": "https://petstore.swagger.io/oauth/dialog",
             "scopes": {
               "write:pets": "modify pets in your account",
               "read:pets": "read your pets"
