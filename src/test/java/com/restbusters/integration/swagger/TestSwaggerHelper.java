@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.google.common.io.Resources;
 import com.jayway.jsonpath.JsonPath;
-import com.restbusters.integraton.swagger.PayloadManager;
-import com.restbusters.integraton.swagger.SwaggerHelper;
-import com.restbusters.integraton.swagger.SwaggerManager;
-import com.restbusters.integraton.swagger.model.HttpRestRequest;
-import com.restbusters.integraton.swagger.model.HttpRestResponse;
+import com.restbusters.exception.ScenarioExecutionException;
+import com.restbusters.integraton.swagger.*;
+import com.restbusters.integraton.swagger.model.*;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.RestClientHelper;
 import net.minidev.json.JSONArray;
@@ -54,11 +52,13 @@ public class TestSwaggerHelper {
     private PayloadManager pm;
     private String payloadResources;
     private String petIdFromPost;
+    private SwaggerUrl swaggerUrl;
 
 
 
     @BeforeClass
     private void setUp() throws IOException {
+        this.swaggerUrl = new SwaggerUrl();
         this.payloadResources = readResourceFileAsString("swagger/request-payload.json");
         this.pm = PayloadManager.getInstance(payloadResources);
         this.okHttpClient = RestClientHelper.getInstance().buildNoAuthClient();
@@ -73,11 +73,8 @@ public class TestSwaggerHelper {
 
 
     public SwaggerManager set_swagger_manager(){
-        List<Map<String,Object>> swaggers = new ArrayList<>();
-        Map<String,Object> swagger1 = new HashMap<>();
-        swagger1.put("url", this.swaggerUrls);
-        swaggers.add(swagger1);
-        return new SwaggerManager(swaggers);
+        this.swaggerUrl.setSwaggerUrls(this.swaggerUrls);
+        return new SwaggerManager(swaggerUrl);
     }
 
     @Test(enabled = true)
@@ -162,6 +159,50 @@ public class TestSwaggerHelper {
         Assert.assertEquals(httpRestResponse.getStatus(), "FINISHED");
         Long id = JsonPath.read(httpRestResponse.getResponseBody(), "$.id");
         this.petIdFromPost = String.valueOf(id);
+    }
+
+    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
+    public void execute_rest_scenario(){
+
+        String swaggerTitle = "SwaggerPetstore";
+        String operationId = "addPet";
+        String actualName = "Iva";
+        Map<String,String>payload = new HashMap<>();
+        payload.put("categoryName", actualName);
+        payload.put("petName", actualName);
+        //
+        List<ApiScenario> apiScenarios = new ArrayList<>();
+        ApiScenario apiScenario = new ApiScenario();
+        apiScenario.setName("scenario1");
+        List<ApiScenarioStep> apiScenarioSteps = new ArrayList<>();
+        ApiScenarioStep step1 = new ApiScenarioStep();
+        apiScenarioSteps.add(step1);
+        apiScenario.setApiScenarioSteps(apiScenarioSteps);
+        //set HttpRequest1
+        HttpRestRequest httpRestRequest = new HttpRestRequest();
+        httpRestRequest.setApiTitle(swaggerTitle);
+        httpRestRequest.setOperationId(operationId);
+        //set request body
+        SubstitutionRules subRues1 = new SubstitutionRules();
+        subRues1.setValueType(InstructionType.USER_DEFINED.name());
+        //Create new instruction
+        Instruction instruction = new Instruction();
+        instruction.setUserDefined(payload);
+        subRues1.setInstruction(instruction);
+        step1.setSubstitutionRules(subRues1);
+        step1.setHttpRestRequest(httpRestRequest);
+        apiScenarios.add(apiScenario);
+
+        ApiScenarioManager apiScenarioManager = null;
+        try {
+            this.swaggerManager.setPayloadManager(pm);
+            apiScenarioManager = new ApiScenarioManager(this.swaggerManager);
+            apiScenarios = apiScenarioManager.scenarioExecutor(apiScenarios);
+            logger.info(apiScenario.toString());
+        } catch (ScenarioExecutionException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Test(enabled = true, dependsOnMethods = "execute_rest_get")

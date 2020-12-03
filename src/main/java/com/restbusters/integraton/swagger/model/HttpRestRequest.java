@@ -16,4 +16,5 @@ public class HttpRestRequest extends HttpRest {
     private Map<String,String> urlParams;
     private Map<String,String> queryParams;
     private String url;
+
 }
