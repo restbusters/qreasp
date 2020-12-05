@@ -1,5 +1,6 @@
 package com.restbusters.integraton.swagger.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Map;
@@ -9,12 +10,13 @@ import java.util.Map;
  * @project qreasp
  */
 @Data
-public class HttpRestRequest extends HttpRest {
+public class HttpRestRequest {
 
     private String requestBody;
     private Map<String,String> headers;
     private Map<String,String> urlParams;
     private Map<String,String> queryParams;
     private String url;
+    private String httpMethod;
 
 }

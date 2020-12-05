@@ -7,8 +7,9 @@ import lombok.Data;
  * @project qreasp
  */
 @Data
-public class HttpRest {
+public class OperationMetaData {
 
     private String apiTitle;
     private String operationId;
+    private String payLoadType;
 }

@@ -8,7 +8,7 @@ import lombok.Data;
  * @project qreasp
  */
 @Data
-public class PayloadTemplate extends HttpRest {
+public class PayloadTemplate extends OperationMetaData {
     private String name;
     private String type;
     private String payload;

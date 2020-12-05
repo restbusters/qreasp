@@ -7,7 +7,7 @@ package com.restbusters.integraton.swagger;
 public enum InstructionType {
 
     FROM_RESPONSE("FROM_RESPONSE"),
-    USER_DEFINED("USER_DEFINED");
+    USER_PROVIDED("USER_PROVIDED");
 
     private String instructionType;
 

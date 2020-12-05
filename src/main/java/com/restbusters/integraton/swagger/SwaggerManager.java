@@ -22,14 +22,14 @@ public class SwaggerManager {
     private List<SwaggerDescriptor> swaggerDescriptor;
     private List<Map<String, Object>> swaggerConfig;
     private SwaggerUrl swaggerUrl;
-    private OkHttpClient noAuthClient;
+    private OkHttpClient trustedOkHtttp;
     private PayloadManager payloadManager;
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
     public SwaggerManager(SwaggerUrl swaggerUrl){
-        this.noAuthClient = RestClientHelper.getInstance().buildNoAuthClient();
+        this.trustedOkHtttp = RestClientHelper.getInstance().buildTrustedHttpClient();
         this.swaggerUrl = swaggerUrl;
         this.swaggerDescriptor = new ArrayList<>();
         setSwaggerDescriptor();
@@ -42,7 +42,7 @@ public class SwaggerManager {
 
         Collections.synchronizedList(this.swaggerUrl.getSwaggerUrls()).stream().parallel().forEach(url -> {
             try {
-                Response response = RestClientHelper.getInstance().doGetRequest(this.noAuthClient, url.toString(), null, null);
+                Response response = RestClientHelper.getInstance().doGetRequest(this.trustedOkHtttp, url, null, null);
                 if (response.isSuccessful()) {
                     String body = response.body().string().replaceAll("\\s", "");
                     if (body.matches(".*\"swagger.+\\:.+(\\d).*")) {
@@ -101,6 +101,16 @@ public class SwaggerManager {
         return false;
     }
 
+    public boolean setTrustedHttpClientForSwagger(String swaggerTitle) {
+        SwaggerDescriptor swaggerDescriptor = findSwaggerDescriptor(swaggerTitle);
+        if (swaggerDescriptor != null) {
+            OkHttpClient okHttpClient = RestClientHelper.getInstance().buildTrustedHttpClient();
+            swaggerDescriptor.setHttpClient(okHttpClient);
+            return true;
+        }
+        return false;
+    }
+
     private OkHttpClient getHttpClient(String swaggerTitle) {
         SwaggerDescriptor swaggerDescriptor = findSwaggerDescriptor(swaggerTitle);
         if (swaggerDescriptor != null) {
@@ -117,55 +127,48 @@ public class SwaggerManager {
         return payloadManager.getPayload(swaggerTitle, swaggerOperationId, payLoadType, payload);
     }
 
-    public HttpRestResponse executeSwaggerEndPoint(HttpRestRequest httpRestRequest) {
-        //put protection if urlParam is not what is expected
+    public HttpRestResponse executeApiStep(ApiStep apiStep){
+        SwaggerApiResource swaggerApiResource = findSwaggerResource(apiStep.getApiTitle(), apiStep.getOperationId());
         HttpRestResponse httpRestResponse = new HttpRestResponse();
-        httpRestResponse.setHttpRestRequest(httpRestRequest);
-        SwaggerApiResource swaggerApiResource = findSwaggerResource(httpRestRequest.getApiTitle(), httpRestRequest.getOperationId());
+        httpRestResponse.setHttpRestRequest(apiStep.getHttpRestRequest());
         if (swaggerApiResource == null) {
             httpRestResponse.setStatus("ABORTED");
             httpRestResponse.setReason("OPERATION NOT FOUND");
-            httpRestResponse.setHttpRestRequest(httpRestRequest);
+            httpRestResponse.setHttpRestRequest(apiStep.getHttpRestRequest());
             return httpRestResponse;
         }
-        httpRestRequest.setUrl(swaggerApiResource.getResourcePath());
-        OkHttpClient okHttpClient = this.getHttpClient(httpRestRequest.getApiTitle());
+        apiStep.getHttpRestRequest().setUrl(swaggerApiResource.getResourcePath());
+        apiStep.getHttpRestRequest().setHttpMethod(swaggerApiResource.getHttpMethod());
+        OkHttpClient okHttpClient = this.getHttpClient(apiStep.getApiTitle());
         if (okHttpClient == null) {
             httpRestResponse.setStatus("ABORTED");
             httpRestResponse.setReason("HTTP CLIENT NOT SET");
-            httpRestResponse.setHttpRestRequest(httpRestRequest);
+            httpRestResponse.setHttpRestRequest(apiStep.getHttpRestRequest());
             return httpRestResponse;
         }
+        return executeSwaggerEndPoint(okHttpClient, apiStep.getHttpRestRequest());
+    }
 
-        Response response;
-        switch (swaggerApiResource.getHttpMethod()) {
+    private HttpRestResponse executeSwaggerEndPoint(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) {
+        //put protection if urlParam is not what is expected
+        HttpRestResponse httpRestResponse = new HttpRestResponse();
+        httpRestResponse.setHttpRestRequest(httpRestRequest);
+        switch (httpRestRequest.getHttpMethod().toUpperCase()) {
             case "GET":
                 try {
-                    response = RestClientHelper.getInstance().doGetRequest(okHttpClient, httpRestRequest);
-                    httpRestResponse.setResponseBody(response.body().string());
-                    httpRestResponse.setHttpCode(response.code());
-                    httpRestResponse.setStatus("FINISHED");
-                    return httpRestResponse;
+                    return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             case "POST":
                 try {
-                    response = RestClientHelper.getInstance().doPostRequest(okHttpClient, httpRestRequest, null);
-                    httpRestResponse.setResponseBody(response.body().string());
-                    httpRestResponse.setHttpCode(response.code());
-                    httpRestResponse.setStatus("FINISHED");
-                    return httpRestResponse;
+                    return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             case "PUT":
                 try {
-                    response = RestClientHelper.getInstance().doPostRequest(okHttpClient, httpRestRequest, null);
-                    httpRestResponse.setResponseBody(response.body().string());
-                    httpRestResponse.setHttpCode(response.code());
-                    httpRestResponse.setStatus("FINISHED");
-                    return httpRestResponse;
+                    return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -175,6 +178,17 @@ public class SwaggerManager {
         }
         return httpRestResponse;
 
+    }
+
+    private HttpRestResponse setHttpResponse(HttpRestResponse httpRestResponse, Response response){
+        try {
+            httpRestResponse.setResponseBody(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        httpRestResponse.setHttpCode(response.code());
+        httpRestResponse.setStatus("FINISHED");
+        return httpRestResponse;
     }
 
 }

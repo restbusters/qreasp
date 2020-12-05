@@ -12,6 +12,6 @@
     "operationId": "updatePet",
     "name": "updatePet",
     "type": "default",
-    "payload": "{\"id\":\"${id}\",\"category\":{\"id\":0,\"${categoryName}\":\"string\"},\"name\":\"${petName}\",\"photoUrls\":[\"string\"],\"tags\":[{\"id\":0,\"name\":\"string\"}],\"status\":\"available\"}"
+    "payload": "{\"id\":#{petId},\"category\":{\"id\":0,\"${categoryName}\":\"string\"},\"name\":\"${petName}\",\"photoUrls\":[\"string\"],\"tags\":[{\"id\":0,\"name\":\"string\"}],\"status\":\"available\"}"
   }
 ]

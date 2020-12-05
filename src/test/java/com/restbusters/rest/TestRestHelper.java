@@ -75,6 +75,15 @@ public class TestRestHelper {
     }
 
     @Test
+    public void execute_general_request() throws IOException {
+        String url = "https://httpbin.org/anything";
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, headers);
+        //Response response = RestClientHelper.getInstance().doPatchRequest(okHttpClient, url, this.requestBody, null);
+        Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, "POST", url, null, null, this.requestBody);
+        Assert.assertTrue(response.code() == 200);
+    }
+
+    @Test
     public void testDoPatchRequest() throws IOException {
         String url = "https://httpbin.org/anything";
         OkHttpClient okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, headers);

@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
-public class SubstitutionRules{
+public class Instructions {
 
-	@JsonProperty("substitutionRules")
-	private List<SubstitutionRule> substitutionRules;
+	@JsonProperty("instructions")
+	private List<Instructions> instructions;
 
 }

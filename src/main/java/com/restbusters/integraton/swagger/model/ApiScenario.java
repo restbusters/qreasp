@@ -12,7 +12,8 @@ import java.util.List;
 public class ApiScenario {
 
     private String name;
-    private String descriptor;
-    private List<ApiScenarioStep> apiScenarioSteps;
+    private String description;
+    private List<ApiStep> apiSteps;
     private String state;
+    private String errorCode;
 }

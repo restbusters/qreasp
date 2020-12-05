@@ -3,14 +3,11 @@ package com.restbusters.integraton.swagger.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.annotation.Generated;
 import java.util.Map;
 
 @Data
-public class Instruction{
+public class SubstitutionRule {
 
-	@JsonProperty("userDefined")
-	private Map<String,String> userDefined;
 
 	@JsonProperty("operationId")
 	private String operationId;
@@ -20,5 +17,11 @@ public class Instruction{
 
 	@JsonProperty("jsonPath")
 	private String jsonPath;
+
+	@JsonProperty("userProvided")
+	private Map<String,String> userProvided;
+
+	@JsonProperty("valueType")
+	private String valueType;
 
 }
