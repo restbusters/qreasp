@@ -18,18 +18,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-//import io.swagger.oas.models.OpenAPI;
-//import io.swagger.oas.models.Operation;
-//import io.swagger.oas.models.PathItem;
-//import io.swagger.oas.models.Paths;
-//import io.swagger.oas.models.parameters.Parameter;
-//import io.swagger.v3.oas.models.OpenAPI;
-//import io.swagger.v3.oas.models.Operation;
-//import io.swagger.v3.oas.models.PathItem;
-//import io.swagger.v3.oas.models.Paths;
-//import io.swagger.v3.oas.models.parameters.Parameter;
-//import io.swagger.v3.parser.OpenAPIV3Parser;
+import com.restbusters.integration.swagger.model.SwaggerApiResource;
 
 
 /**
@@ -115,8 +104,8 @@ public class SwaggerHelper {
     }
 
 
-    private com.restbusters.integration.swagger.model.SwaggerApiResource createSwaggerApiResource(Operation operation, String resourcePath, String httpVerb) {
-        com.restbusters.integration.swagger.model.SwaggerApiResource apiResource = new com.restbusters.integration.swagger.model.SwaggerApiResource();
+    private SwaggerApiResource createSwaggerApiResource(Operation operation, String resourcePath, String httpVerb) {
+        SwaggerApiResource apiResource = new com.restbusters.integration.swagger.model.SwaggerApiResource();
         apiResource.setResourcePath(resourcePath);
         apiResource.setHttpMethod(httpVerb);
         if (operation.getOperationId() != null) {

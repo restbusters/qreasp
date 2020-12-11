@@ -216,8 +216,10 @@ public class TestSwaggerHelper {
             apiScenarioManager.scenarioExecutor(apiScenarios1);
             //apiScenarios1 = apiScenarioManager.scenarioExecutor1(apiScenarios1);
             logger.info(apiScenario.toString());
-            Assert.assertEquals(apiScenarios1.get(0).getState(), ApiScenarioState.FINISHED.name());
-            Assert.assertEquals(apiScenarios1.get(1).getState(), ApiScenarioState.FINISHED.name());
+            for(ApiScenario apiScenario1 : apiScenarios1){
+                Assert.assertEquals(apiScenario1.getState(), ApiScenarioState.FINISHED.name());
+            }
+
         } catch (ScenarioExecutionException e) {
             e.printStackTrace();
         }

@@ -24,4 +24,10 @@ public class SubstitutionRule {
 	@JsonProperty("valueType")
 	private String valueType;
 
+	@JsonProperty("targetType")
+	private String targetType;
+
+	@JsonProperty("queryParam")
+	private String queryParam;
+
 }

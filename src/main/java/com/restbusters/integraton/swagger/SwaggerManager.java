@@ -2,6 +2,7 @@ package com.restbusters.integraton.swagger;
 
 import com.restbusters.integration.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.*;
+import com.restbusters.rest.client.RBHttpMethod;
 import com.restbusters.rest.client.RestClientHelper;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -22,14 +23,14 @@ public class SwaggerManager {
     private List<SwaggerDescriptor> swaggerDescriptor;
     private List<Map<String, Object>> swaggerConfig;
     private SwaggerUrl swaggerUrl;
-    private OkHttpClient trustedOkHtttp;
+    private OkHttpClient trustedOkHttp;
     private PayloadManager payloadManager;
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
     public SwaggerManager(SwaggerUrl swaggerUrl){
-        this.trustedOkHtttp = RestClientHelper.getInstance().buildTrustedHttpClient();
+        this.trustedOkHttp = RestClientHelper.getInstance().buildTrustedHttpClient();
         this.swaggerUrl = swaggerUrl;
         this.swaggerDescriptor = new ArrayList<>();
         setSwaggerDescriptor();
@@ -42,7 +43,7 @@ public class SwaggerManager {
 
         Collections.synchronizedList(this.swaggerUrl.getSwaggerUrls()).stream().parallel().forEach(url -> {
             try {
-                Response response = RestClientHelper.getInstance().doGetRequest(this.trustedOkHtttp, url, null, null);
+                Response response = RestClientHelper.getInstance().doGetRequest(this.trustedOkHttp, url, null, null);
                 if (response.isSuccessful()) {
                     String body = response.body().string().replaceAll("\\s", "");
                     if (body.matches(".*\"swagger.+\\:.+(\\d).*")) {
@@ -154,27 +155,38 @@ public class SwaggerManager {
         HttpRestResponse httpRestResponse = new HttpRestResponse();
         httpRestResponse.setHttpRestRequest(httpRestRequest);
         switch (httpRestRequest.getHttpMethod().toUpperCase()) {
-            case "GET":
+            case RBHttpMethod.GET:
                 try {
                     return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            case "POST":
+            case RBHttpMethod.POST:
                 try {
                     return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            case "PUT":
+            case RBHttpMethod.PUT:
+                try {
+                    return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            case RBHttpMethod.PATCH:
+                try {
+                    return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            case RBHttpMethod.DELETE:
                 try {
                     return setHttpResponse(httpRestResponse, RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             default:
-                //Java code
-                ;
+                logger.warn("Not Supported method {}", httpRestRequest.getHttpMethod().toUpperCase());
         }
         return httpRestResponse;
 

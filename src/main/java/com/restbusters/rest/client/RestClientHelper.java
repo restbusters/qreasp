@@ -1,5 +1,6 @@
 package com.restbusters.rest.client;
 
+import com.jayway.jsonpath.JsonPath;
 import com.restbusters.integraton.swagger.model.HttpRestRequest;
 import com.restbusters.util.common.GenericUtils;
 import okhttp3.*;
@@ -352,7 +353,7 @@ public class RestClientHelper {
         if (MapUtils.isNotEmpty(queryParams)) {
             url = addQueryParams(url, queryParams);
         }
-        if(httpMethod.equalsIgnoreCase(RBHttpMethod.GET)){
+        if(httpMethod.equalsIgnoreCase(RBHttpMethod.GET) || httpMethod.equalsIgnoreCase(RBHttpMethod.DELETE)){
             return new Request.Builder()
                     .url(url)
                     .get()
@@ -374,6 +375,36 @@ public class RestClientHelper {
 
         return okHttpClient.newCall(buildRequest(httpRestRequest.getHttpMethod(), httpRestRequest.getUrl(), httpRestRequest.getUrlParams(), httpRestRequest.getQueryParams(), httpRestRequest.getRequestBody())).execute();
 
+    }
+
+    public String getOAuth2Token(String url, String clientId, String clientSecret, String grantType, String clientScope){
+
+        RequestBody requestBody = new FormBody.Builder()
+                .add("client_id", clientId)
+                .add("client_secret", clientSecret)
+                .add("grant_type", grantType)
+                .add("client_scope", clientScope)
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .method(RBHttpMethod.POST, requestBody)
+                .build();
+        Response response = null;
+        try {
+            response = this.sharedOkHttpClient.newCall(request).execute();
+            if(response.isSuccessful()){
+                try {
+                    String body = response.body().string();
+                    String token = JsonPath.read(body, "$.access_token");
+                    return token;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
