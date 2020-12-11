@@ -46,19 +46,22 @@ public class SwaggerManager {
                                 Response response = RestClientHelper.getInstance().doGetRequest(this.noAuthClient, url.toString(), null, null);
                                 if (response.isSuccessful()) {
                                     String body = response.body().string().replaceAll("\\s", "");
-                                    if (body.matches(".*\"swagger.+\\:.+(\\d).*")) {
+                                    if (body.matches("^\\{\"swagger\"\\:.+(\\d).*")) {
                                         logger.info("The requested url {} is swagger");
                                         //grebaniy swagger does not work with getContent but works with readUrl method
                                         SwaggerDescriptor swaggerDescriptor = SwaggerHelper.getInstance().getSwaggerDescriptor(url.toString());
                                         swaggerDescriptor.setApiType("swagger");
                                         this.swaggerDescriptor.add(swaggerDescriptor);
                                     }
-                                    if (body.matches(".*\"openapi.+\\:.+(\\d).*")) {
+                                    else if (body.matches("^\\{\"openapi\"\\:.+(\\d).*")) {
                                         //swaggerDescriptor.setApiType("swagger");
                                         logger.info("The requested url {} is openapi");
                                         SwaggerDescriptor swaggerDescriptor = OpenApiHelper.getInstance().getSwaggerDescriptor(body);
                                         swaggerDescriptor.setApiType("openapi");
                                         this.swaggerDescriptor.add(swaggerDescriptor);
+                                    }
+                                    else {
+                                        logger.info("Not matches for: {}", url.toString());
                                     }
                                 }
 
