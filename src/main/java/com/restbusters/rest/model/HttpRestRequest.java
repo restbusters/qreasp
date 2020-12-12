@@ -1,6 +1,5 @@
-package com.restbusters.integraton.swagger.model;
+package com.restbusters.rest.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Map;

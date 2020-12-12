@@ -1,20 +1,7 @@
 package com.restbusters.integration.swagger;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.google.common.io.Resources;
-import com.jayway.jsonpath.JsonPath;
-import com.restbusters.exception.ScenarioExecutionException;
-import com.restbusters.integraton.swagger.*;
-import com.restbusters.integraton.swagger.model.*;
-import com.restbusters.resource.GlobalResourceManager;
-import com.restbusters.rest.client.RestClientHelper;
-import net.minidev.json.JSONArray;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import com.restbusters.integraton.swagger.OpenApiHelper;
+import com.restbusters.integraton.swagger.SwaggerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -23,14 +10,8 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 /**
  * @author Sasha Matsaylo on 2020-10-02
@@ -38,280 +19,43 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
  */
 public class TestSwaggerHelper {
 
-    private SwaggerHelper swaggerHelper = SwaggerHelper.getInstance();
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private final String url = "https://petstore.swagger.io/v2/swagger.json";
-    private final String url3 = "https://petstore3.swagger.io/api/v3/openapi.json";
-    private final String openApiUrl = "http://localhost:8090/v2/openapi.json";
-    private final List<String> swaggerUrls = new ArrayList<>();
-    private final ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
-    private WireMockServer wireMockServer;
-    private final int wireMockPort = 8090;
-    private final String wireMockAdminUrl = "http://localhost:8090/__admin/mappings";
-    private OkHttpClient okHttpClient;
-    private SwaggerManager swaggerManager;
-    private final String swaggetTitle = "SwaggerPetstore";
-    private final String swaggerOperationId = "addPet";
-    private PayloadManager pm;
-    private String payloadResources;
-    private Long petIdFromPost;
-    private SwaggerUrl swaggerUrl;
-
+    private final String swaggerUrl = "https://petstore.swagger.io/v2/swagger.json";
+    private final String openApiUrl = "https://petstore3.swagger.io/api/v3/openapi.json";
+    private List<String> swaggerUrls;
 
 
     @BeforeClass
     private void setUp() throws IOException {
-        this.swaggerUrl = new SwaggerUrl();
-        this.payloadResources = readResourceFileAsString("swagger/request-payload.json");
-        this.pm = PayloadManager.getInstance(payloadResources);
-        this.okHttpClient = RestClientHelper.getInstance().buildNoAuthClient();
-        this.wireMockSetInitialState();
-        swaggerUrls.add(this.url);
-        swaggerUrls.add(this.openApiUrl);
-        swaggerUrls.add(url3);
-        this.swaggerManager = set_swagger_manager();
-        Map<String,String> headers = new HashMap<>();
-        headers.put("test", "test");
-        this.swaggerManager.setTrustedHttpClientForSwagger(swaggetTitle);
 
-
+        swaggerUrls = new ArrayList<>();
+        swaggerUrls.add(swaggerUrl);
+        swaggerUrls.add(openApiUrl);
     }
 
 
-    public SwaggerManager set_swagger_manager(){
-        this.swaggerUrl.setSwaggerUrls(this.swaggerUrls);
-        return new SwaggerManager(swaggerUrl);
+    @Test()
+    public void build_swagger_resource(){
+        Assert.assertNotNull(SwaggerHelper.getInstance().getSwaggerDescriptor(swaggerUrl));
+    }
+
+    @Test()
+    public void build_openapi_resource_from_url(){
+        Assert.assertNotNull(OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
     }
 
     @Test(enabled = true)
-    public void swagger_manager_instantiation(){
-        Assert.assertNotNull(this.swaggerManager);
+    public void build_swagger_descriptor(){
+        Assert.assertNotNull(SwaggerHelper.getInstance().getSwaggerDescriptor(swaggerUrl));
     }
-
 
     @Test(enabled = true)
-    public void build_swagger_descriptor_list(){
-        List<Map<String,Object>> swaggers = new ArrayList<>();
-        Map<String,Object> swagger1 = new HashMap<>();
-        swagger1.put("url", this.swaggerUrls);
-        swaggers.add(swagger1);
-        Assert.assertEquals(this.swaggerManager.getSwaggerDescriptor().size(), this.swaggerUrls.size());
-        this.swaggerManager = swaggerManager;
-        Assert.assertNotNull(swaggerManager.findSwaggerResource("SwaggerPetstore","addPet"));
-    }
-
-    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void test_swagger_filter(){
-        Assert.assertNotNull(swaggerManager.findSwaggerResource(this.swaggetTitle, this.swaggerOperationId));
-    }
-
-    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void test_swagger_filter_invalid_swagger_title(){
-        Assert.assertNull(swaggerManager.findSwaggerResource("invalid",this.swaggerOperationId));
-    }
-
-    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void filter_invalid_operationId(){
-        Assert.assertNull(swaggerManager.findSwaggerResource(this.swaggetTitle,"invalid"));
-    }
-
-    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void find_descriptor(){
-        Assert.assertNotNull(swaggerManager.findSwaggerDescriptor(this.swaggetTitle));
-    }
-
-    @Test(enabled = true, dependsOnMethods = "execute_rest_post")
-    public void execute_rest_get(){
-        String swaggetTitle = "SwaggerPetstore";
-        String operationId = "getPetById";
-        Map<String,String> urlParams = new HashMap<>();
-        urlParams.put("petId", String.valueOf(this.petIdFromPost));
-        ApiStep apiStep = new ApiStep();
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        apiStep.setHttpRestRequest(httpRestRequest);
-        apiStep.setApiTitle(swaggetTitle);
-        apiStep.setOperationId(operationId);
-        httpRestRequest.setUrlParams(urlParams);
-        HttpRestResponse httpRestResponse = this.swaggerManager.executeApiStep(apiStep);
-        Assert.assertEquals(httpRestResponse.getStatus(), "FINISHED");
-        Assert.assertEquals(httpRestResponse.getHttpCode(), 200);
-    }
-
-    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void create_template_from_swagger(){
-        String actualName = "myName";
-        Map<String,Object>payload = new HashMap<>();
-        payload.put("categoryName", actualName);
-        payload.put("petName", actualName);
-        String requestBody = pm.getPayload(this.swaggetTitle, this.swaggerOperationId, null, payload);
-        String expectedName = JsonPath.read(requestBody, "$.category.name");
-        Assert.assertEquals(actualName, expectedName);
-    }
-
-    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void execute_rest_post(){
-        String swaggerTitle = "SwaggerPetstore";
-        String operationId = "addPet";
-        String actualName = "Iva";
-        Map<String,Object>payload = new HashMap<>();
-        payload.put("categoryName", actualName);
-        payload.put("petName", actualName);
-        String requestBody = pm.getPayload(this.swaggetTitle, operationId, null, payload);
-        //run post
-        ApiStep apiStep = new ApiStep();
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        apiStep.setHttpRestRequest(httpRestRequest);
-        apiStep.setApiTitle(swaggetTitle);
-        apiStep.setOperationId(operationId);
-        httpRestRequest.setRequestBody(requestBody);
-        HttpRestResponse httpRestResponse = this.swaggerManager.executeApiStep(apiStep);
-        Assert.assertEquals(httpRestResponse.getHttpCode(), 200);
-        Assert.assertEquals(httpRestResponse.getStatus(), "FINISHED");
-        Long id = JsonPath.read(httpRestResponse.getResponseBody(), "$.id");
-        this.petIdFromPost = id;
-    }
-
-    @Test(enabled = true, dependsOnMethods = "build_swagger_descriptor_list")
-    public void execute_rest_scenario(){
-
-        String swaggerTitle = "SwaggerPetstore";
-        String operationId = "addPet";
-        String actualName = "Iva";
-        Map<String,String>payload = new HashMap<>();
-        payload.put("categoryName", actualName);
-        payload.put("petName", actualName);
-        //
-        List<ApiScenario> apiScenarios = new ArrayList<>();
-        ApiScenario apiScenario = new ApiScenario();
-        apiScenario.setName("scenario1");
-        List<ApiStep> apiSteps = new ArrayList<>();
-        ApiStep apiStep1 = createApiStep(swaggerTitle, operationId);
-        ApiStep apiStep2 = createApiStep(swaggerTitle, "updatePet");
-        apiSteps.add(apiStep1);
-        apiSteps.add(apiStep2);
-        List<SubstitutionRule> substitutionRuleList1 = new ArrayList<>();
-        List<SubstitutionRule> substitutionRuleList2 = new ArrayList<>();
-        substitutionRuleList1.add(createUserDefinedSubstitutionRule(payload));
-        substitutionRuleList2.add(createSubstitutionRuleFromResponse("$.id", "addPet", "petId"));
-        substitutionRuleList2.add(createSubstitutionRuleFromResponse("$.category.name", "addPet", "categoryName"));
-        substitutionRuleList2.add(createSubstitutionRuleFromResponse("$.name", "addPet", "petName"));
-        apiStep1.setSubstitutionRules(substitutionRuleList1);
-        apiStep2.setSubstitutionRules(substitutionRuleList2);
-        apiScenario.setApiSteps(apiSteps);
-        apiScenarios.add(apiScenario);
-        String scenarios = readResourceFileAsString("swagger/defined-scenarios.json");
-        List<ApiScenario> apiScenarios1 = new ArrayList<>();
-        try {
-            apiScenarios1 = objectMapper.readValue(scenarios, new TypeReference<List<ApiScenario>>(){});
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-        }
-
-        ApiScenarioManager apiScenarioManager = null;
-        try {
-            this.swaggerManager.setPayloadManager(pm);
-            apiScenarioManager = new ApiScenarioManager(this.swaggerManager);
-            apiScenarioManager.scenarioExecutor(apiScenarios1);
-            //apiScenarios1 = apiScenarioManager.scenarioExecutor1(apiScenarios1);
-            logger.info(apiScenario.toString());
-            for(ApiScenario apiScenario1 : apiScenarios1){
-                Assert.assertEquals(apiScenario1.getState(), ApiScenarioState.FINISHED.name());
-            }
-
-        } catch (ScenarioExecutionException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Test(enabled = true, dependsOnMethods = "execute_rest_get")
-    public void send_put_request(){
-        String swaggerTitle = "SwaggerPetstore";
-        String operationId = "updatePet";
-        String actualName = "Iva2";
-        Map<String,Object>payload = new HashMap<>();
-        payload.put("categoryName", actualName);
-        payload.put("petName", actualName);
-        payload.put("petId", this.petIdFromPost);
-        String requestBody = pm.getPayload(this.swaggetTitle, operationId, null, payload);
-        //run put
-
-        ApiStep put = new ApiStep();
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        put.setHttpRestRequest(httpRestRequest);
-        put.setApiTitle(swaggerTitle);
-        put.setOperationId(operationId);
-        httpRestRequest.setRequestBody(requestBody);
-        HttpRestResponse httpRestResponse = this.swaggerManager.executeApiStep(put);
-        Assert.assertEquals(httpRestResponse.getHttpCode(), 200);
-        Assert.assertEquals(httpRestResponse.getStatus(), "FINISHED");
-    }
-
-    private ApiStep createApiStep(String apiTitle, String operationId){
-        ApiStep apiStep = new ApiStep();
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        apiStep.setHttpRestRequest(httpRestRequest);
-        apiStep.setApiTitle(apiTitle);
-        apiStep.setOperationId(operationId);
-        apiStep.setPayLoadType("default");
-        apiStep.setHttpRestRequest(httpRestRequest);
-        return apiStep;
-    }
-
-    private SubstitutionRule createUserDefinedSubstitutionRule(Map<String, String> payload){
-        SubstitutionRule subRues = new SubstitutionRule();
-        subRues.setValueType(InstructionType.USER_PROVIDED.name());
-        subRues.setUserProvided(payload);
-        return subRues;
-    }
-
-    private SubstitutionRule createSubstitutionRuleFromResponse(String jsonPath, String operationIdFromResponse, String templateValue){
-        SubstitutionRule subRues = new SubstitutionRule();
-        subRues.setValueType(InstructionType.FROM_RESPONSE.name());
-        subRues.setJsonPath(jsonPath);
-        subRues.setOperationId(operationIdFromResponse);
-        subRues.setTemplateValue(templateValue);
-        return subRues;
+    public void build_openapi_descriptor(){
+        Assert.assertNotNull(OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
     }
 
 
-    private void startWireMock() {
-        this.wireMockServer.start();
-    }
-
-    private void stopWireMock() {
-        this.wireMockServer.stop();
-    }
-
-    private void resetWireMock() {
-        this.wireMockServer.resetAll();
-    }
-
-    private void wireMockSetInitialState() throws IOException {
-        wireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort));
-        startWireMock();
-        URL url = Resources.getResource("swagger/wiremock-stub.json");
-        String stubs = Resources.toString(url, StandardCharsets.UTF_8);
-        JSONArray jsonArray = JsonPath.read(stubs, "$");
-        for (Object stub : jsonArray) {
-            String jsonStub = objectMapper.writeValueAsString(stub);
-            Response response =
-                    RestClientHelper.getInstance().doPostRequest(this.okHttpClient, this.wireMockAdminUrl, jsonStub, null);
-            Assert.assertEquals(response.code(), 201);
-        }
-    }
-
-    private String readResourceFileAsString(String fileResourcePath){
-        try {
-            URL url = Resources.getResource(fileResourcePath);
-            return Resources.toString(url, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 
 

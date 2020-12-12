@@ -1,7 +1,7 @@
 package com.restbusters.rest.client;
 
 import com.jayway.jsonpath.JsonPath;
-import com.restbusters.integraton.swagger.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.util.common.GenericUtils;
 import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;

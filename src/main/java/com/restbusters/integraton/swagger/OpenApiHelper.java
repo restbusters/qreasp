@@ -103,6 +103,21 @@ public class OpenApiHelper {
         return swaggerApiResource;
     }
 
+    public SwaggerDescriptor getSwaggerDescriptorFromUrl(String swaggerUrl) {
+        io.swagger.v3.oas.models.OpenAPI openAPI = new OpenAPIV3Parser().read(swaggerUrl);
+        if(openAPI == null){
+            throw new SwaggerException("Failed to build openapi");
+        }
+
+        SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
+        swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
+        swaggerDescriptor.setServerUrl(openAPI.getServers().get(0).getUrl());
+        swaggerDescriptor.setSwaggerApiResources(buildSwaggerResources(openAPI));
+        return swaggerDescriptor;
+
+
+    }
+
     public SwaggerDescriptor getSwaggerDescriptor(String swaggerContent) {
         io.swagger.v3.oas.models.OpenAPI openAPI = new OpenAPIV3Parser().readContents(swaggerContent, null, null).getOpenAPI();
         if(openAPI == null){
