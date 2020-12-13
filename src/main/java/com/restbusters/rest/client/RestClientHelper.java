@@ -1,6 +1,7 @@
 package com.restbusters.rest.client;
 
-import com.restbusters.integraton.swagger.model.HttpRestRequest;
+import com.jayway.jsonpath.JsonPath;
+import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.util.common.GenericUtils;
 import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;
@@ -8,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -109,6 +112,51 @@ public class RestClientHelper {
     public OkHttpClient buildBearerClient(String token) throws Exception {
         Map<String, String> headers = new HashMap<>();
         return buildClientFromSharedWithBearerInterceptor(new BearerAuthInterceptor(token), headers);
+    }
+
+
+    public OkHttpClient buildTrustedHttpClient() {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[] {
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
+            builder.followRedirects(true);
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager)trustAllCerts[0]);
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+
+            OkHttpClient okHttpClient = builder.build();
+            return okHttpClient;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -296,6 +344,67 @@ public class RestClientHelper {
         return new Request.Builder()
                 .url(substituteUrlParams(url, urlParams))
                 .build();
+    }
+
+    private Request buildRequest(String httpMethod, String url, @Nullable Map<String, String> urlParams, @Nullable Map<String, String> queryParams, @Nullable String requestBody){
+        if(MapUtils.isNotEmpty(urlParams)){
+            url = substituteUrlParams(url, urlParams);
+        }
+        if (MapUtils.isNotEmpty(queryParams)) {
+            url = addQueryParams(url, queryParams);
+        }
+        if(httpMethod.equalsIgnoreCase(RBHttpMethod.GET) || httpMethod.equalsIgnoreCase(RBHttpMethod.DELETE)){
+            return new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
+        }
+        return new Request.Builder()
+                .url(url)
+                .method(httpMethod, this.createJsonRequestBody(requestBody))
+                .build();
+    }
+
+    public Response executeRequest(OkHttpClient okHttpClient, String httpMethod, String url, @Nullable Map<String, String> urlParams, @Nullable Map<String, String> queryParams, String requestBody) throws IOException {
+
+        return okHttpClient.newCall(buildRequest(httpMethod, url, urlParams, queryParams, requestBody)).execute();
+
+    }
+
+    public Response executeRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
+
+        return okHttpClient.newCall(buildRequest(httpRestRequest.getHttpMethod(), httpRestRequest.getUrl(), httpRestRequest.getUrlParams(), httpRestRequest.getQueryParams(), httpRestRequest.getRequestBody())).execute();
+
+    }
+
+    public String getOAuth2Token(String url, String clientId, String clientSecret, String grantType, String clientScope){
+
+        RequestBody requestBody = new FormBody.Builder()
+                .add("client_id", clientId)
+                .add("client_secret", clientSecret)
+                .add("grant_type", grantType)
+                .add("client_scope", clientScope)
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .method(RBHttpMethod.POST, requestBody)
+                .build();
+        Response response = null;
+        try {
+            response = this.sharedOkHttpClient.newCall(request).execute();
+            if(response.isSuccessful()){
+                try {
+                    String body = response.body().string();
+                    String token = JsonPath.read(body, "$.access_token");
+                    return token;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

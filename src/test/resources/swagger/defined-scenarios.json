@@ -1,0 +1,2982 @@
+[
+  {
+    "name": "scenario2",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario2",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario2",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario2",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  },
+  {
+    "name": "scenario3",
+    "description": null,
+    "apiSteps": [
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "addPet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": null,
+            "templateValue": null,
+            "jsonPath": null,
+            "userProvided": {
+              "petName": "Iva",
+              "categoryName": "Iva"
+            },
+            "valueType": "USER_PROVIDED",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "updatePet",
+        "payLoadType": "default",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "templateValue": "petId",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "categoryName",
+            "jsonPath": "$.category.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          },
+          {
+            "operationId": "addPet",
+            "templateValue": "petName",
+            "jsonPath": "$.name",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_BODY"
+          }
+        ],
+        "httpRestResponse": null
+      },
+      {
+        "apiTitle": "SwaggerPetstore",
+        "operationId": "deletePet",
+        "httpRestRequest": {
+          "requestBody": null,
+          "headers": null,
+          "urlParams": null,
+          "queryParams": null,
+          "url": null,
+          "httpMethod": null
+        },
+        "substitutionRules": [
+          {
+            "operationId": "addPet",
+            "jsonPath": "$.id",
+            "userProvided": null,
+            "valueType": "FROM_RESPONSE",
+            "targetType":"REQUEST_URL",
+            "queryParam": "petId"
+          }
+        ],
+        "httpRestResponse": null
+      }
+    ],
+    "state": null
+  }
+]
