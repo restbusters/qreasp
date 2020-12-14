@@ -24,12 +24,17 @@ repositories {
     mavenCentral()
 }
 
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
 group = 'com.restbusters'
 version = '0.0.15'
 
 dependencies {
-    //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.0'
-    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
     implementation 'org.slf4j:slf4j-api:1.7.28'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     implementation group: 'org.aeonbits.owner', name: 'owner', version: '1.0.10'//
@@ -50,8 +55,6 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.8'
     implementation group: 'org.apache.directory.studio', name: 'org.apache.commons.io', version: '2.4'
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:28.0-jre'
@@ -60,20 +63,20 @@ dependencies {
     implementation group: 'io.swagger', name: 'swagger-core', version: '2.0.0-rc2'
     implementation group: 'io.swagger', name: 'swagger-parser', version: '2.0.0-rc1'
     //openapi
-    compile group:  'io.swagger.core.v3', name: 'swagger-core', version: '2.1.5'
-    compile group:  'io.swagger.core.v3', name: 'swagger-models', version: '2.1.5'
+    implementation group: 'io.swagger.core.v3', name: 'swagger-core', version: '2.1.5'
+    implementation group: 'io.swagger.core.v3', name: 'swagger-models', version: '2.1.5'
     compile group: 'io.swagger.parser.v3', name: 'swagger-parser-v3', version: '2.0.23'
     //for creating request body
-    compile group: 'io.swagger', name: 'swagger-inflector', version: '2.0.5'
+    implementation group: 'io.swagger', name: 'swagger-inflector', version: '2.0.5'
     //lombok
-    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
     //templates
-    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
+    implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation 'org.testng:testng:6.14.3'
-    testCompile group: 'com.github.tomakehurst', name: 'wiremock-standalone', version: '2.26.3'
+    testImplementation group: 'com.github.tomakehurst', name: 'wiremock-standalone', version: '2.26.3'
 }
 
 configurations {
@@ -129,7 +132,7 @@ artifacts {
 }
 
 signing {
-    required {false}
+    required { false }
     sign publishing.publications
 }
 
