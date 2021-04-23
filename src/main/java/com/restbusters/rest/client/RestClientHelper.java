@@ -12,6 +12,8 @@ import javax.annotation.Nullable;
 import javax.net.ssl.*;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,15 +44,16 @@ public class RestClientHelper {
 
     private void createSharedOkHttpClient() {
         this.sharedOkHttpClient = new OkHttpClient();
+        this.sharedOkHttpClient.newBuilder()
+                .connectTimeout(180, TimeUnit.SECONDS)
+                .writeTimeout(180, TimeUnit.SECONDS)
+                .readTimeout(180, TimeUnit.SECONDS)
+                .build();
     }
 
     private OkHttpClient buildClientFromShared(Object auth, Map<String, String> headers) {
         return sharedOkHttpClient.newBuilder()
-                .connectTimeout(180, TimeUnit.SECONDS)
-                .writeTimeout(180, TimeUnit.SECONDS)
-                .readTimeout(180, TimeUnit.SECONDS)
                 .addNetworkInterceptor(new LoggingInterceptor())
-                .addNetworkInterceptor(new PostHeaderInterceptor())
                 .addInterceptor(
                         chain -> {
                             Request request = chain.request().newBuilder()
@@ -64,27 +67,61 @@ public class RestClientHelper {
 
     public OkHttpClient buildNoAuthClient() {
         return sharedOkHttpClient.newBuilder()
-                .connectTimeout(180, TimeUnit.SECONDS)
-                .writeTimeout(180, TimeUnit.SECONDS)
-                .readTimeout(180, TimeUnit.SECONDS)
                 .addNetworkInterceptor(new LoggingInterceptor())
                 .build();
     }
 
-    public OkHttpClient buildNoAuthClient(Map<String, String> headers) {
+    public OkHttpClient buildNoAuthClientNoLogging() {
         return sharedOkHttpClient.newBuilder()
-                .connectTimeout(180, TimeUnit.SECONDS)
-                .writeTimeout(180, TimeUnit.SECONDS)
-                .readTimeout(180, TimeUnit.SECONDS)
                 .addNetworkInterceptor(new LoggingInterceptor())
                 .build();
+    }
+
+    public OkHttpClient buildClientWithHeaders(Map<String, String> headers, Long connectTimeout, Long readTimeout, Long writeTimeout) {
+//        String hostname = "127.0.0.1";
+//        int port = 1080;
+//        Proxy proxy = new Proxy(Proxy.Type.HTTP,
+//                new InetSocketAddress(hostname, port));
+        OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
+        httpClient
+                //.proxy(proxy)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException {
+                        Request original = chain.request();
+                        Request.Builder requestBuilder = original.newBuilder()
+                                .headers(Headers.of(headers));
+
+                        Request request = requestBuilder.build();
+                        return chain.proceed(request);
+                    }
+                });
+                return httpClient.build();
+    }
+
+    public OkHttpClient buildClientWithHeaders(Map<String, String> headers) {
+        OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
+        httpClient
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException {
+                        Request original = chain.request();
+                        Request.Builder requestBuilder = original.newBuilder()
+                                .headers(Headers.of(headers));
+
+                        Request request = requestBuilder.build();
+                        return chain.proceed(request);
+                    }
+                });
+
+        return httpClient.build();
     }
 
     private OkHttpClient buildClientFromSharedWithBearerInterceptor(Object auth, Map<String, String> headers) {
         return sharedOkHttpClient.newBuilder()
-                .connectTimeout(180, TimeUnit.SECONDS)
-                .writeTimeout(180, TimeUnit.SECONDS)
-                .readTimeout(180, TimeUnit.SECONDS)
                 .addNetworkInterceptor(new LoggingInterceptor())
                 .addInterceptor(
                         chain -> {
@@ -96,6 +133,7 @@ public class RestClientHelper {
                 .addInterceptor((Interceptor) auth)
                 .build();
     }
+
 
 
     //we can pass headers
@@ -115,10 +153,10 @@ public class RestClientHelper {
     }
 
 
-    public OkHttpClient buildTrustedHttpClient() {
+    public OkHttpClient buildTrustedHttpClient(Map<String,String> headers) {
         try {
             // Create a trust manager that does not validate certificate chains
-            final TrustManager[] trustAllCerts = new TrustManager[] {
+            final TrustManager[] trustAllCerts = new TrustManager[]{
                     new X509TrustManager() {
                         @Override
                         public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
@@ -141,17 +179,15 @@ public class RestClientHelper {
 
             // Create an ssl socket factory with our all-trusting manager
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
             OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
             builder.followRedirects(true);
-            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager)trustAllCerts[0]);
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
             builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String hostname, SSLSession session) {
                     return true;
                 }
             });
-
             OkHttpClient okHttpClient = builder.build();
             return okHttpClient;
         } catch (Exception e) {
@@ -189,22 +225,43 @@ public class RestClientHelper {
                         }).build();
     }
 
-    public void registerLoggerInterceptor(OkHttpClient okHttpClient) {
-        okHttpClient.newBuilder()
+    public OkHttpClient registerLoggerInterceptor(OkHttpClient okHttpClient) {
+        return okHttpClient.newBuilder()
                 .addInterceptor(new LoggingInterceptor())
                 .build();
     }
 
-    public void registerAuthInterceptor(OkHttpClient okHttpClient, String userName, String password) {
-        okHttpClient.newBuilder()
+    public OkHttpClient registerBasicAuthInterceptor(OkHttpClient okHttpClient, String userName, String password) {
+        return okHttpClient.newBuilder()
                 .addInterceptor(new BasicAuthInterceptor(userName, password))
                 .build();
     }
 
-    public void registerLoggerInterceptor2() {
-        this.sharedOkHttpClient.newBuilder()
+    public void registerLoggerInterceptorForSharedClient() {
+        this.sharedOkHttpClient = this.sharedOkHttpClient.newBuilder()
                 .addInterceptor(new LoggingInterceptor())
                 .build();
+    }
+
+    public OkHttpClient buildOkHttpClient(Map<String,String> headers) {
+        OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
+        httpClient
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .writeTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException {
+                        Request original = chain.request();
+                        Request.Builder requestBuilder = original.newBuilder()
+                                .headers(Headers.of(headers));
+
+                        Request request = requestBuilder.build();
+                        return chain.proceed(request);
+                    }
+                });
+
+        return httpClient.build();
     }
 
 
@@ -337,7 +394,7 @@ public class RestClientHelper {
                 .build();
     }
 
-    private Request buildGetRequest(String url, Map<String, String> urlParams, Map<String, String> queryParams ){
+    private Request buildGetRequest(String url, Map<String, String> urlParams, Map<String, String> queryParams) {
         if (MapUtils.isNotEmpty(queryParams)) {
             url = addQueryParams(url, queryParams);
         }
@@ -346,14 +403,14 @@ public class RestClientHelper {
                 .build();
     }
 
-    private Request buildRequest(String httpMethod, String url, @Nullable Map<String, String> urlParams, @Nullable Map<String, String> queryParams, @Nullable String requestBody){
-        if(MapUtils.isNotEmpty(urlParams)){
+    private Request buildRequest(String httpMethod, String url, @Nullable Map<String, String> urlParams, @Nullable Map<String, String> queryParams, @Nullable String requestBody) {
+        if (MapUtils.isNotEmpty(urlParams)) {
             url = substituteUrlParams(url, urlParams);
         }
         if (MapUtils.isNotEmpty(queryParams)) {
             url = addQueryParams(url, queryParams);
         }
-        if(httpMethod.equalsIgnoreCase(RBHttpMethod.GET) || httpMethod.equalsIgnoreCase(RBHttpMethod.DELETE)){
+        if (httpMethod.equalsIgnoreCase(RBHttpMethod.GET) || httpMethod.equalsIgnoreCase(RBHttpMethod.DELETE)) {
             return new Request.Builder()
                     .url(url)
                     .get()
@@ -377,7 +434,7 @@ public class RestClientHelper {
 
     }
 
-    public String getOAuth2Token(String url, String clientId, String clientSecret, String grantType, String clientScope){
+    public String getOAuth2Token(String url, String clientId, String clientSecret, String grantType, String clientScope) {
 
         RequestBody requestBody = new FormBody.Builder()
                 .add("client_id", clientId)
@@ -392,7 +449,7 @@ public class RestClientHelper {
         Response response = null;
         try {
             response = this.sharedOkHttpClient.newCall(request).execute();
-            if(response.isSuccessful()){
+            if (response.isSuccessful()) {
                 try {
                     String body = response.body().string();
                     String token = JsonPath.read(body, "$.access_token");
