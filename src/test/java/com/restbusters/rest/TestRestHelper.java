@@ -41,7 +41,7 @@ public class TestRestHelper {
     public void testCreate2NewRestClient() {
         Map<String, String> headers = new HashMap<>();
         headers.put("headerName", "headerValue");
-        RestClientHelper.getInstance().registerLoggerInterceptor2();
+        RestClientHelper.getInstance().registerLoggerInterceptorForSharedClient();
         OkHttpClient okHttpClient1 = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
         OkHttpClient okHttpClient2 = RestClientHelper.getInstance().buildBasicAuthClient("myUser", "mypassword", headers);
         Assert.assertFalse(okHttpClient1.equals(okHttpClient2));
@@ -106,6 +106,19 @@ public class TestRestHelper {
         queryParams.put("test2", "t&?");
         String actualUrl = RestClientHelper.getInstance().addQueryParams(url, queryParams);
         Assert.assertEquals(actualUrl, expectedUrl, "url must match");
+    }
+
+    @Test
+    public void execute_general_request_with_header_client() throws IOException {
+        String url = "https://httpbin.org/anything";
+        Long timeout = Long.valueOf(10);
+        headers.put("key1", "value1");
+        OkHttpClient okHttpClient = RestClientHelper.getInstance().buildClientWithHeaders(headers, timeout, timeout, timeout);
+        okHttpClient = RestClientHelper.getInstance().registerLoggerInterceptor(okHttpClient);
+        Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, "POST", url, null, null, this.requestBody);
+        String body = response.body().string();
+        Assert.assertTrue(response.code() == 200);
+        Assert.assertTrue(body.contains("value1"));
     }
 
 
