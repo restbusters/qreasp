@@ -99,7 +99,7 @@ public class RestClientHelper {
                         return chain.proceed(request);
                     }
                 });
-                return httpClient.build();
+        return httpClient.build();
     }
 
     public OkHttpClient buildClientWithHeaders(Map<String, String> headers) {
@@ -135,7 +135,6 @@ public class RestClientHelper {
     }
 
 
-
     //we can pass headers
     public OkHttpClient buildBasicAuthClient(String userName, String password, Map<String, String> headers) {
         return buildClientFromShared(new BasicAuthInterceptor(userName, password), headers);
@@ -153,7 +152,7 @@ public class RestClientHelper {
     }
 
 
-    public OkHttpClient buildTrustedHttpClient(Map<String,String> headers) {
+    public OkHttpClient buildTrustedHttpClient(Map<String, String> headers) {
         try {
             // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[]{
@@ -243,7 +242,7 @@ public class RestClientHelper {
                 .build();
     }
 
-    public OkHttpClient buildOkHttpClient(Map<String,String> headers) {
+    public OkHttpClient buildOkHttpClient(Map<String, String> headers) {
         OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
         httpClient
                 .connectTimeout(90, TimeUnit.SECONDS)
@@ -434,17 +433,19 @@ public class RestClientHelper {
 
     }
 
-    public String getOAuth2Token(String url, String clientId, String clientSecret, String grantType, String clientScope) {
+    public String getOAuth2Token(String url, Map<String, String> formBodyPairs, String jsonPathExtractor) {
 
-        RequestBody requestBody = new FormBody.Builder()
-                .add("client_id", clientId)
-                .add("client_secret", clientSecret)
-                .add("grant_type", grantType)
-                .add("client_scope", clientScope)
-                .build();
+        if (MapUtils.isEmpty(formBodyPairs)) {
+            return null;
+        }
+        FormBody.Builder requestBodyBuilder = new FormBody.Builder();
+        for (Map.Entry<String, String> entry : formBodyPairs.entrySet()) {
+            requestBodyBuilder.add(entry.getKey(), entry.getValue());
+        }
+
         Request request = new Request.Builder()
                 .url(url)
-                .method(RBHttpMethod.POST, requestBody)
+                .method(RBHttpMethod.POST, requestBodyBuilder.build())
                 .build();
         Response response = null;
         try {
@@ -452,7 +453,7 @@ public class RestClientHelper {
             if (response.isSuccessful()) {
                 try {
                     String body = response.body().string();
-                    String token = JsonPath.read(body, "$.access_token");
+                    String token = JsonPath.read(body, jsonPathExtractor);
                     return token;
                 } catch (IOException e) {
                     e.printStackTrace();
