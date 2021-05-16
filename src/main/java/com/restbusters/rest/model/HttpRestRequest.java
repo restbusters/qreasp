@@ -17,5 +17,6 @@ public class HttpRestRequest {
     private Map<String,String> queryParams;
     private String url;
     private String httpMethod;
+    private String contentType;
 
 }

@@ -5,6 +5,7 @@ import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.util.common.GenericUtils;
 import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -264,62 +265,31 @@ public class RestClientHelper {
     }
 
 
-    public Response doGetRequest(OkHttpClient okHttpClient, String url, @Nullable Map<String, String> urlParams, @Nullable Map<String, String> queryParams) throws IOException {
-
-        return okHttpClient.newCall(buildGetRequest(url, urlParams, queryParams)).execute();
-
-    }
-
     public Response doGetRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
 
-        return okHttpClient.newCall(buildGetRequest(httpRestRequest.getUrl(), httpRestRequest.getUrlParams(), httpRestRequest.getQueryParams())).execute();
+        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
     }
 
-    public Response doPostRequest(OkHttpClient okHttpClient, String url, @Nullable String userDefinedRequestBody, @Nullable Map<String, String> urlParams) throws IOException {
+    public Response doPostRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
 
-        return okHttpClient.newCall(buildPostRequest(substituteUrlParams(url, urlParams), userDefinedRequestBody)).execute();
+        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
     }
 
-    public Response doPostRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest, @Nullable Map<String, String> urlParams) throws IOException {
+    public Response doPutRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
 
-        return okHttpClient.newCall(buildPostRequest(substituteUrlParams(httpRestRequest.getUrl(), urlParams), httpRestRequest.getRequestBody())).execute();
+        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
     }
 
-    public Response doPostRequestWithMediaType(OkHttpClient okHttpClient, String url, @Nullable String userDefinedRequestBody, @Nullable Map<String, String> urlParams, String mediaType) throws IOException {
+    public Response doPatchRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
 
-        return okHttpClient.newCall(buildPostRequest(substituteUrlParams(url, urlParams), userDefinedRequestBody, mediaType)).execute();
+        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
     }
 
+    public Response doDeleteRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
 
-    public Response doPutRequest(OkHttpClient okHttpClient, String url, String requestBody, @Nullable Map<String, String> urlParams) throws IOException {
-
-        return okHttpClient.newCall(buildPutRequest(substituteUrlParams(url, urlParams), requestBody)).execute();
+        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
     }
 
-    public Response doPutRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest, @Nullable Map<String, String> urlParams) throws IOException {
-
-        return okHttpClient.newCall(buildPutRequest(substituteUrlParams(httpRestRequest.getUrl(), urlParams), httpRestRequest.getRequestBody())).execute();
-    }
-
-    public Response doPatchRequest(OkHttpClient okHttpClient, String url, String requestBody, @Nullable Map<String, String> urlParams) throws IOException {
-
-        return okHttpClient.newCall(buildPatchRequest(substituteUrlParams(url, urlParams), requestBody)).execute();
-    }
-
-    public Response doPatchRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest, @Nullable Map<String, String> urlParams) throws IOException {
-
-        return okHttpClient.newCall(buildPatchRequest(substituteUrlParams(httpRestRequest.getUrl(), urlParams), httpRestRequest.getRequestBody())).execute();
-    }
-
-    public Response doDeleteRequest(OkHttpClient okHttpClient, String url, @Nullable String requestBody, @Nullable Map<String, String> urlParams) throws IOException {
-
-        return okHttpClient.newCall(buildPatchRequest(substituteUrlParams(url, urlParams), requestBody)).execute();
-    }
-
-    public Response doDeleteRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest, @Nullable Map<String, String> urlParams) throws IOException {
-
-        return okHttpClient.newCall(buildDeleteRequest(substituteUrlParams(httpRestRequest.getUrl(), urlParams), httpRestRequest.getRequestBody())).execute();
-    }
 
     private String substituteUrlParams(String url, @Nullable Map<String, String> urlParams) {
         if (MapUtils.isNotEmpty(urlParams)) {
@@ -340,96 +310,74 @@ public class RestClientHelper {
         return httpBuilder.build().toString();
     }
 
-    private RequestBody createJsonRequestBody(String requestBody) {
-        if (requestBody == null) {
-            return RequestBody.create("", null);
+    private RequestBody createRequestBody(String requestBody, @Nullable String contentType) {
+        MediaType mediaType = null;
+        if (contentType == null) {
+            mediaType = JSON;
         } else {
-            return RequestBody.create(JSON, requestBody);
+            mediaType = MediaType.get(contentType);
+        }
+        if (requestBody == null) {
+            return RequestBody.create("", mediaType);
+        } else {
+            return RequestBody.create(requestBody, mediaType);
         }
     }
 
-    private Request buildPostRequest(String url, String requestBody) {
-        return new Request.Builder()
-                .url(url)
-                .addHeader("accept", "application/json")
-                .addHeader("Content-Type", "application/json")
-                .post(this.createJsonRequestBody(requestBody))
-                .build();
-    }
 
-    private Request buildPutRequest(String url, String requestBody) {
-        return new Request.Builder()
-                .url(url)
-                .addHeader("accept", "application/json")
-                .addHeader("Content-Type", "application/json")
-                .put(this.createJsonRequestBody(requestBody))
-                .build();
-    }
-
-    private Request buildPostRequest(String url, String requestBody, String mediaType) {
-        return new Request.Builder()
-                .url(url)
-                .addHeader("accept", "application/json")
-                .addHeader("Content-Type", mediaType)
-                .post(this.createJsonRequestBody(requestBody))
-                .build();
-    }
-
-    private Request buildPatchRequest(String url, String requestBody) {
-        return new Request.Builder()
-                .url(url)
-                .addHeader("accept", "application/json")
-                .addHeader("Content-Type", "application/json")
-                .patch(this.createJsonRequestBody(requestBody))
-                .build();
-    }
-
-    private Request buildDeleteRequest(String url, String requestBody) {
-        return new Request.Builder()
-                .url(url)
-                .addHeader("accept", "application/json")
-                .addHeader("Content-Type", "application/json")
-                .delete(this.createJsonRequestBody(requestBody))
-                .build();
-    }
-
-    private Request buildGetRequest(String url, Map<String, String> urlParams, Map<String, String> queryParams) {
-        if (MapUtils.isNotEmpty(queryParams)) {
-            url = addQueryParams(url, queryParams);
+    private Request convertToOkHttpRequest(HttpRestRequest httpRestRequest) {
+        String url = httpRestRequest.getUrl();
+        String contentType = httpRestRequest.getContentType();
+        if (contentType == null) {
+            contentType = "application/json";
         }
-        return new Request.Builder()
-                .url(substituteUrlParams(url, urlParams))
-                .build();
-    }
-
-    private Request buildRequest(String httpMethod, String url, @Nullable Map<String, String> urlParams, @Nullable Map<String, String> queryParams, @Nullable String requestBody) {
-        if (MapUtils.isNotEmpty(urlParams)) {
-            url = substituteUrlParams(url, urlParams);
+        if (StringUtils.isAllBlank(url)) {
+            throw new RuntimeException(ConstantsErrors.INVALID_URL);
         }
-        if (MapUtils.isNotEmpty(queryParams)) {
-            url = addQueryParams(url, queryParams);
+        if (StringUtils.isAllBlank(url)) {
+            throw new RuntimeException(ConstantsErrors.HTTP_METHOD_BLANK);
         }
-        if (httpMethod.equalsIgnoreCase(RBHttpMethod.GET) || httpMethod.equalsIgnoreCase(RBHttpMethod.DELETE)) {
-            return new Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
+        if (HttpMethods.findByValue(httpRestRequest.getHttpMethod()) == null) {
+            throw new RuntimeException(ConstantsErrors.HTTP_METHOD_INVALID);
         }
-        return new Request.Builder()
-                .url(url)
-                .method(httpMethod, this.createJsonRequestBody(requestBody))
-                .build();
-    }
-
-    public Response executeRequest(OkHttpClient okHttpClient, String httpMethod, String url, @Nullable Map<String, String> urlParams, @Nullable Map<String, String> queryParams, String requestBody) throws IOException {
-
-        return okHttpClient.newCall(buildRequest(httpMethod, url, urlParams, queryParams, requestBody)).execute();
+        if (MapUtils.isNotEmpty(httpRestRequest.getUrlParams())) {
+            url = substituteUrlParams(httpRestRequest.getUrl(), httpRestRequest.getUrlParams());
+        }
+        if (MapUtils.isNotEmpty(httpRestRequest.getQueryParams())) {
+            url = addQueryParams(url, httpRestRequest.getQueryParams());
+        }
+        return buildRequest(url, httpRestRequest.getRequestBody(), httpRestRequest.getHttpMethod(), contentType);
 
     }
 
-    public Response executeRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
-
-        return okHttpClient.newCall(buildRequest(httpRestRequest.getHttpMethod(), httpRestRequest.getUrl(), httpRestRequest.getUrlParams(), httpRestRequest.getQueryParams(), httpRestRequest.getRequestBody())).execute();
+    private Request buildRequest(String url, @Nullable String requestBody, String httpMethod, String... contentTypeParam) {
+        String contentType = null;
+        if (!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
+            if (contentTypeParam.length == 1) {
+                contentType = contentTypeParam[0];
+            } else {
+                contentType = "application/json";
+            }
+        }
+        Request.Builder builder = new Request.Builder();
+        builder
+                .url(url);
+        if(!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())){
+            builder
+                    .addHeader("Content-Type", contentType);
+        }
+        if (httpMethod.equalsIgnoreCase(HttpMethods.POST.getValue())) {
+            builder.post(this.createRequestBody(requestBody, contentType));
+        } else if (httpMethod.equalsIgnoreCase(HttpMethods.PUT.getValue())) {
+            builder.put(this.createRequestBody(requestBody, contentType));
+        } else if (httpMethod.equalsIgnoreCase(HttpMethods.PATCH.getValue())) {
+            builder.patch(this.createRequestBody(requestBody, contentType));
+        } else if (httpMethod.equalsIgnoreCase(HttpMethods.DELETE.getValue())) {
+            builder.patch(this.createRequestBody(requestBody, contentType));
+        } else if (httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
+            builder.get();
+        }
+        return builder.build();
 
     }
 
@@ -445,7 +393,7 @@ public class RestClientHelper {
 
         Request request = new Request.Builder()
                 .url(url)
-                .method(RBHttpMethod.POST, requestBodyBuilder.build())
+                .method(HttpMethods.POST.getValue(), requestBodyBuilder.build())
                 .build();
         Response response = null;
         try {
