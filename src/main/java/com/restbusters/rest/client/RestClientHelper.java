@@ -1,5 +1,6 @@
 package com.restbusters.rest.client;
 
+import com.atlassian.httpclient.api.Buildable;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.util.common.GenericUtils;
@@ -121,18 +122,21 @@ public class RestClientHelper {
         return httpClient.build();
     }
 
-    private OkHttpClient buildClientFromSharedWithBearerInterceptor(Object auth, Map<String, String> headers) {
-        return sharedOkHttpClient.newBuilder()
-                .addNetworkInterceptor(new LoggingInterceptor())
-                .addInterceptor(
-                        chain -> {
-                            Request request = chain.request().newBuilder()
-                                    .headers(Headers.of(headers))
-                                    .build();
-                            return chain.proceed(request);
-                        })
-                .addInterceptor((Interceptor) auth)
-                .build();
+
+    private OkHttpClient buildClientFromSharedWithBearerInterceptor(Object auth, @Nullable Map<String, String> headers) {
+        OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
+        builder.addNetworkInterceptor(new LoggingInterceptor());
+        if(headers != null){
+            builder.addInterceptor(
+                    chain -> {
+                        Request request = chain.request().newBuilder()
+                                .headers(Headers.of(headers))
+                                .build();
+                        return chain.proceed(request);
+                    });
+        }
+        builder.addInterceptor((Interceptor) auth);
+        return builder.build();
     }
 
 
@@ -149,6 +153,10 @@ public class RestClientHelper {
 
     public OkHttpClient buildBearerClient(String token) throws Exception {
         Map<String, String> headers = new HashMap<>();
+        return buildClientFromSharedWithBearerInterceptor(new BearerAuthInterceptor(token), headers);
+    }
+
+    public OkHttpClient buildBearerClient(String token, Map<String, String> headers) throws Exception {
         return buildClientFromSharedWithBearerInterceptor(new BearerAuthInterceptor(token), headers);
     }
 
