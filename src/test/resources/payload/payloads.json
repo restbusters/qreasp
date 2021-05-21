@@ -1,0 +1,43 @@
+[
+  {
+    "operationId": "testOperationId",
+    "payloadName": "testPayloads",
+    "description": "description",
+    "parameters": [
+      {
+        "name": "key1",
+        "description": "desc",
+        "optional": false
+      },
+      {
+        "name": "key2",
+        "description": "desc",
+        "optional": true
+      }
+    ],
+    "payload": {
+      "key1": "{{key1}}",
+      "list1": [
+      ],
+      "key2": "{{ default(key2, 'key2Value')}}"
+    }
+  },
+  {
+    "operationId": "testOperationId2",
+    "payloadName": "testPayloads2",
+    "description": "description2",
+    "relativePath": "payload/template/test-payload.ftl",
+    "parameters": [
+      {
+        "name": "key1",
+        "description": "desc",
+        "optional": false
+      },
+      {
+        "name": "key2",
+        "description": "desc",
+        "optional": true
+      }
+    ]
+  }
+]
