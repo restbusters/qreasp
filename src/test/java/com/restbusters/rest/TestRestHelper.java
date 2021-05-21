@@ -43,10 +43,12 @@ public class TestRestHelper {
     private final ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
     private OkHttpClient okHttpClient;
     private final String commonUrl = "https://httpbin.org/anything";
+    private final String headerKey = "Headerkey";
+    private final String headerValue = "headerValue";
 
     @BeforeClass
     public void setUp() throws IOException {
-        this.headers.put("fromSetup", "fromSetup");
+        this.headers.put(this.headerKey, this.headerValue);
         this.wireMockSetInitialState();
         this.okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
     }
@@ -83,6 +85,22 @@ public class TestRestHelper {
         httpRestRequest.setContentType("application/xml");
         Response response = RestClientHelper.getInstance().doPostRequest(okHttpClient, httpRestRequest);
         Assert.assertTrue(response.code() == 200);
+    }
+
+    @Test
+    public void verifyHeadersSetOnBearerClientCreation() throws Exception {
+        OkHttpClient bearerClient = RestClientHelper.getInstance().buildBearerClient("token", this.headers);
+        HttpRestRequest httpRestRequest = new HttpRestRequest();
+        httpRestRequest.setUrl(commonUrl);
+        httpRestRequest.setHttpMethod(HttpMethods.POST.getValue());
+        httpRestRequest.setRequestBody(this.requestBody);
+        httpRestRequest.setContentType("application/json");
+        Response response = RestClientHelper.getInstance().doPostRequest(bearerClient, httpRestRequest);
+        String respBody = response.body().string();
+        Assert.assertTrue(response.code() == 200);
+        String actualHeaderValue = JsonPath.read(respBody, "$.headers." + this.headerKey);
+        Assert.assertEquals(this.headerValue, actualHeaderValue);
+
     }
 
     @Test( expectedExceptions = RuntimeException.class,
