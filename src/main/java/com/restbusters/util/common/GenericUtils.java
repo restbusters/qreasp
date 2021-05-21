@@ -3,6 +3,12 @@ package com.restbusters.util.common;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.restbusters.config.GlobalConfig;
+import com.restbusters.resource.GlobalResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +26,7 @@ import java.util.regex.Pattern;
 public class GenericUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Configuration jacksonConfiguration = GlobalResourceManager.getInstance().getConfiguration();
 
     public static Map<String, String> splitToMap(String splitter, String keyValueSeparator, String keysAndValues) {
         return Splitter.on(splitter).withKeyValueSeparator(keyValueSeparator).split(keysAndValues);
@@ -64,6 +71,14 @@ public class GenericUtils {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    public static String removeKeyWithValueFromJson(String json, String pathSpec) {
+        return JsonPath.using(jacksonConfiguration).parse(json).delete(pathSpec).jsonString();
+    }
+
+    public static String setKeyWithValueFromJson(String json, String pathSpec, Object value) {
+        return JsonPath.using(jacksonConfiguration).parse(json).set(pathSpec, value).jsonString();
     }
 
 }

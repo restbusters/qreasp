@@ -129,7 +129,6 @@ public class PayloadManager {
     }
 
     private Filter buildFilter(Map<String, String> filterMap) {
-        List<Criteria> criteriaList = new ArrayList<>();
         Set<Map.Entry<String, String>> entrySet = filterMap.entrySet();
         int setStart = 1;
         Criteria criteria = null;
@@ -138,7 +137,7 @@ public class PayloadManager {
                 criteria = Criteria.where(entry.getKey()).eq(entry.getValue());
 
             } else {
-                criteria.and(entry.getKey()).eq(entry.getValue());
+                criteria = criteria.and(entry.getKey()).eq(entry.getValue());
             }
             setStart++;
         }

@@ -1,8 +1,0 @@
-{% set list = [{'get_url': 'bar'},{'get_url': 'foo'}] %}
-
-
-{"urls": [
-{% for i in list %}
-    "/img/example/{{i.get_url}}" {% if not loop.last  %}  , {%endif%}
-{% endfor %}
-]}

@@ -32,6 +32,8 @@ public class PayloadTemplate {
     public String payloadName;
     @JsonProperty("description")
     public String description;
+    @JsonProperty("relativePath")
+    public String relativePath;
     @JsonProperty("parameters")
     public List<Parameter> parameters = null;
     @JsonProperty("payload")
