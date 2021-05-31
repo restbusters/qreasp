@@ -126,7 +126,7 @@ public class TestRestHelper {
     }
 
     @Test( expectedExceptions = RuntimeException.class,
-            expectedExceptionsMessageRegExp = ConstantsErrors.HTTP_METHOD_INVALID)
+            expectedExceptionsMessageRegExp = ConstantsErrors.HTTP_METHOD_BLANK)
     public void testDoPostRequestWithObjectAndNullHttpMethod() throws IOException {
         HttpRestRequest httpRestRequest = new HttpRestRequest();
         httpRestRequest.setUrl(this.commonUrl);
@@ -137,7 +137,7 @@ public class TestRestHelper {
     }
 
     @Test( expectedExceptions = RuntimeException.class,
-            expectedExceptionsMessageRegExp = ConstantsErrors.HTTP_METHOD_INVALID)
+            expectedExceptionsMessageRegExp = ConstantsErrors.HTTP_METHOD_BLANK)
     public void testDoPostRequestWithObjectAndBlankHttpMethod() throws IOException {
         HttpRestRequest httpRestRequest = new HttpRestRequest();
         httpRestRequest.setUrl(this.commonUrl);
