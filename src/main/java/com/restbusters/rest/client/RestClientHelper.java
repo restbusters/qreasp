@@ -342,7 +342,7 @@ public class RestClientHelper {
         if (StringUtils.isAllBlank(url)) {
             throw new RuntimeException(ConstantsErrors.INVALID_URL);
         }
-        if (StringUtils.isAllBlank(url)) {
+        if (StringUtils.isAllBlank(httpRestRequest.getHttpMethod())) {
             throw new RuntimeException(ConstantsErrors.HTTP_METHOD_BLANK);
         }
         if (HttpMethods.findByValue(httpRestRequest.getHttpMethod()) == null) {
@@ -354,11 +354,11 @@ public class RestClientHelper {
         if (MapUtils.isNotEmpty(httpRestRequest.getQueryParams())) {
             url = addQueryParams(url, httpRestRequest.getQueryParams());
         }
-        return buildRequest(url, httpRestRequest.getRequestBody(), httpRestRequest.getHttpMethod(), contentType);
+        return buildRequest(url, httpRestRequest.getRequestBody(), httpRestRequest.getHttpMethod(), httpRestRequest.getHeaders(), contentType);
 
     }
 
-    private Request buildRequest(String url, @Nullable String requestBody, String httpMethod, String... contentTypeParam) {
+    private Request buildRequest(String url, @Nullable String requestBody, String httpMethod, @Nullable Map<String,String> headers, String... contentTypeParam) {
         String contentType = null;
         if (!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
             if (contentTypeParam.length == 1) {
@@ -373,6 +373,9 @@ public class RestClientHelper {
         if(!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())){
             builder
                     .addHeader("Content-Type", contentType);
+        }
+        if(headers != null){
+            builder.headers(Headers.of(headers));
         }
         if (httpMethod.equalsIgnoreCase(HttpMethods.POST.getValue())) {
             builder.post(this.createRequestBody(requestBody, contentType));
