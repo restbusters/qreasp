@@ -67,6 +67,14 @@ public class RestClientHelper {
                 .build();
     }
 
+    private OkHttpClient buildClientFromSharedWithUserInterceptor(Object auth, Object userDefinedInterceptor) {
+        return sharedOkHttpClient.newBuilder()
+                .addNetworkInterceptor(new LoggingInterceptor())
+                .addInterceptor((Interceptor) auth)
+                .addInterceptor((Interceptor) userDefinedInterceptor)
+                .build();
+    }
+
     public OkHttpClient buildNoAuthClient() {
         return sharedOkHttpClient.newBuilder()
                 .addNetworkInterceptor(new LoggingInterceptor())
@@ -75,7 +83,6 @@ public class RestClientHelper {
 
     public OkHttpClient buildNoAuthClientNoLogging() {
         return sharedOkHttpClient.newBuilder()
-                .addNetworkInterceptor(new LoggingInterceptor())
                 .build();
     }
 
@@ -139,10 +146,30 @@ public class RestClientHelper {
         return builder.build();
     }
 
+    private OkHttpClient buildClientFromSharedUserDefinedInterceptor(Object userInterceptor, @Nullable Map<String, String> headers) {
+        OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
+        builder.addNetworkInterceptor(new LoggingInterceptor());
+        if(headers != null){
+            builder.addInterceptor(
+                    chain -> {
+                        Request request = chain.request().newBuilder()
+                                .headers(Headers.of(headers))
+                                .build();
+                        return chain.proceed(request);
+                    });
+        }
+        builder.addInterceptor((Interceptor) userInterceptor);
+        return builder.build();
+    }
+
 
     //we can pass headers
     public OkHttpClient buildBasicAuthClient(String userName, String password, Map<String, String> headers) {
         return buildClientFromShared(new BasicAuthInterceptor(userName, password), headers);
+    }
+
+    public OkHttpClient buildBasicAuthClientWithCustomInterceptor(String userName, String password, Object userDefinedInterceptor) {
+        return buildClientFromSharedWithUserInterceptor(new BasicAuthInterceptor(userName, password), userDefinedInterceptor);
     }
 
     //we can pass headers
@@ -222,6 +249,24 @@ public class RestClientHelper {
                 }).build();
     }
 
+    public void addHeaders(OkHttpClient okHttpClient, Map<String, String> headers) {
+        okHttpClient.newBuilder()
+                .addNetworkInterceptor(new Interceptor() {
+
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException {
+                        Request original = chain.request();
+
+                        Request request = original.newBuilder()
+                                .headers(Headers.of(headers))
+                                .method(original.method(), original.body())
+                                .build();
+
+                        return chain.proceed(request);
+                    }
+                }).build();
+    }
+
     public void removeHeader(OkHttpClient okHttpClient, String headerName, String headerValue) {
         okHttpClient.newBuilder()
                 .addInterceptor(
@@ -273,27 +318,10 @@ public class RestClientHelper {
     }
 
 
-    public Response doGetRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
-
-        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
-    }
-
-    public Response doPostRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
-
-        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
-    }
-
-    public Response doPutRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
-
-        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
-    }
-
-    public Response doPatchRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
-
-        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
-    }
-
-    public Response doDeleteRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
+    public Response executeRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
+        if(MapUtils.isNotEmpty(httpRestRequest.getHeaders())){
+            addHeaders(okHttpClient, httpRestRequest.getHeaders());
+        }
 
         return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
     }
