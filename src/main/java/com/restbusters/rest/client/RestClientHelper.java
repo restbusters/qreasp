@@ -1,6 +1,5 @@
 package com.restbusters.rest.client;
 
-import com.atlassian.httpclient.api.Buildable;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.util.common.GenericUtils;
@@ -14,8 +13,6 @@ import javax.annotation.Nullable;
 import javax.net.ssl.*;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;

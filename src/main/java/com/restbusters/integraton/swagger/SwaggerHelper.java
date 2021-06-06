@@ -1,5 +1,6 @@
 package com.restbusters.integraton.swagger;
 
+import com.restbusters.integration.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import io.swagger.oas.models.OpenAPI;
@@ -18,7 +19,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.restbusters.integration.swagger.model.SwaggerApiResource;
 
 
 /**

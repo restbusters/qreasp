@@ -8,6 +8,8 @@ import com.restbusters.rest.client.ConstantsErrors;
 import com.restbusters.rest.client.HttpMethods;
 import com.restbusters.rest.client.RestClientHelper;
 import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.wiremock.WireMockManager;
 import net.minidev.json.JSONArray;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -36,20 +38,19 @@ public class TestRestHelper {
     private final String password = "password";
     private final Map<String, String> headers = new HashMap<>();
     private final String requestBody = "{\\\"key\\\": \\\"value\\\"}";
-    private WireMockServer wireMockServer;
-    private final int wireMockPort = 8090;
-    private final String wireMockAdminUrl = "http://localhost:8090/__admin/mappings";
-    private final OkHttpClient wireMockClient = RestClientHelper.getInstance().buildNoAuthClient();
     private final ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
     private OkHttpClient okHttpClient;
     private final String commonUrl = "https://httpbin.org/anything";
     private final String headerKey = "Headerkey";
     private final String headerValue = "headerValue";
+    private WireMockManager wireMockManager;
 
     @BeforeClass
     public void setUp() throws IOException {
         this.headers.put(this.headerKey, this.headerValue);
-        this.wireMockSetInitialState();
+        //this.wireMockSetInitialState();
+        String wireMockJsonStubs = FileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
+        this.wireMockManager = WireMockManager.getInstance(wireMockJsonStubs);
         this.okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
     }
 
@@ -219,39 +220,6 @@ public class TestRestHelper {
         params.put("param3", "paramValue3");
         String token = RestClientHelper.getInstance().getOAuth2Token("http://localhost:8090/oauth/token", params, "$.access_token");
         Assert.assertEquals(token, "dummytoken", "tokens should match");
-    }
-
-    private void startWireMock() {
-        this.wireMockServer.start();
-    }
-
-    private void stopWireMock() {
-        this.wireMockServer.stop();
-    }
-
-    private void resetWireMock() {
-        this.wireMockServer.resetAll();
-    }
-
-    public void wireMockSetInitialState() throws IOException {
-        wireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort));
-        startWireMock();
-        String stubs = readFile("wiremock/wiremock-stubs.json");
-        JSONArray jsonArray = JsonPath.read(stubs, "$");
-        for (Object stub : jsonArray) {
-            String jsonStub = objectMapper.writeValueAsString(stub);
-            HttpRestRequest httpRestRequest = new HttpRestRequest();
-            httpRestRequest.setUrl(wireMockAdminUrl);
-            httpRestRequest.setHttpMethod(HttpMethods.POST.getValue());
-            httpRestRequest.setRequestBody(jsonStub);
-            Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRestRequest);
-            Assert.assertEquals(response.code(), 201);
-        }
-    }
-
-    public String readFile(String fileName) throws IOException {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        return IOUtils.toString(classloader.getResourceAsStream(fileName), "UTF-8");
     }
 
 
