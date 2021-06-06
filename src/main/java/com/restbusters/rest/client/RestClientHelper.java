@@ -130,7 +130,7 @@ public class RestClientHelper {
     private OkHttpClient buildClientFromSharedWithBearerInterceptor(Object auth, @Nullable Map<String, String> headers) {
         OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
         builder.addNetworkInterceptor(new LoggingInterceptor());
-        if(headers != null){
+        if (headers != null) {
             builder.addInterceptor(
                     chain -> {
                         Request request = chain.request().newBuilder()
@@ -146,7 +146,7 @@ public class RestClientHelper {
     private OkHttpClient buildClientFromSharedUserDefinedInterceptor(Object userInterceptor, @Nullable Map<String, String> headers) {
         OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
         builder.addNetworkInterceptor(new LoggingInterceptor());
-        if(headers != null){
+        if (headers != null) {
             builder.addInterceptor(
                     chain -> {
                         Request request = chain.request().newBuilder()
@@ -316,7 +316,7 @@ public class RestClientHelper {
 
 
     public Response executeRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
-        if(MapUtils.isNotEmpty(httpRestRequest.getHeaders())){
+        if (MapUtils.isNotEmpty(httpRestRequest.getHeaders())) {
             addHeaders(okHttpClient, httpRestRequest.getHeaders());
         }
 
@@ -360,10 +360,6 @@ public class RestClientHelper {
 
     private Request convertToOkHttpRequest(HttpRestRequest httpRestRequest) {
         String url = httpRestRequest.getUrl();
-        String contentType = httpRestRequest.getContentType();
-        if (contentType == null) {
-            contentType = "application/json";
-        }
         if (StringUtils.isAllBlank(url)) {
             throw new RuntimeException(ConstantsErrors.INVALID_URL);
         }
@@ -379,27 +375,26 @@ public class RestClientHelper {
         if (MapUtils.isNotEmpty(httpRestRequest.getQueryParams())) {
             url = addQueryParams(url, httpRestRequest.getQueryParams());
         }
-        return buildRequest(url, httpRestRequest.getRequestBody(), httpRestRequest.getHttpMethod(), httpRestRequest.getHeaders(), contentType);
+        return buildRequest(url, httpRestRequest.getRequestBody(), httpRestRequest.getHttpMethod(), httpRestRequest.getHeaders(), httpRestRequest.getContentType());
 
     }
 
-    private Request buildRequest(String url, @Nullable String requestBody, String httpMethod, @Nullable Map<String,String> headers, String... contentTypeParam) {
-        String contentType = null;
+    private Request buildRequest(String url, @Nullable String requestBody, String httpMethod, @Nullable Map<String, String> headers, @Nullable String contentType) {
         if (!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
-            if (contentTypeParam.length == 1) {
-                contentType = contentTypeParam[0];
-            } else {
-                contentType = "application/json";
+            if (contentType == null && requestBody != null) {
+                if (GenericUtils.isJSONValid(requestBody)) {
+                    contentType = "application/json";
+                }
             }
         }
         Request.Builder builder = new Request.Builder();
-        builder
-                .url(url);
-        if(!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())){
-            builder
-                    .addHeader("Content-Type", contentType);
+        builder.url(url);
+        if (!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
+            if(contentType != null){
+                builder.addHeader("Content-Type", contentType);
+            }
         }
-        if(headers != null){
+        if (headers != null) {
             builder.headers(Headers.of(headers));
         }
         if (httpMethod.equalsIgnoreCase(HttpMethods.POST.getValue())) {

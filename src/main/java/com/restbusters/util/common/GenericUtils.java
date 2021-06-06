@@ -9,6 +9,7 @@ import com.restbusters.resource.GlobalResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
 import java.util.Optional;
@@ -76,6 +77,15 @@ public class GenericUtils {
 
     public static String setKeyWithValueFromJson(String json, String pathSpec, Object value) {
         return JsonPath.using(jacksonConfiguration).parse(json).set(pathSpec, value).jsonString();
+    }
+
+    public static boolean isJSONValid(String jsonInString ) {
+        try {
+            GlobalResourceManager.getInstance().getObjectMapper().readTree(jsonInString);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
 }
