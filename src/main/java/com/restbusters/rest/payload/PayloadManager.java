@@ -7,11 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Predicate;
-import com.jayway.jsonpath.internal.filter.ValueNode;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.payload.model.PayloadTemplate;
-import com.restbusters.util.common.FileUtils;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 import org.jtwig.environment.EnvironmentConfiguration;
@@ -23,7 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author amatsaylo on 10/15/18
