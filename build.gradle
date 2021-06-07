@@ -2,9 +2,9 @@
 /*
  * *
  *  * Created by RESTBUSTERS on 7/1/20
- *  * Copyright (c) 2021 . All rights reserved.
+ *  * Copyright RESTBUSTERS (c) 2021 . All rights reserved.
  *  * Last modified 6/5/21 6:50 PM
- *  
+ *
  */
 
 plugins {
@@ -34,7 +34,7 @@ compileJava {
 
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
-version = '0.0.21'
+version = '0.0.22'
 
 dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
@@ -193,7 +193,7 @@ def customizePom(pom, gradleProject) {
             description gradleProject.description
             url 'https://github.com/restbusters/qreasp'
             organization {
-                name 'restbusters'
+                name 'Restbusters'
                 url 'https://restbusters.com'
             }
             issueManagement {
