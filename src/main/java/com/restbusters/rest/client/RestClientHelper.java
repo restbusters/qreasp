@@ -389,13 +389,13 @@ public class RestClientHelper {
         }
         Request.Builder builder = new Request.Builder();
         builder.url(url);
+        if (headers != null) {
+            builder.headers(Headers.of(headers));
+        }
         if (!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
             if(contentType != null){
                 builder.addHeader("Content-Type", contentType);
             }
-        }
-        if (headers != null) {
-            builder.headers(Headers.of(headers));
         }
         if (httpMethod.equalsIgnoreCase(HttpMethods.POST.getValue())) {
             builder.post(this.createRequestBody(requestBody, contentType));

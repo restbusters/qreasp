@@ -8,6 +8,7 @@ import com.restbusters.rest.client.RestClientHelper;
 import com.restbusters.rest.model.HttpRestRequest;
 import net.minidev.json.JSONArray;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,10 @@ public class WireMockManager {
             httpRestRequest.setUrl(wireMockAdminUrl);
             httpRestRequest.setHttpMethod(HttpMethods.POST.getValue());
             httpRestRequest.setRequestBody(jsonStub);
-            RestClientHelper.getInstance().executeRequest(wireMockClient, httpRestRequest);
+            Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRestRequest);
+            if(!response.isSuccessful()){
+                logger.error("Failed to set wire mock stub {}", jsonStub);
+            }
         }
     }
 }

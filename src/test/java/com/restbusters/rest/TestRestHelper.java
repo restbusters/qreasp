@@ -218,6 +218,11 @@ public class TestRestHelper {
         params.put("param1", "paramValue1");
         params.put("param2", "paramValue2");
         params.put("param3", "paramValue3");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         String token = RestClientHelper.getInstance().getOAuth2Token("http://localhost:8090/oauth/token", params, "$.access_token");
         Assert.assertEquals(token, "dummytoken", "tokens should match");
     }
