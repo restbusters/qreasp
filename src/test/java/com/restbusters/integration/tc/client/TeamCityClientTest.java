@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -40,7 +41,7 @@ public class TeamCityClientTest {
         this.wireMockManager = WireMockManager.getInstance(wireMockStubs);
     }
 
-    @AfterClass
+    @AfterSuite
     private void tearDown(){
         this.wireMockManager.stopWireMock();
     }
