@@ -78,10 +78,14 @@ dependencies {
     implementation group: 'org.jtwig', name: 'jtwig-json-extension', version: '5.86.1.RELEASE'
     //mocking
     implementation group: 'com.github.tomakehurst', name: 'wiremock-standalone', version: '2.27.2'
+    //needed for data provider
+    implementation group: 'org.testng', name: 'testng', version: '7.4.0'
+
 
 
     // Use TestNG framework, also requires calling test.useTestNG() below
-    testImplementation 'org.testng:testng:6.14.3'
+    testImplementation group: 'org.testng', name: 'testng', version: '7.4.0'
+
 }
 
 configurations {

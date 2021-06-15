@@ -1,0 +1,20 @@
+
+[
+    {
+      "testName": "test1",
+      "parameters": [
+        {
+          "name": "test1",
+          "value": "val1"
+        },
+        {
+          "name": "test2",
+          "value": "val2"
+        },
+        {
+          "name": "test3",
+          "value": "val3"
+        }
+      ]
+    }
+]
