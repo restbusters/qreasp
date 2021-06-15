@@ -1,7 +1,5 @@
-package com.restbusters.integration.dataprovider;
+package com.restbusters.data.dataprovider;
 
-import com.restbusters.integraton.dataprovider.DataProviderHelper;
-import com.restbusters.integraton.dataprovider.GenericDataProvider;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
