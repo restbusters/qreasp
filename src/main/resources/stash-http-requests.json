@@ -1,0 +1,38 @@
+{
+  "getCommitsInRange": {
+    "headers": {
+      "Accept": "application/json"
+    },
+    "urlParams": {"projectName":null, "repoName": null},
+    "queryParams": {"since":null, "until":null, "start": null, "limit":"100"},
+    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits",
+    "httpMethod": "GET"
+  },
+  "getCommitsInRangeApiV2": {
+    "headers": {
+      "Accept": "application/json"
+    },
+    "urlParams": {"workSpace":null, "repoName": null},
+    "queryParams": null,
+    "url": "/2.0/repositories/{workSpace}/{repoName}/commits",
+    "httpMethod": "GET"
+  },
+  "getTags": {
+    "headers": {
+      "Accept": "application/json"
+    },
+    "urlParams": {"projectName":null, "repoName": null},
+    "queryParams": {"start":"0", "limit": "25"},
+    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/tags",
+    "httpMethod": "GET"
+  },
+  "getLastXCommits": {
+    "headers": {
+      "Accept": "application/json"
+    },
+    "urlParams": {"projectName":null, "repoName": null},
+    "queryParams": {"id":"refs/tags/0.6.0", "limit": "50"},
+    "url": "/rest/api/1.0/projects/rest/api/latest/projects/{projectName}/repos/{repoName}/commits",
+    "httpMethod": "GET"
+  }
+}
