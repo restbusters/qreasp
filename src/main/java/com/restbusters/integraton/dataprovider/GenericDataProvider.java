@@ -20,7 +20,6 @@ public class GenericDataProvider {
     }
 
     private Iterator<Object[]>  getDataObject(List<Object> dataSet){
-
         Collection<Object[]> data = new ArrayList<Object[]>();
         for (int i = 0; i < dataSet.size(); i++) {
             data.add(new Object[]{dataSet.get(i)});
