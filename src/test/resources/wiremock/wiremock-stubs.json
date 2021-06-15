@@ -49,5 +49,39 @@
       "status": 200,
       "body": "{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\",\"buildType\":{\"id\":\"My_Build_Type_ID\",\"name\":\"Deploy to your env\",\"projectName\":\"My_Build_Type_ID\",\"projectId\":\"My_Build_Type_ID\",\"href\":\"/app/rest/buildTypes/id:buildTypeId\",\"webUrl\":\"https://server.com/viewType.html?buildTypeId=buildTypeId\"},\"queuedDate\":\"20200325T170159+0000\",\"triggered\":{\"type\":\"user\",\"date\":\"20200325T170159+0000\",\"user\":{\"username\":\"user\",\"name\":\"User Name\",\"id\":1496,\"href\":\"/app/rest/users/id:1496\"}},\"changes\":{\"href\":\"/app/rest/changes?locator=build:(id:2750959)\"},\"revisions\":{\"count\":0},\"compatibleAgents\":{\"href\":\"/app/rest/agents?locator=compatible:(build:(id:2750959))\"},\"artifacts\":{\"href\":\"/app/rest/builds/id:2750959/artifacts/children/\"},\"properties\":{\"count\":27,\"property\":[{\"name\":\"artifactory-repository\",\"value\":\"core-service\",\"inherited\":true}]},\"snapshot-dependencies\":{\"count\":2,\"build\":[{\"id\":2750957,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750958,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750958\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750958\"}]}}\""
     }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "urlPath": "/rest/api/1.0/projects/myproject/repos/myrepo/tags",
+      "headers": {
+        "Authorization": {
+          "matches": ".*"
+        },
+        "Accept": {
+          "matches": "application/json"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"isLastPage\":false,\"limit\":2,\"nextPageStart\":25,\"size\":2,\"start\":0,\"values\":[{\"id\":\"refs/tags/myTag1\",\"displayId\":\"myTag1\",\"type\":\"TAG\",\"latestCommit\":\"a4b6a9879003a0cfaa3237317b76b3cec9c91fb2\",\"latestChangeset\":\"a4b6a9879003a0cfaa3237987b76b3cec9c91fb2\",\"hash\":null},{\"id\":\"refs/tags/mytag2\",\"displayId\":\"mytag2\",\"type\":\"TAG\",\"latestCommit\":\"f4be6a66ec40b4rt33b97b1806312e97dd25fgrs\",\"latestChangeset\":\"b4be6a66ec40bd3d33b97b1806312e97dd251118\",\"hash\":null}]}"}
+  },
+  {
+    "request": {
+      "method": "GET",
+      "urlPath": "/rest/api/1.0/projects/myproject/repos/myrepo/commits",
+      "headers": {
+        "Authorization": {
+          "matches": ".*"
+        },
+        "Accept": {
+          "matches": "application/json"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"values\":[{\"id\":\"w13cef8gwbebad2e0bg6wcf124b29550b1f20345\",\"displayId\":\"w13cef8gwbe\",\"author\":{\"name\":\"name\",\"emailAddress\":\"name@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588164087000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588164087000,\"message\":\"dummyMessage\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\",\"author\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588022211000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588022211000,\"message\":\"(DUMMY-123)\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}}],\"size\":2,\"isLastPage\":true,\"start\":0,\"limit\":25,\"nextPageStart\":null}"}
   }
 ]
