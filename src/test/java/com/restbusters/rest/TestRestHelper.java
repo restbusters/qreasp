@@ -48,7 +48,6 @@ public class TestRestHelper {
     @BeforeClass
     public void setUp() throws IOException {
         this.headers.put(this.headerKey, this.headerValue);
-        //this.wireMockSetInitialState();
         String wireMockJsonStubs = FileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
         this.wireMockManager = WireMockManager.getInstance(wireMockJsonStubs);
         this.okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
