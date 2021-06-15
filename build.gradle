@@ -34,7 +34,7 @@ compileJava {
 
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
-version = '0.0.22'
+version = '0.0.23'
 
 dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
@@ -81,11 +81,8 @@ dependencies {
     //needed for data provider
     implementation group: 'org.testng', name: 'testng', version: '7.4.0'
 
-
-
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation group: 'org.testng', name: 'testng', version: '7.4.0'
-
 }
 
 configurations {
