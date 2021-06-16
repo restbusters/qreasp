@@ -1,7 +1,5 @@
-package com.restbusters.integration.dataprovider;
+package com.restbusters.data.dataprovider;
 
-import com.restbusters.integraton.dataprovider.JsonDataProvider;
-import com.restbusters.integraton.dataprovider.JsonDataProviderHelper;
 import com.restbusters.util.common.FileUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;

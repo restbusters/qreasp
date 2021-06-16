@@ -1,4 +1,4 @@
-package com.restbusters.integraton.dataprovider;
+package com.restbusters.data.dataprovider;
 
 import org.testng.annotations.DataProvider;
 

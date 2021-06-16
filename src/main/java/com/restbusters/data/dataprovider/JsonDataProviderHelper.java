@@ -1,4 +1,4 @@
-package com.restbusters.integraton.dataprovider;
+package com.restbusters.data.dataprovider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -7,7 +7,6 @@ import com.restbusters.resource.GlobalResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.lang.model.element.TypeElement;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 
