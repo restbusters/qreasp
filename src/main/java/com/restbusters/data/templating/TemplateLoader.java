@@ -18,6 +18,7 @@ import freemarker.cache.StringTemplateLoader;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import org.apache.commons.codec.CharEncoding;
 
 public class TemplateLoader {
     private Configuration freemarkerConfig;
@@ -35,7 +36,7 @@ public class TemplateLoader {
     public TemplateLoader() {
         freemarkerConfig = new Configuration(Configuration.VERSION_2_3_23);
         freemarkerConfig.setTagSyntax(Configuration.ANGLE_BRACKET_TAG_SYNTAX);
-        freemarkerConfig.setDefaultEncoding("UTF-8");
+        freemarkerConfig.setDefaultEncoding(CharEncoding.UTF_8);
         freemarkerConfig.setNumberFormat("computer");
         freemarkerConfig.setObjectWrapper(new BeansWrapperBuilder(Configuration.VERSION_2_3_23).build());
         freemarkerConfig.setTemplateLoader(new StringTemplateLoader());
