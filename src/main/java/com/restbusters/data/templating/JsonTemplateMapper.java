@@ -16,9 +16,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restbusters.resource.GlobalResourceManager;
 
 public class JsonTemplateMapper {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = GlobalResourceManager.getInstance().getObjectMapper();
 
     public static Map<String, Object> convertJsonToMap(String json) throws IOException {
         return OBJECT_MAPPER.readValue(json, new TypeReference<HashMap<String, Object>>(){});
