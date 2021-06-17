@@ -26,6 +26,15 @@
     "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/tags",
     "httpMethod": "GET"
   },
+  "getFileContent": {
+    "headers": {
+      "Accept": "*/*"
+    },
+    "urlParams": {"projectName":null, "repoName": null, "filePath": null},
+    "queryParams": {"at":null},
+    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/raw/{filePath}",
+    "httpMethod": "GET"
+  },
   "getLastXCommits": {
     "headers": {
       "Accept": "application/json"

@@ -13,4 +13,6 @@ public final class StashConstant {
     public static final String MAP_QUERY_PARAM_KEY_UNTIL = "until";
     public static final String MAP_QUERY_PARAM_KEY_START = "start";
     public static final String MAP_QUERY_PARAM_KEY_LIMIT = "limit";
+    public static final String API_V1 = "v1";
+    public static final String API_V2 = "v2";
 }

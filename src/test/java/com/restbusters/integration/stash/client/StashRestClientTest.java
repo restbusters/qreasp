@@ -70,4 +70,11 @@ public class StashRestClientTest {
         logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body));
     }
 
+    @Test
+    private void getFileContent() throws Exception {
+        Response response = stashRestClient.getFileContent("/my/file/path/file.txt", "refs/heads/master");
+        String body = response.body().string();
+        Assert.assertEquals(body, "file content");
+    }
+
 }

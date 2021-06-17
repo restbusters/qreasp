@@ -20,4 +20,5 @@ public class StashRequests {
     private HttpRestRequest getLastXCommits;
     private HttpRestRequest getCommitByHash;
     private HttpRestRequest getCommitsInRangeApiV2;
+    private HttpRestRequest getFileContent;
 }
