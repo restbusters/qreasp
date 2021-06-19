@@ -37,7 +37,9 @@ description = 'Quality, Release and Automation support'
 version = '0.0.24'
 
 dependencies {
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
+    //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
+    //implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
     implementation 'org.slf4j:slf4j-api:1.7.28'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     implementation group: 'org.aeonbits.owner', name: 'owner', version: '1.0.10'//

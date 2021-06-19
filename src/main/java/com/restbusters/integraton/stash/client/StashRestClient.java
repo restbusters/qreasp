@@ -1,6 +1,7 @@
 package com.restbusters.integraton.stash.client;
 
 import com.restbusters.exception.InvalidParameterException;
+import com.restbusters.integraton.stash.client.model.StashResponse;
 import com.restbusters.integraton.stash.client.resoures.StashConstant;
 import com.restbusters.integraton.stash.client.resoures.StashResourceManager;
 import com.restbusters.rest.client.RestClientHelper;
@@ -11,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -34,18 +34,20 @@ public class StashRestClient {
         this.authToken = authToken;
         this.serverUrl = serverUrl.replaceAll("/$", "");
         this.projectName = projectName;
+        this.workSpaceName = projectName;
         this.repoName = repoName;
-        this.tcClient = RestClientHelper.getInstance().buildBearerClient(authToken, getHeaders());
+        this.tcClient = RestClientHelper.getInstance().buildBearerClientWithCustomInterceptor(authToken, new HeaderInterceptor());
         this.stashResourceManager.initServerUrl(this.serverUrl);
     }
 
-    public StashRestClient(String serverUrl, String userName, String password, String workSpaceName, String repoName) throws Exception {
+    public StashRestClient(String serverUrl, String userName, String password, String projectName, String repoName) throws Exception {
         this.userName = userName;
         this.password  = password;
-        this.workSpaceName = workSpaceName;
+        this.projectName = projectName;
+        this.workSpaceName = projectName;
         this.serverUrl = serverUrl.replaceAll("/$", "");
         this.repoName = repoName;
-        this.tcClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password, getHeaders());
+        this.tcClient = RestClientHelper.getInstance().buildBasicAuthClientWithCustomInterceptor(userName, password, new HeaderInterceptor());
         this.stashResourceManager.initServerUrl(this.serverUrl);
     }
 
@@ -85,7 +87,7 @@ public class StashRestClient {
      * @param  gitReference git reference to the branch or tag
      * @return      fileContent as String
      */
-    public Response getFileContent(String filePath, String gitReference) throws InvalidParameterException {
+    public StashResponse getFileContent(String filePath, String gitReference) throws InvalidParameterException {
         if (StringUtils.isBlank(filePath)) {
             throw new InvalidParameterException("Parameter filePath must not be null");
         }
@@ -98,7 +100,32 @@ public class StashRestClient {
         httpRestRequest.setQueryParams(queryParams);
         Map<String,String> urlParam = httpRestRequest.getUrlParams();
         urlParam.put("filePath", StringUtils.removeStartIgnoreCase(filePath, "/"));
-        return executeCall(httpRestRequest, StashConstant.API_V1);
+        Response response = executeCall(httpRestRequest, StashConstant.API_V1);
+        StashResponse stashResponse = new StashResponse();
+
+        return buildStashResponse(executeCall(httpRestRequest, StashConstant.API_V1));
+
+    }
+
+    private StashResponse buildStashResponse(Response response){
+        StashResponse stashResponse = new StashResponse();
+        try {
+            String body = response.body().string();
+            //response.body().close();
+            response.close();
+            stashResponse.setHttpStatus(response.code());
+            if(!response.isSuccessful()){
+                stashResponse.setErrorReason(body);
+            }
+            else {
+                stashResponse.setRequestBody(body);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            //response.body().close();
+            response.close();
+        }
+        return stashResponse;
     }
 
     private Map<String,String> setQueryParamsStarLimit(Integer start, Integer limit, Map<String,String> queryParams){
@@ -127,12 +154,6 @@ public class StashRestClient {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private Map<String, String> getHeaders() {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/json");
-        return headers;
     }
 
     private HttpRestRequest setDefaultUrlParamsV1(HttpRestRequest httpRestRequest) {

@@ -1,6 +1,7 @@
 package com.restbusters.util.wiremock;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.HttpMethods;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
@@ -58,6 +60,10 @@ public class WireMockManager {
         this.wireMockServer.resetAll();
     }
 
+    public List<StubMapping> getWireMockStubs(){
+        return this.wireMockServer.getStubMappings();
+    }
+
     private void wireMockSetInitialState() throws IOException {
         wireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort));
         startWireMock();
@@ -71,6 +77,7 @@ public class WireMockManager {
             Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRestRequest);
             if(!response.isSuccessful()){
                 logger.error("Failed to set wire mock stub {}", jsonStub);
+                logger.error(jsonStub);
             }
         }
     }
