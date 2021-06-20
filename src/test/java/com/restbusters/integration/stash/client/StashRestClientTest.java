@@ -5,6 +5,7 @@ package com.restbusters.integration.stash.client;
 
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.integraton.stash.client.StashRestClient;
+import com.restbusters.integraton.stash.client.model.StashResponse;
 import com.restbusters.integraton.stash.client.resoures.StashResourceManager;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.util.common.FileUtils;
@@ -56,6 +57,7 @@ public class StashRestClientTest {
     private void getCommitsInRange() throws Exception {
         Response response = stashRestClient.getCommitsInRangeV1("since", "until", 0, 25);
         String body = response.body().string();
+        response.close();
         Integer actualResult = JsonPath.read(body, "$.size");
         Assert.assertTrue(actualResult == 2);
         logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body));
@@ -68,6 +70,13 @@ public class StashRestClientTest {
         String actualResult = JsonPath.read(body, "$.values[0].type");
         Assert.assertEquals(actualResult, "TAG");
         logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body));
+    }
+
+    @Test
+    private void getFileContent() throws Exception {
+        //wireMockManager.getWireMockStubs();
+        StashResponse stashResponse = stashRestClient.getFileContent("/my/file/path/file.txt", "refs/heads/master");
+        Assert.assertEquals(stashResponse.getHttpStatus(), 200);
     }
 
 }

@@ -23,7 +23,7 @@
       },
       "bodyPatterns": [
         {
-          "matches": ".*"
+          "equalTo": "requestBody"
         }
       ]
     },
@@ -41,7 +41,7 @@
           "matches": ".*"
         },
         "Accept": {
-          "matches": "application/json"
+          "equalTo": "application/json"
         }
       }
     },
@@ -59,13 +59,14 @@
           "matches": ".*"
         },
         "Accept": {
-          "matches": "application/json"
+          "equalTo": "application/json"
         }
       }
     },
     "response": {
       "status": 200,
-      "body": "{\"isLastPage\":false,\"limit\":2,\"nextPageStart\":25,\"size\":2,\"start\":0,\"values\":[{\"id\":\"refs/tags/myTag1\",\"displayId\":\"myTag1\",\"type\":\"TAG\",\"latestCommit\":\"a4b6a9879003a0cfaa3237317b76b3cec9c91fb2\",\"latestChangeset\":\"a4b6a9879003a0cfaa3237987b76b3cec9c91fb2\",\"hash\":null},{\"id\":\"refs/tags/mytag2\",\"displayId\":\"mytag2\",\"type\":\"TAG\",\"latestCommit\":\"f4be6a66ec40b4rt33b97b1806312e97dd25fgrs\",\"latestChangeset\":\"b4be6a66ec40bd3d33b97b1806312e97dd251118\",\"hash\":null}]}"}
+      "body": "{\"isLastPage\":false,\"limit\":2,\"nextPageStart\":25,\"size\":2,\"start\":0,\"values\":[{\"id\":\"refs/tags/myTag1\",\"displayId\":\"myTag1\",\"type\":\"TAG\",\"latestCommit\":\"a4b6a9879003a0cfaa3237317b76b3cec9c91fb2\",\"latestChangeset\":\"a4b6a9879003a0cfaa3237987b76b3cec9c91fb2\",\"hash\":null},{\"id\":\"refs/tags/mytag2\",\"displayId\":\"mytag2\",\"type\":\"TAG\",\"latestCommit\":\"f4be6a66ec40b4rt33b97b1806312e97dd25fgrs\",\"latestChangeset\":\"b4be6a66ec40bd3d33b97b1806312e97dd251118\",\"hash\":null}]}"
+    }
   },
   {
     "request": {
@@ -76,12 +77,31 @@
           "matches": ".*"
         },
         "Accept": {
-          "matches": "application/json"
+          "equalTo": "application/json"
         }
       }
     },
     "response": {
       "status": 200,
-      "body": "{\"values\":[{\"id\":\"w13cef8gwbebad2e0bg6wcf124b29550b1f20345\",\"displayId\":\"w13cef8gwbe\",\"author\":{\"name\":\"name\",\"emailAddress\":\"name@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588164087000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588164087000,\"message\":\"dummyMessage\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\",\"author\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588022211000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588022211000,\"message\":\"(DUMMY-123)\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}}],\"size\":2,\"isLastPage\":true,\"start\":0,\"limit\":25,\"nextPageStart\":null}"}
+      "body": "{\"values\":[{\"id\":\"w13cef8gwbebad2e0bg6wcf124b29550b1f20345\",\"displayId\":\"w13cef8gwbe\",\"author\":{\"name\":\"name\",\"emailAddress\":\"name@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588164087000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588164087000,\"message\":\"dummyMessage\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\",\"author\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588022211000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588022211000,\"message\":\"(DUMMY-123)\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}}],\"size\":2,\"isLastPage\":true,\"start\":0,\"limit\":25,\"nextPageStart\":null}"
+    }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "urlPath": "/rest/api/1.0/projects/myproject/repos/myrepo/raw/my/file/path/file.txt",
+      "headers": {
+        "Authorization": {
+          "matches": "Bearer dummyToken"
+        },
+        "Accept": {
+          "equalTo": "*/*"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": "file content"
+    }
   }
 ]
