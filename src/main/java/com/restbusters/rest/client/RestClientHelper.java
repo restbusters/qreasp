@@ -169,6 +169,10 @@ public class RestClientHelper {
         return buildClientFromSharedWithUserInterceptor(new BasicAuthInterceptor(userName, password), userDefinedInterceptor);
     }
 
+    public OkHttpClient buildBearerClientWithCustomInterceptor(String token, Object userDefinedInterceptor) {
+        return buildClientFromSharedWithUserInterceptor(new BearerAuthInterceptor(token), userDefinedInterceptor);
+    }
+
     //we can pass headers
     public OkHttpClient buildBasicAuthClient(String userName, String password) {
         Map<String, String> headers = new HashMap<>();

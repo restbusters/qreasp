@@ -64,6 +64,8 @@ public class TeamCityClientTest {
     private void postBuild() throws Exception {
         Response response = tcClient.postBuild("requestBody");
         String body = response.body().string();
+        logger.info(body);
+        Assert.assertTrue(response.isSuccessful());
         Assert.assertEquals("queued", JsonPath.read(body, "$.state"));
         logger.info(rc.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body));
     }
