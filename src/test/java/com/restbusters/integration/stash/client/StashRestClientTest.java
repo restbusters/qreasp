@@ -74,9 +74,14 @@ public class StashRestClientTest {
 
     @Test
     private void getFileContent() throws Exception {
-        //wireMockManager.getWireMockStubs();
         StashResponse stashResponse = stashRestClient.getFileContent("/my/file/path/file.txt", "refs/heads/master");
         Assert.assertEquals(stashResponse.getHttpStatus(), 200);
+    }
+
+    @Test
+    private void getCommitByHash() throws Exception {
+        Response response = stashRestClient.getCommitByHash("dummyGitHash");
+        Assert.assertEquals(response.code(), 200);
     }
 
 }
