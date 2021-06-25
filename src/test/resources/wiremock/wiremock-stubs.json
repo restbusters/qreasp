@@ -103,5 +103,23 @@
       "status": 200,
       "body": "file content"
     }
+  },
+  {
+    "request": {
+      "method": "GET",
+      "urlPath": "/rest/api/1.0/projects/myproject/repos/myrepo/commits/dummyGitHash",
+      "headers": {
+        "Authorization": {
+          "matches": ".*"
+        },
+        "Accept": {
+          "equalTo": "application/json"
+        }
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":\"dummyGitHash\",\"displayId\":\"w13cef8gwbe\",\"author\":{\"name\":\"name\",\"emailAddress\":\"name@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588164087000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588164087000,\"message\":\"dummyMessage\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}}"
+    }
   }
 ]

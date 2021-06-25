@@ -100,19 +100,22 @@ public class StashRestClient {
         httpRestRequest.setQueryParams(queryParams);
         Map<String,String> urlParam = httpRestRequest.getUrlParams();
         urlParam.put("filePath", StringUtils.removeStartIgnoreCase(filePath, "/"));
-        Response response = executeCall(httpRestRequest, StashConstant.API_V1);
-        StashResponse stashResponse = new StashResponse();
-
         return buildStashResponse(executeCall(httpRestRequest, StashConstant.API_V1));
 
+    }
+
+    public Response getCommitByHash(String gitHash) {
+        HttpRestRequest httpRestRequest = this.stashResourceManager.getStashRequests().getGetCommitByHash();
+        Map<String, String> urlParams = httpRestRequest.getUrlParams();
+        urlParams.put(StashConstant.MAP_URL_PARAM_KEY_GIT_HASH, gitHash);
+        httpRestRequest.setUrlParams(urlParams);
+        return executeCall(httpRestRequest, StashConstant.API_V1);
     }
 
     private StashResponse buildStashResponse(Response response){
         StashResponse stashResponse = new StashResponse();
         try {
             String body = response.body().string();
-            //response.body().close();
-            response.close();
             stashResponse.setHttpStatus(response.code());
             if(!response.isSuccessful()){
                 stashResponse.setErrorReason(body);
@@ -120,12 +123,17 @@ public class StashRestClient {
             else {
                 stashResponse.setRequestBody(body);
             }
+            closeResponse(response);
         } catch (IOException e) {
             e.printStackTrace();
-            //response.body().close();
-            response.close();
+            closeResponse(response);
         }
         return stashResponse;
+    }
+
+    private static void closeResponse(Response response){
+        response.body().close();
+        response.close();
     }
 
     private Map<String,String> setQueryParamsStarLimit(Integer start, Integer limit, Map<String,String> queryParams){

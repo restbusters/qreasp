@@ -8,6 +8,15 @@
     "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits",
     "httpMethod": "GET"
   },
+  "getCommitByHash": {
+    "headers": {
+      "Accept": "application/json"
+    },
+    "urlParams": {"projectName":null, "repoName": null, "gitHash": null},
+    "queryParams": null,
+    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits/{gitHash}",
+    "httpMethod": "GET"
+  },
   "getCommitsInRangeApiV2": {
     "headers": {
       "Accept": "application/json"
