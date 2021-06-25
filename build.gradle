@@ -34,7 +34,7 @@ compileJava {
 
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
-version = '0.0.25'
+version = '0.0.26'
 
 dependencies {
     //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0-RC1'
