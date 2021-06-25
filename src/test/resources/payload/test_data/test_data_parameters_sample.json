@@ -1,0 +1,23 @@
+{
+  "parameter_values": {
+    "testName": "CreateAccount",
+    "instances": [
+      {
+        "instance": [
+          {
+            "name": "product",
+            "value": "checking"
+          },
+          {
+            "name": "locale",
+            "value": "US"
+          },
+          {
+            "name": "ownerType",
+            "value": "Primary"
+          }
+        ]
+      }
+    ]
+  }
+}

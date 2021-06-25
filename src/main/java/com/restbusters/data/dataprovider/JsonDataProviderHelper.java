@@ -47,9 +47,13 @@ public class JsonDataProviderHelper {
         this.jsonData = json;
     }
 
-    public void addJsonDataForMethod(String method, Map<String, String> jsonWithKeys){
+    public void addJsonDataForMethod(String method, String json, String rootKey){
+        Map<String, String> jsonWithKeys = new HashMap<>();
+        jsonWithKeys.put("json", json);
+        jsonWithKeys.put("rootKey", rootKey);
         instance.globalJson.put(method, jsonWithKeys);
     }
+
     public void initializeJsonData(String json, String rootKey){
         List nodeList = null;
         ObjectMapper gm = GlobalResourceManager.getInstance().getObjectMapper();

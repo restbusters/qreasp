@@ -19,7 +19,7 @@ public class JsonDataProviderTest {
     private String MULTI_CASE_METHOD = "testJsonDataProviderWithList";
     private String jsonSingleTestCase;
     private String jsonMultipleTestCases;
-    private JsonDataProviderHelper dataProviderHelper;
+    private JsonDataProviderHelper dataProviderHelper = JsonDataProviderHelper.getInstance();
     private Map<String, Map<String, String>> json = new HashMap<>();
     private List<Object> dataSet = new ArrayList<>();
 
@@ -28,16 +28,8 @@ public class JsonDataProviderTest {
     private void setUp() {
         jsonSingleTestCase = FileUtils.getFileOnClassPathAsString(SINGLE_TEST_CASE_FILE);
         jsonMultipleTestCases = FileUtils.getFileOnClassPathAsString(MULTIPLE_TEST_CASE_FILE);
-        Map<String, String> singleMap = new HashMap<>();
-        singleMap.put("json", jsonSingleTestCase);
-        singleMap.put("rootKey", null);
-        json.put(SINGLE_CASE_METHOD, singleMap);
-        Map<String, String> multiTestCaseMap = new HashMap<>();
-        multiTestCaseMap.put("json", jsonMultipleTestCases);
-        multiTestCaseMap.put("rootKey", "tests");
-        dataProviderHelper = JsonDataProviderHelper.getInstance();
-        dataProviderHelper.addJsonDataForMethod(SINGLE_CASE_METHOD, singleMap);
-        dataProviderHelper.addJsonDataForMethod(MULTI_CASE_METHOD, multiTestCaseMap);
+        dataProviderHelper.addJsonDataForMethod(SINGLE_CASE_METHOD, jsonSingleTestCase, null);
+        dataProviderHelper.addJsonDataForMethod(MULTI_CASE_METHOD, jsonMultipleTestCases, "tests");
     }
 
     @Test(description = "Test JsonDataProvider Single Test Case", dataProvider = "jsonDataProvider", dataProviderClass = JsonDataProvider.class, priority = 1)

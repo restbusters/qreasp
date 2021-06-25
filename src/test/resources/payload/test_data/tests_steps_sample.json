@@ -1,0 +1,35 @@
+{
+  "tests": [
+    {
+      "testName": "CreateAccount",
+      "steps": [
+        {
+          "step": "createAccount",
+          "parameters": [
+            {
+              "name": "accountName",
+              "type": "String"
+            },
+            {
+              "name": "product",
+              "type": "String"
+            },
+            {
+              "name": "ownerType",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "step": "deleteAccount",
+          "parameters": [
+            {
+              "name": "accountId",
+              "type": "String"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
