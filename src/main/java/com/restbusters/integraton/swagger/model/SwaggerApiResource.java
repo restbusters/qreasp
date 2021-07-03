@@ -33,4 +33,10 @@ public class SwaggerApiResource {
     @JsonProperty("body")
     private String body;
 
+    @JsonProperty
+    private String summary;
+
+    @JsonProperty
+    private String description;
+
 }

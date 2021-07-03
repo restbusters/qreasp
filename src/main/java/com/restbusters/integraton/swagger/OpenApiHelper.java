@@ -159,6 +159,12 @@ public class OpenApiHelper {
         if (operation.getParameters() != null) {
             apiResource.setOperationParameters(setOperationParameter(operation.getParameters()));
         }
+        if (!StringUtils.isEmpty(operation.getSummary())) {
+            apiResource.setSummary(operation.getOperationId());
+        }
+        if (!StringUtils.isEmpty(operation.getDescription())) {
+            apiResource.setDescription(operation.getDescription());
+        }
         return apiResource;
     }
 
