@@ -41,7 +41,7 @@ public class TestSwaggerHelper {
     }
 
     @Test()
-    public void build_openapi_resource_from_url(){
+    public void build_open_api_resource_from_url(){
         Assert.assertNotNull(OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
     }
 
@@ -51,7 +51,7 @@ public class TestSwaggerHelper {
     }
 
     @Test(enabled = true)
-    public void build_openapi_descriptor(){
+    public void build_open_api_descriptor(){
         Assert.assertNotNull(OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
     }
 
