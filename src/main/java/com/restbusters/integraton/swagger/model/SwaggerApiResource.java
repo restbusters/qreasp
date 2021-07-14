@@ -1,4 +1,4 @@
-package com.restbusters.integration.swagger.model;
+package com.restbusters.integraton.swagger.model;
 
 /**
  * @author Sasha Matsaylo on 2020-09-14

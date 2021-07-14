@@ -18,5 +18,5 @@ public class SwaggerDescriptor {
     private String apiType;
     private String apiVersion;
     private OkHttpClient httpClient;
-    private List<com.restbusters.integration.swagger.model.SwaggerApiResource> swaggerApiResources;
+    private List<SwaggerApiResource> swaggerApiResources;
 }

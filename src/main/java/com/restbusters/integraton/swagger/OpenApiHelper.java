@@ -2,8 +2,8 @@ package com.restbusters.integraton.swagger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.restbusters.integration.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.OperationParameters;
+import com.restbusters.integraton.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import io.swagger.oas.inflector.examples.ExampleBuilder;
 import io.swagger.oas.inflector.examples.models.Example;
@@ -52,7 +52,7 @@ public class OpenApiHelper {
 
 
     private List<SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
-        List<com.restbusters.integration.swagger.model.SwaggerApiResource> apiResourceList = new ArrayList<>();
+        List<SwaggerApiResource> apiResourceList = new ArrayList<>();
         Paths path = openAPI.getPaths();
         Map<String, Schema> schemas = openAPI.getComponents().getSchemas();
         String serverUrl = openAPI.getServers().get(0).getUrl();
@@ -149,8 +149,8 @@ public class OpenApiHelper {
     }
 
 
-    private com.restbusters.integration.swagger.model.SwaggerApiResource createSwaggerApiResource(Operation operation, String resourcePath, String httpVerb) {
-        com.restbusters.integration.swagger.model.SwaggerApiResource apiResource = new com.restbusters.integration.swagger.model.SwaggerApiResource();
+    private SwaggerApiResource createSwaggerApiResource(Operation operation, String resourcePath, String httpVerb) {
+        SwaggerApiResource apiResource = new SwaggerApiResource();
         apiResource.setResourcePath(resourcePath);
         apiResource.setHttpMethod(httpVerb);
         if (operation.getOperationId() != null) {
