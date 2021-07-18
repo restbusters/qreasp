@@ -1,7 +1,6 @@
 package com.restbusters.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.ConstantsErrors;
@@ -10,10 +9,8 @@ import com.restbusters.rest.client.RestClientHelper;
 import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.util.common.FileUtils;
 import com.restbusters.util.wiremock.WireMockManager;
-import net.minidev.json.JSONArray;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -24,8 +21,6 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 /**
  * @author amatsaylo on 9/17/19
@@ -67,9 +62,7 @@ public class TestRestHelper {
 
     @Test//(threadPoolSize = 3, invocationCount = 6)
     public void testDoGetRequest() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(this.commonUrl);
-        httpRestRequest.setHttpMethod(HttpMethods.GET.getValue());
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, HttpMethods.GET.getValue());
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
         Assert.assertTrue(response.code() == 200);
 
@@ -78,9 +71,7 @@ public class TestRestHelper {
 
     @Test
     public void testDoPostRequestWithObject() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(commonUrl);
-        httpRestRequest.setHttpMethod(HttpMethods.POST.getValue());
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, HttpMethods.POST.getValue());
         httpRestRequest.setRequestBody(this.requestBody);
         httpRestRequest.setContentType("application/xml");
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
@@ -90,9 +81,7 @@ public class TestRestHelper {
     @Test
     public void verifyHeadersSetOnBearerClientCreation() throws Exception {
         OkHttpClient bearerClient = RestClientHelper.getInstance().buildBearerClient("token", this.headers);
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(commonUrl);
-        httpRestRequest.setHttpMethod(HttpMethods.POST.getValue());
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, HttpMethods.POST.getValue());
         httpRestRequest.setRequestBody(this.requestBody);
         httpRestRequest.setContentType("application/json");
         Response response = RestClientHelper.getInstance().executeRequest(bearerClient, httpRestRequest);
@@ -109,9 +98,7 @@ public class TestRestHelper {
         String headerKey = "jenkins";
         String headerValue = "headerValue";
         OkHttpClient basicAuthClient = RestClientHelper.getInstance().buildBasicAuthClient("user", "password");
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(commonUrl);
-        httpRestRequest.setHttpMethod(HttpMethods.POST.getValue());
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, HttpMethods.POST.getValue());
         httpRestRequest.setRequestBody(this.requestBody);
         Map<String,String> headersForRequest = new HashMap<>();
         headersForRequest.put(headerKey, headerValue);
@@ -127,7 +114,7 @@ public class TestRestHelper {
     @Test( expectedExceptions = RuntimeException.class,
             expectedExceptionsMessageRegExp = ConstantsErrors.INVALID_URL)
     public void testDoPostRequestWithObjectNoUrl() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
+        HttpRestRequest httpRestRequest = new HttpRestRequest("", HttpMethods.POST.getValue());
         httpRestRequest.setUrl("");
         httpRestRequest.setHttpMethod(HttpMethods.POST.getValue());
         httpRestRequest.setRequestBody(this.requestBody);
@@ -138,9 +125,7 @@ public class TestRestHelper {
     @Test( expectedExceptions = RuntimeException.class,
             expectedExceptionsMessageRegExp = ConstantsErrors.HTTP_METHOD_INVALID)
     public void testDoPostRequestWithObjectInvalidHttpMethod() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(this.commonUrl);
-        httpRestRequest.setHttpMethod("Invalid");
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, "Invalid");
         httpRestRequest.setRequestBody(this.requestBody);
         httpRestRequest.setContentType("application/xml");
         RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
@@ -149,9 +134,7 @@ public class TestRestHelper {
     @Test( expectedExceptions = RuntimeException.class,
             expectedExceptionsMessageRegExp = ConstantsErrors.HTTP_METHOD_BLANK)
     public void testDoPostRequestWithObjectAndNullHttpMethod() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(this.commonUrl);
-        httpRestRequest.setHttpMethod(null);
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, null);
         httpRestRequest.setRequestBody(this.requestBody);
         httpRestRequest.setContentType("application/xml");
         RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
@@ -160,9 +143,8 @@ public class TestRestHelper {
     @Test( expectedExceptions = RuntimeException.class,
             expectedExceptionsMessageRegExp = ConstantsErrors.HTTP_METHOD_BLANK)
     public void testDoPostRequestWithObjectAndBlankHttpMethod() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, "");
         httpRestRequest.setUrl(this.commonUrl);
-        httpRestRequest.setHttpMethod("");
         httpRestRequest.setRequestBody(this.requestBody);
         httpRestRequest.setContentType("application/xml");
         RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
@@ -170,9 +152,7 @@ public class TestRestHelper {
 
     @Test
     public void testDoPutRequest() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(this.commonUrl);
-        httpRestRequest.setHttpMethod(HttpMethods.PUT.getValue());
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, HttpMethods.PUT.getValue());
         httpRestRequest.setRequestBody(this.requestBody);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
         Assert.assertTrue(response.code() == 200);
@@ -181,9 +161,7 @@ public class TestRestHelper {
 
     @Test
     public void testDoPatchRequest() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(this.commonUrl);
-        httpRestRequest.setHttpMethod(HttpMethods.PATCH.getValue());
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, HttpMethods.PATCH.getValue());
         httpRestRequest.setRequestBody(this.requestBody);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
         Assert.assertTrue(response.code() == 200);
@@ -191,9 +169,7 @@ public class TestRestHelper {
 
     @Test
     public void testDoDeleteRequest() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest.setUrl(this.commonUrl);
-        httpRestRequest.setHttpMethod(HttpMethods.PUT.getValue());
+        HttpRestRequest httpRestRequest = new HttpRestRequest(this.commonUrl, HttpMethods.PUT.getValue());
         httpRestRequest.setRequestBody(this.requestBody);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
         Assert.assertTrue(response.code() == 200);

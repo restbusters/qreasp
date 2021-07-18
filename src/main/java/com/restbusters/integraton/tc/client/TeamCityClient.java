@@ -48,8 +48,7 @@ public class TeamCityClient {
     }
 
     public Response postBuild(String jsonRequestBody) throws Exception {
-        HttpRestRequest httpRestRequest = new HttpRestRequest();
-        httpRestRequest = resourceManager.getTcRequests().getPostBuild();
+        HttpRestRequest httpRestRequest = resourceManager.getTcRequests().getPostBuild();
         httpRestRequest.setRequestBody(jsonRequestBody);
         return executeCall(httpRestRequest);
     }

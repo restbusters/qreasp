@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restbusters.integraton.tc.client.model.TCRequests;
+import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.util.common.FileUtils;
 
@@ -24,7 +25,7 @@ public class TCResourceManager {
   private final String requestsFile = "tc-http-requests.json";
 
   private TCResourceManager() throws Exception {
-    this.objectMapper = new ObjectMapper();
+    this.objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
     this.jsonTcRequests = FileUtils.getFileOnClassPathAsString(this.requestsFile);
     this.tcRequests = objectMapper.readValue(jsonTcRequests, TCRequests.class);
   }

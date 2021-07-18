@@ -1,5 +1,7 @@
 package com.restbusters.util.common;
 
+import com.restbusters.data.context.Context;
+import com.restbusters.exception.ContextKeyIsBlank;
 import org.junit.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -21,7 +23,7 @@ public class TestContext {
     }
 
     @Test
-    private void setMap(){
+    private void setMap() throws ContextKeyIsBlank {
         Map<String,String> map = new HashMap<>();
         map.put("key", "value");
         context.setValue("map1", map);

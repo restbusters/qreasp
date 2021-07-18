@@ -8,7 +8,6 @@ import com.jayway.jsonpath.Criteria;
 import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
-import com.restbusters.rest.model.HttpRestRequest;
 import com.restbusters.rest.payload.model.PayloadTemplate;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
