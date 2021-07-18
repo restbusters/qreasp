@@ -1,7 +1,7 @@
 package com.restbusters.integraton.swagger;
 
-import com.restbusters.integration.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.OperationParameters;
+import com.restbusters.integraton.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import io.swagger.oas.models.OpenAPI;
 import io.swagger.oas.models.Operation;
@@ -43,8 +43,8 @@ public class SwaggerHelper {
     }
 
 
-    private List<com.restbusters.integration.swagger.model.SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
-        List<com.restbusters.integration.swagger.model.SwaggerApiResource> apiResourceList = new ArrayList<>();
+    private List<SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
+        List<SwaggerApiResource> apiResourceList = new ArrayList<>();
         Paths path = openAPI.getPaths();
         String serverUrl = openAPI.getServers().get(0).getUrl();
         path.entrySet().forEach(entry -> {
@@ -105,7 +105,7 @@ public class SwaggerHelper {
 
 
     private SwaggerApiResource createSwaggerApiResource(Operation operation, String resourcePath, String httpVerb) {
-        SwaggerApiResource apiResource = new com.restbusters.integration.swagger.model.SwaggerApiResource();
+        SwaggerApiResource apiResource = new SwaggerApiResource();
         apiResource.setResourcePath(resourcePath);
         apiResource.setHttpMethod(httpVerb);
         if (operation.getOperationId() != null) {

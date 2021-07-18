@@ -1,6 +1,7 @@
 package com.restbusters.rest.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -8,15 +9,23 @@ import java.util.Map;
  * @author Sasha Matsaylo on 2020-11-29
  * @project qreasp
  */
-@Data
+@Setter
+@Getter
 public class HttpRestRequest {
 
-    private String requestBody;
-    private Map<String,String> headers;
+    private String httpMethod;
+    private String url;
     private Map<String,String> urlParams;
     private Map<String,String> queryParams;
-    private String url;
-    private String httpMethod;
+    private Map<String,String> headers;
+    private String requestBody;
     private String contentType;
 
+    public HttpRestRequest(){;
+    }
+
+    public HttpRestRequest(String url, String httpMethod) {
+        this.url = url;
+        this.httpMethod = httpMethod;
+    }
 }

@@ -1,7 +1,11 @@
 package com.restbusters.integration.swagger;
 
+import com.restbusters.exception.RecordNotFound;
 import com.restbusters.integraton.swagger.OpenApiHelper;
+import com.restbusters.integraton.swagger.SwaggerApiResourceFilter;
 import com.restbusters.integraton.swagger.SwaggerHelper;
+import com.restbusters.integraton.swagger.model.SwaggerApiResource;
+import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -24,6 +28,7 @@ public class TestSwaggerHelper {
     private final String swaggerUrl = "https://petstore.swagger.io/v2/swagger.json";
     private final String openApiUrl = "https://petstore3.swagger.io/api/v3/openapi.json";
     private List<String> swaggerUrls;
+    private List<SwaggerDescriptor> swaggerDescriptors;
 
 
     @BeforeClass
@@ -32,6 +37,7 @@ public class TestSwaggerHelper {
         swaggerUrls = new ArrayList<>();
         swaggerUrls.add(swaggerUrl);
         swaggerUrls.add(openApiUrl);
+        this.swaggerDescriptors = new ArrayList<>();
     }
 
 
@@ -47,12 +53,23 @@ public class TestSwaggerHelper {
 
     @Test(enabled = true)
     public void build_swagger_descriptor(){
-        Assert.assertNotNull(SwaggerHelper.getInstance().getSwaggerDescriptor(swaggerUrl));
+        SwaggerDescriptor swaggerDescriptor = SwaggerHelper.getInstance().getSwaggerDescriptor(swaggerUrl);
+        Assert.assertNotNull(swaggerDescriptor);
+        this.swaggerDescriptors.add(swaggerDescriptor);
     }
 
     @Test(enabled = true)
     public void build_open_api_descriptor(){
-        Assert.assertNotNull(OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
+        SwaggerDescriptor swaggerDescriptor = OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl);
+        Assert.assertNotNull(swaggerDescriptor);
+        this.swaggerDescriptors.add(swaggerDescriptor);
+
+    }
+
+    @Test(enabled = true, dependsOnMethods = "build_open_api_descriptor")
+    public void build_swagger_filter() throws RecordNotFound {
+        SwaggerApiResource swaggerApiResource = SwaggerApiResourceFilter.fetchApiResource(this.swaggerDescriptors, "Swagger Petstore - OpenAPI 3.0", "addPet");
+        Assert.assertNotNull(swaggerApiResource);
     }
 
 
