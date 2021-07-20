@@ -21,7 +21,7 @@ public class TestRequestBuilder {
 
     @Test
     public void testRequestBuilder(){
-        HttpRequestBuilder builder = new HttpRequestBuilder("url", "GET")
+        HttpRequestBuilder builder = new HttpRequestBuilder("GET", "url")
                 .setUrlParams(new HashMap<>())
                 .setQueryParams(new HashMap<>())
                 .setHeaders(new HashMap<>())

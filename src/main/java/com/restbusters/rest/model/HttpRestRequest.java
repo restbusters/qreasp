@@ -24,8 +24,8 @@ public class HttpRestRequest {
     public HttpRestRequest(){;
     }
 
-    public HttpRestRequest(String url, String httpMethod) {
-        this.url = url;
+    public HttpRestRequest(String httpMethod, String url) {
         this.httpMethod = httpMethod;
+        this.url = url;
     }
 }

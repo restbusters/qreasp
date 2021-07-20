@@ -70,7 +70,7 @@ public class WireMockManager {
         JSONArray jsonArray = JsonPath.read(this.jsonWireMockStubs, "$");
         for (Object stub : jsonArray) {
             String jsonStub = GlobalResourceManager.getInstance().getObjectMapper().writeValueAsString(stub);
-            HttpRestRequest httpRestRequest = new HttpRestRequest(wireMockAdminUrl, HttpMethods.POST.getValue());
+            HttpRestRequest httpRestRequest = new HttpRestRequest(HttpMethods.POST.getValue(), wireMockAdminUrl);
             httpRestRequest.setRequestBody(jsonStub);
             Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRestRequest);
             if(!response.isSuccessful()){
