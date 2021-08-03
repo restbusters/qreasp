@@ -125,7 +125,7 @@ public class SwaggerHelper {
 
     private List<OperationParameters> setOperationParameter(List<Parameter> parameters) {
         List<OperationParameters> operationParametersList = new ArrayList<>();
-        Collections.synchronizedList(parameters).stream().parallel().forEach(
+        parameters.stream().forEach(
                 parameter -> {
                     OperationParameters operationParameters = new OperationParameters();
                     operationParameters.setDescription(parameter.getDescription());
