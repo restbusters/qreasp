@@ -9,6 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FileUtils {
 
@@ -68,6 +75,24 @@ public class FileUtils {
 
     private File getFileAsFileFromClassPath(String relativePath) {
         return new File(getClass().getClassLoader().getResource(relativePath).getPath());
+    }
+
+    public Map<String,String> readFilesAsStringIntoMap(String directory, String fileType) throws IOException {
+        Map<String,String> templateMap = new HashMap<>();
+        List<File> files = Files.list(Paths.get(directory))
+                .filter(path -> path.toString().endsWith(fileType))
+                .map(Path::toFile)
+                .collect(Collectors.toList());
+        files.forEach(file -> {
+            try {
+                templateMap.put(file.getName().split("\\.")[0],  org.apache.commons.io.FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return templateMap;
+
     }
 
 
