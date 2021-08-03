@@ -29,15 +29,22 @@ public class TestSwaggerHelper {
     private final String openApiUrl = "https://petstore3.swagger.io/api/v3/openapi.json";
     private List<String> swaggerUrls;
     private List<SwaggerDescriptor> swaggerDescriptors;
+    private final int swaggerSize = 10;
 
 
     @BeforeClass
     private void setUp() throws IOException {
 
+
         swaggerUrls = new ArrayList<>();
-        swaggerUrls.add(swaggerUrl);
-        swaggerUrls.add(openApiUrl);
         this.swaggerDescriptors = new ArrayList<>();
+        this.setUrls();
+    }
+
+    private void setUrls(){
+        for(int i=1; i<30; i++){
+            this.swaggerUrls.add(this.swaggerUrl);
+        }
     }
 
 
@@ -63,6 +70,14 @@ public class TestSwaggerHelper {
         SwaggerDescriptor swaggerDescriptor = OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl);
         Assert.assertNotNull(swaggerDescriptor);
         this.swaggerDescriptors.add(swaggerDescriptor);
+
+    }
+
+    @Test(enabled = true)
+    public void build_swagger_from_list(){
+        List<SwaggerDescriptor> swaggerDescriptor = SwaggerHelper.getInstance().getSwaggerApiResources(this.swaggerUrls);
+        Assert.assertNotNull(swaggerDescriptor);
+        Assert.assertTrue(swaggerDescriptor.size() == this.swaggerSize - 1);
 
     }
 

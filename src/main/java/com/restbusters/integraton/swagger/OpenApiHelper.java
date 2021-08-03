@@ -170,7 +170,7 @@ public class OpenApiHelper {
 
     private List<OperationParameters> setOperationParameter(List<Parameter> parameters) {
         List<OperationParameters> operationParametersList = new ArrayList<>();
-        Collections.synchronizedList(parameters).stream().parallel().forEach(
+        parameters.stream().forEach(
                 parameter -> {
                     OperationParameters operationParameters = new OperationParameters();
                     operationParameters.setDescription(parameter.getDescription());
@@ -200,7 +200,7 @@ public class OpenApiHelper {
             }
             else {
                 //here we can provide predefined schema
-                return "our predined schema";
+                return "our predefined schema";
             }
         }
         else {
