@@ -3,6 +3,7 @@ package com.restbusters.data.templating;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restbusters.resource.GlobalResourceManager;
+import org.checkerframework.dataflow.qual.TerminatesExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -65,6 +66,11 @@ public class JsonTemplatingTest {
         List<Object> testsList = (List<Object>)outputMap.get("tests");
         Assert.assertTrue(testsList.size() > 0, "Tests size must be greater than zero");
         Assert.assertTrue(testsList.size() == 3, "Default Tests size must be equal to 3");
+    }
+
+    @Test()
+    private void testBulkTemplateLoaderListOfMaps(){
+
     }
 
     private Map<String, Object> readAsMap(String input) {

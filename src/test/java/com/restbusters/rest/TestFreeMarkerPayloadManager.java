@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.payload.FreeMarkerPayloadManager;
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class TestFreeMarkerPayloadManager {
     @BeforeClass(alwaysRun = true)
     private void setUp() throws IOException {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        this.jsonPayloads = FileUtils.getFileOnClassPathAsString("payload/payloads.json");
+        this.jsonPayloads = RBFileUtils.getFileOnClassPathAsString("payload/payloads.json");
         this.payloadManager = FreeMarkerPayloadManager.getInstance(jsonPayloads);
         this.defaultTemplateFilter = new HashMap<>();
         defaultTemplateFilter.put("operationId", "testOperationId2");

@@ -8,7 +8,7 @@ import com.restbusters.integraton.stash.client.StashRestClient;
 import com.restbusters.integraton.stash.client.model.StashResponse;
 import com.restbusters.integraton.stash.client.resoures.StashResourceManager;
 import com.restbusters.resource.GlobalResourceManager;
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 import com.restbusters.util.wiremock.WireMockManager;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class StashRestClientTest {
         //this.stashRestClient = new StashRestClient(url,  "dummyOne", "findDummyOne", "Restb", "m-test-rails");
         this.stashRestClient = new StashRestClient(url, "dummyToken", "myproject", "myrepo");
         this.rc = StashResourceManager.getInstance();
-        String wireMockStubs = FileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
+        String wireMockStubs = RBFileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
         this.wireMockManager = WireMockManager.getInstance(wireMockStubs);
     }
 

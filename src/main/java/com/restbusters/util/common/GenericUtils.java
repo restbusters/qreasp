@@ -27,6 +27,9 @@ public class GenericUtils {
     private static final Configuration jacksonConfiguration = GlobalResourceManager.getInstance().getConfiguration();
 
     public static Map<String, String> splitToMap(String splitter, String keyValueSeparator, String keysAndValues) {
+        if (!RBPattern.SPLIT_TO_MAP_VALIDATOR.matcher(keysAndValues).matches()) {
+            throw new IllegalArgumentException("Invalid String for splitting, Example: key=value if more then one key=value;key=value");
+        }
         return Splitter.on(splitter).withKeyValueSeparator(keyValueSeparator).split(keysAndValues);
     }
 
@@ -86,6 +89,17 @@ public class GenericUtils {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public static String RegexMatcher(String text, String pattern, int expectedGroup) {
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(text);
+        if (m.find()) {
+            logger.info("Expected group {} return value {} ", expectedGroup, m.group(expectedGroup));
+            return m.group(expectedGroup);
+        }
+        logger.warn("NO MATCH FOR FOR YOUR PATTERN");
+        return null;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.restbusters.util.common;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,22 +13,20 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class FileUtils {
+public class RBFileUtils {
 
-    private static FileUtils instance;
+    private static RBFileUtils instance;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private FileUtils() {
+    private RBFileUtils() {
     }
 
-    public static synchronized FileUtils getInstance() {
+    public static synchronized RBFileUtils getInstance() {
         if (instance == null) {
-            instance = new FileUtils();
+            instance = new RBFileUtils();
         }
         return instance;
     }
@@ -93,6 +92,18 @@ public class FileUtils {
 
         return templateMap;
 
+    }
+
+    public List<File> readAllFiles(String startDir, String extensions[], boolean recursive){
+        if(startDir == null){
+            throw new IllegalArgumentException("startDir must not be null");
+        }
+        File directory = new File(startDir);
+        Collection<File> files = FileUtils.listFiles(directory, extensions, recursive);
+        files.stream().forEach(file -> {
+            file.toString();
+        });
+        return new ArrayList<>(files);
     }
 
 

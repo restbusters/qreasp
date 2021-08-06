@@ -46,23 +46,8 @@ public class BulkTemplateLoader {
         freemarkerConfig.setTemplateLoader(new StringTemplateLoader());
     }
 
-    private Template loadTemplate(String templateName, String templatePath) {
-        try {
-            String templateContent = new String(Files.readAllBytes(Paths.get(templatePath)));
-            ((StringTemplateLoader) freemarkerConfig.getTemplateLoader()).putTemplate(templateName, templateContent);
-            return freemarkerConfig.getTemplate(templateName);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public String processTemplate(String templateName, Map<String, Object> data) {
+        return TemplateLoaderHelper.processTemplate(freemarkerConfig, templateDirectory, templateName, data);
     }
 
-    public String processTemplate(String templateName, Map<String, Object> data) {
-        Template template = loadTemplate(templateName, templateDirectory + templateName);
-        try (StringWriter writer = new StringWriter()) {
-            template.process(data, writer);
-            return writer.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
