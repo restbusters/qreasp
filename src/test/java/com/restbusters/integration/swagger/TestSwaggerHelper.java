@@ -33,16 +33,14 @@ public class TestSwaggerHelper {
 
 
     @BeforeClass
-    private void setUp() throws IOException {
-
-
+    private void setUp() {
         swaggerUrls = new ArrayList<>();
         this.swaggerDescriptors = new ArrayList<>();
         this.setUrls();
     }
 
     private void setUrls(){
-        for(int i=1; i<30; i++){
+        for(int i=1; i<swaggerSize; i++){
             this.swaggerUrls.add(this.swaggerUrl);
         }
     }
