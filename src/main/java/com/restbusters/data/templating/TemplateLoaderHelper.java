@@ -6,9 +6,7 @@ import com.restbusters.util.common.GenericUtils;
 import com.restbusters.util.common.RBFileUtils;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.ext.beans.BeansWrapperBuilder;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateHashModel;
+import freemarker.template.*;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -62,34 +60,31 @@ public class TemplateLoaderHelper {
         }
     }
 
-    public static String processTemplate(Configuration freemarkerConfig, TemplateHolder templateHolder, Map<String, Object> data) {
+    public static String processTemplate(Configuration freemarkerConfig, TemplateHolder templateHolder, Map<String, Object> data) throws IOException, TemplateException {
         Template template = convertToTemplate(freemarkerConfig, templateHolder.getName(), templateHolder.getTemplate());
-        try (StringWriter writer = new StringWriter()) {
-            template.process(data, writer);
-            return writer.toString();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        StringWriter writer = new StringWriter();
+        template.process(data, writer);
+        return writer.toString();
     }
 
-    public static List<TemplateHolder> bulkTemplateLoader(String startDir, String[] extensions, boolean isRecursive, String metaDataSplitter, String metaDataKeyValueSplitter){
+    public static List<TemplateHolder> bulkTemplateLoader(String startDir, String[] extensions, boolean isRecursive, String metaDataSplitter, String metaDataKeyValueSplitter) {
         List<File> result = RBFileUtils.getInstance().readAllFiles(startDir, extensions, isRecursive);
         List<TemplateHolder> templates = new ArrayList<>();
         result.stream().forEach(file -> {
             try {
-                TemplateHolder templateHolder = new TemplateHolder();
-                if(file.getName().contains(".ftl")){
-                    String  template = FileUtils.readFileToString(file);
+                if (file.getName().contains(".ftl")) {
+                    TemplateHolder templateHolder = new TemplateHolder();
+                    String template = FileUtils.readFileToString(file);
                     String templateMetaData = GenericUtils.RegexMatcher(template, Constant.TEMPLATE_METADATA_REGEX.toString(), 1);
-                    Map<String,String> templateMap = new HashMap<>(GenericUtils.splitToMap(metaDataSplitter, metaDataKeyValueSplitter, templateMetaData));
+                    Map<String, String> templateMap = new HashMap<>(GenericUtils.splitToMap(metaDataSplitter, metaDataKeyValueSplitter, templateMetaData));
                     templateMap.put("template", template);
                     templateHolder = GlobalResourceManager.getInstance().getObjectMapper().convertValue(templateMap, TemplateHolder.class);
                     Optional<String> input = findJsonInputFile(result, templateHolder.getInputFileName());
-                    if(input.isPresent()){
+                    if (input.isPresent()) {
                         templateHolder.setInput(input.get());
                     }
+                    templates.add(templateHolder);
                 }
-                templates.add(templateHolder);
 
 
             } catch (IOException e) {
@@ -104,13 +99,13 @@ public class TemplateLoaderHelper {
         Optional<File> optionalFile = fileList.stream()
                 .filter(file -> file.getName().equalsIgnoreCase(fileName))
                 .findFirst();
-        if(!optionalFile.isPresent()){
+        if (!optionalFile.isPresent()) {
             return Optional.empty();
         }
         return Optional.of(FileUtils.readFileToString(optionalFile.get(), CharEncoding.UTF_8));
     }
 
-    public static Configuration getFreeMarkerConfig(){
+    public static Configuration getFreeMarkerConfig() {
         Configuration freemarkerConfig = new Configuration(Configuration.VERSION_2_3_23);
         freemarkerConfig.setTagSyntax(Configuration.ANGLE_BRACKET_TAG_SYNTAX);
         freemarkerConfig.setDefaultEncoding(CharEncoding.UTF_8);
@@ -120,18 +115,14 @@ public class TemplateLoaderHelper {
         return freemarkerConfig;
     }
 
-    public static String jsonToJson(Configuration freemarkerConfig, TemplateHolder templateHolder) {
+    public static String jsonToJson(Configuration freemarkerConfig, TemplateHolder templateHolder) throws TemplateException, IOException {
         String output = null;
-        try {
-            Map<String, Object> data = new HashMap<>();
-            data.put("input", templateHolder.getInput());
-            TemplateHashModel staticModels = new BeansWrapperBuilder(Configuration.VERSION_2_3_23).build().getStaticModels();
-            data.put("JsonUtil", staticModels.get(JsonTemplateMapper.class.getName()));
-            output = processTemplate(freemarkerConfig, templateHolder, data);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("input", templateHolder.getInput());
+        TemplateHashModel staticModels = new BeansWrapperBuilder(Configuration.VERSION_2_3_23).build().getStaticModels();
+        data.put("JsonUtil", staticModels.get(JsonTemplateMapper.class.getName()));
+        output = processTemplate(freemarkerConfig, templateHolder, data);
         return output;
     }
 }
