@@ -1,0 +1,12 @@
+{
+  "status": "available",
+  "photoUrls": ["url1", "url2"],
+  "id": 1,
+  "name": "ivaFromInput",
+  "category_name": "categoryName",
+  "category_id": 12,
+  "tags": [{"id": 1, "name": "name1"}, {"id": 2, "name": "name2"}],
+  "whichStatus": "status2",
+  "status": "fromInput",
+  "status2": "fromInput2"
+}
