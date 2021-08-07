@@ -37,7 +37,7 @@ public class TemplateTest {
     private void testJsonTransformationForPrebuildTemplates() throws RecordNotFound, JsonProcessingException {
 
        //<#-- $name=sample2;description=sample2;version=02;inputFileName=sampleInput2.json$ -->
-        String result = this.templateManager.processTemplateWithJsonInput("sample2", "02");
+        String result = this.templateManager.processTemplateWithJsonInput("sample3", "0.1");
         Assert.assertNotNull(result);
         Object json = GlobalResourceManager.getInstance().getObjectMapper().readValue(result, Object.class);
         logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(json));
