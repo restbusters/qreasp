@@ -17,7 +17,6 @@ import v2.io.swagger.parser.SwaggerException;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
