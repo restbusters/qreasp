@@ -3,6 +3,8 @@ package com.restbusters.data.templating;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restbusters.resource.GlobalResourceManager;
+import com.restbusters.util.common.RBMapUtil;
+import org.checkerframework.dataflow.qual.TerminatesExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -27,7 +29,6 @@ public class JsonTemplatingTest {
     private final String templateName = "jsonTestParamTemplate.ftl";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
     TemplateLoader templateLoader = new TemplateLoader();
     TemplateTransform tf = new TemplateTransform();
 
@@ -41,7 +42,7 @@ public class JsonTemplatingTest {
         //Transformation from a json to a different json target
         String output = tf.jsonToJson(templateLoader, tf.getJsonSource(), tf.getTemplateName());
         logger.info(output);
-        Map<String, Object> outputMap = readAsMap(output);
+        Map<String, Object> outputMap = RBMapUtil.readAsMap(output);
         Assert.assertTrue(output != null, "Generated output must not be null");
         Assert.assertTrue(outputMap != null, "Generated output map must not be null");
         List<Object> testsList = (List<Object>)outputMap.get("tests");
@@ -58,7 +59,7 @@ public class JsonTemplatingTest {
         tf.setTemplateName(templateName);
         //Transformation from a json to a different json target
         String output = tf.jsonToJson(templateLoader, tf.getJsonSource(), tf.getTemplateName());
-        Map<String, Object> outputMap = readAsMap(output);
+        Map<String, Object> outputMap = RBMapUtil.readAsMap(output);;
         logger.info(output);
         Assert.assertTrue(output != null, "Generated output must not be null");
         Assert.assertTrue(outputMap != null, "Generated output map must not be null");
@@ -67,16 +68,4 @@ public class JsonTemplatingTest {
         Assert.assertTrue(testsList.size() == 3, "Default Tests size must be equal to 3");
     }
 
-    private Map<String, Object> readAsMap(String input) {
-        try {
-            Map<String, Object> objectMap = objectMapper.readValue(input, new TypeReference<Map<String, Object>>() {});
-            if(objectMap != null)
-                return objectMap;
-            else
-                return new HashMap<>();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HashMap<>();
-        }
-    }
 }

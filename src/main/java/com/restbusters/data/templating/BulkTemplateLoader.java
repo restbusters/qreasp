@@ -5,7 +5,6 @@
  *  * @project qreasp
  *  * Copyright (c) 2021 . All rights reserved.
  *  * Last modified 6/15/21, 2:01 PM
- *  * Last modified @author Sasha Matsaylo 6/15/21, 2:01 PM
  *
  */
 
@@ -18,7 +17,7 @@ import org.apache.commons.codec.CharEncoding;
 
 import java.util.Map;
 
-public class TemplateLoader {
+public class BulkTemplateLoader {
     private Configuration freemarkerConfig;
 
     public String getTemplateDirectory() {
@@ -29,9 +28,11 @@ public class TemplateLoader {
         this.templateDirectory = templateDirectory;
     }
 
-    private String templateDirectory = "src/test/resources/";
+    private String templateDirectory;
 
-    public TemplateLoader() {
+    public BulkTemplateLoader(String templateDirectory) {
+        this.templateDirectory = templateDirectory;
+
         freemarkerConfig = new Configuration(Configuration.VERSION_2_3_23);
         freemarkerConfig.setTagSyntax(Configuration.ANGLE_BRACKET_TAG_SYNTAX);
         freemarkerConfig.setDefaultEncoding(CharEncoding.UTF_8);

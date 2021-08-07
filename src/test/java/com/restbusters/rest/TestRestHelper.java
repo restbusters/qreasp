@@ -7,7 +7,7 @@ import com.restbusters.rest.client.ConstantsErrors;
 import com.restbusters.rest.client.HttpMethods;
 import com.restbusters.rest.client.RestClientHelper;
 import com.restbusters.rest.model.HttpRestRequest;
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 import com.restbusters.util.wiremock.WireMockManager;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -43,7 +43,7 @@ public class TestRestHelper {
     @BeforeClass
     public void setUp() throws IOException {
         this.headers.put(this.headerKey, this.headerValue);
-        String wireMockJsonStubs = FileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
+        String wireMockJsonStubs = RBFileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
         this.wireMockManager = WireMockManager.getInstance(wireMockJsonStubs);
         this.okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
     }

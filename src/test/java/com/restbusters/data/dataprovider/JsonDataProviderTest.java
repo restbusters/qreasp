@@ -1,6 +1,6 @@
 package com.restbusters.data.dataprovider;
 
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -26,8 +26,8 @@ public class JsonDataProviderTest {
     //A Dataprovider must be initialized in a setUp method before tests are executed.
     @BeforeClass(alwaysRun = true)
     private void setUp() {
-        jsonSingleTestCase = FileUtils.getFileOnClassPathAsString(SINGLE_TEST_CASE_FILE);
-        jsonMultipleTestCases = FileUtils.getFileOnClassPathAsString(MULTIPLE_TEST_CASE_FILE);
+        jsonSingleTestCase = RBFileUtils.getFileOnClassPathAsString(SINGLE_TEST_CASE_FILE);
+        jsonMultipleTestCases = RBFileUtils.getFileOnClassPathAsString(MULTIPLE_TEST_CASE_FILE);
         dataProviderHelper.addJsonDataForMethod(SINGLE_CASE_METHOD, jsonSingleTestCase, null);
         dataProviderHelper.addJsonDataForMethod(MULTI_CASE_METHOD, jsonMultipleTestCases, "tests");
     }

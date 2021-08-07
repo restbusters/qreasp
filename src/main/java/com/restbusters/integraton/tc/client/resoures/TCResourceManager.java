@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restbusters.integraton.tc.client.model.TCRequests;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.model.HttpRestRequest;
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class TCResourceManager {
 
   private TCResourceManager() throws Exception {
     this.objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
-    this.jsonTcRequests = FileUtils.getFileOnClassPathAsString(this.requestsFile);
+    this.jsonTcRequests = RBFileUtils.getFileOnClassPathAsString(this.requestsFile);
     this.tcRequests = objectMapper.readValue(jsonTcRequests, TCRequests.class);
   }
 

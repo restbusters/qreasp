@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.restbusters.integraton.stash.client.model.StashRequests;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.model.HttpRestRequest;
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class StashResourceManager {
   private final String requestsFile = "stash-http-requests.json";
 
   private StashResourceManager() throws Exception {
-    this.jsonStashRequests = FileUtils.getFileOnClassPathAsString(this.requestsFile);
+    this.jsonStashRequests = RBFileUtils.getFileOnClassPathAsString(this.requestsFile);
     this.stashRequests = GlobalResourceManager.getInstance().getObjectMapper().readValue(jsonStashRequests, StashRequests.class);
   }
 

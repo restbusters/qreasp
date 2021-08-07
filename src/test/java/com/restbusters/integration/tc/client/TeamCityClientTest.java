@@ -4,13 +4,12 @@ package com.restbusters.integration.tc.client;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.integraton.tc.client.TeamCityClient;
 import com.restbusters.resource.GlobalResourceManager;
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 import com.restbusters.util.wiremock.WireMockManager;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -37,7 +36,7 @@ public class TeamCityClientTest {
         Assert.assertNotNull(token);
         tcClient = new TeamCityClient(url, token);
         this.rc = GlobalResourceManager.getInstance();
-        String wireMockStubs = FileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
+        String wireMockStubs = RBFileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
         this.wireMockManager = WireMockManager.getInstance(wireMockStubs);
     }
 

@@ -1,0 +1,22 @@
+{
+  "projects": [
+    {
+      "externalName": "Example 2 - Website Testing (automatically imported)",
+      "name": "Example 2 - Website Testing (automatically imported)",
+      "key": "EWTI",
+      "description": "2-wise tests.",
+      "issues": [
+        {
+          "summary": "Test 1",
+          "description": "Device: Desktop\nDesktop Browser: Chrome\nMobile Browser: n/a\nDesktop Connection: cable\nMobile Connection: n/a\nDesktop OS: Windows\nMobile OS: n/a\nIP version: IPv4\nprotocol: https\nwww in front: no\nCookies: enabled\nWindow Dimentions: wide\nWindow Size: large\nLanguage: english\nServer Caching: on\nServer Minification: off\n",
+          "created": 1617035117000
+        },
+        {
+          "summary": "Test 2",
+          "description": "Device: Mobile\nDesktop Browser: n/a\nMobile Browser: Chrome\nDesktop Connection: n/a\nMobile Connection: wifi\nDesktop OS: n/a\nMobile OS: Android\nIP version: IPv4\nprotocol: https\nwww in front: no\nCookies: enabled\nWindow Dimentions: tall\nWindow Size: small\nLanguage: english\nServer Caching: on\nServer Minification: off\n",
+          "created": 1617035117000
+        }
+      ]
+    }
+  ]
+}

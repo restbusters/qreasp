@@ -7,7 +7,7 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.payload.model.PayloadTemplate;
-import com.restbusters.util.common.FileUtils;
+import com.restbusters.util.common.RBFileUtils;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -160,6 +160,6 @@ public class FreeMarkerPayloadManager {
     }
 
     public String fetchTemplate(String freeMarkerTemplateLocation){
-        return FileUtils.getFileOnClassPathAsString(freeMarkerTemplateLocation);
+        return RBFileUtils.getFileOnClassPathAsString(freeMarkerTemplateLocation);
     }
 }

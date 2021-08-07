@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
@@ -49,6 +50,18 @@ public class TestGenericUtil {
         String jsonString =  GenericUtils.removeKeyWithValueFromJson(expectedJson, "$.list");
         logger.info(jsonString);
         JsonPath.read(jsonString, "$.list");
+    }
+
+    @Test
+    private void validateMatcher() {
+
+        String text = "<#-- $name=sample1;description=sample1;version=01$ -->\n" +
+                "<#assign body = JsonUtil.convertJsonToMap(input)>\n" +
+                "<#list body.projects as project>\n";
+        //String pattern = "(<#--.*)(name:.*|description:.*|version:.*)(.*-->)";
+        String pattern = "<#--.*\\$(.*)\\$.*-->";
+        org.junit.Assert.assertEquals("name=sample1;description=sample1;version=01", GenericUtils.RegexMatcher(text, pattern, 1));
+
     }
 
 }

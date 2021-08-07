@@ -1,5 +1,6 @@
 package com.restbusters.util.common;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,18 +10,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class FileUtils {
+public class RBFileUtils {
 
-    private static FileUtils instance;
+    private static RBFileUtils instance;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private FileUtils() {
+    private RBFileUtils() {
     }
 
-    public static synchronized FileUtils getInstance() {
+    public static synchronized RBFileUtils getInstance() {
         if (instance == null) {
-            instance = new FileUtils();
+            instance = new RBFileUtils();
         }
         return instance;
     }
@@ -68,6 +74,36 @@ public class FileUtils {
 
     private File getFileAsFileFromClassPath(String relativePath) {
         return new File(getClass().getClassLoader().getResource(relativePath).getPath());
+    }
+
+    public Map<String,String> readFilesAsStringIntoMap(String directory, String fileType) throws IOException {
+        Map<String,String> templateMap = new HashMap<>();
+        List<File> files = Files.list(Paths.get(directory))
+                .filter(path -> path.toString().endsWith(fileType))
+                .map(Path::toFile)
+                .collect(Collectors.toList());
+        files.forEach(file -> {
+            try {
+                templateMap.put(file.getName().split("\\.")[0],  org.apache.commons.io.FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return templateMap;
+
+    }
+
+    public List<File> readAllFiles(String startDir, String extensions[], boolean recursive){
+        if(startDir == null){
+            throw new IllegalArgumentException("startDir must not be null");
+        }
+        File directory = new File(startDir);
+        Collection<File> files = FileUtils.listFiles(directory, extensions, recursive);
+        files.stream().forEach(file -> {
+            file.toString();
+        });
+        return new ArrayList<>(files);
     }
 
 
