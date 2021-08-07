@@ -1,10 +1,8 @@
 package com.restbusters.data.templating;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restbusters.exception.RecordNotFound;
 import com.restbusters.resource.GlobalResourceManager;
-import com.restbusters.util.common.RBMapUtil;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +10,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.Map;
 
 /**
- * @author Sasha Matsaylo on 8/6/21
+ * @author Sasha Matsaylo on 8/7/21
  * @project qreasp
  */
 public class TemplateTest {
@@ -29,9 +25,7 @@ public class TemplateTest {
     private final String templateName = "jsonTestParamTemplate.ftl";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final String[] extension = { "ftl", "json" };
-
     private TemplateManager templateManager;
-    TemplateTransform tf = new TemplateTransform();
 
     @BeforeClass(alwaysRun = true)
     private void setUp() {

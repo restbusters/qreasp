@@ -1,10 +1,6 @@
 package com.restbusters.data.templating;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.util.common.RBMapUtil;
-import org.checkerframework.dataflow.qual.TerminatesExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -12,7 +8,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.invoke.MethodHandles;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
