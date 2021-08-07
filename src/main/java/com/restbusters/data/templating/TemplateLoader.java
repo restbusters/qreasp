@@ -11,26 +11,11 @@
 
 package com.restbusters.data.templating;
 
-import com.restbusters.util.common.Constant;
-import com.restbusters.util.common.GenericUtils;
-import com.restbusters.util.common.RBFileUtils;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import org.apache.commons.codec.CharEncoding;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TemplateLoader {

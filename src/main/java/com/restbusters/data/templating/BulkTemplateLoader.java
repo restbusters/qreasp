@@ -13,13 +13,8 @@ package com.restbusters.data.templating;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import org.apache.commons.codec.CharEncoding;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Map;
 
 public class BulkTemplateLoader {

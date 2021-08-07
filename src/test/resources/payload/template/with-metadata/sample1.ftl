@@ -1,4 +1,4 @@
-<#-- $name=sample1;description=sample1;version=01$ -->
+<#-- $name=sample1;description=sample1;version=01;inputFileName=sampleInput1.json$ -->
 <#assign body = JsonUtil.convertJsonToMap(input)>
 {
 <#list body.projects as project>
