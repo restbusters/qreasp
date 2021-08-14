@@ -1,18 +1,18 @@
 package com.restbusters.integration.swagger;
 
 import com.restbusters.exception.RecordNotFound;
-import com.restbusters.integraton.swagger.OpenApiHelper;
+import com.restbusters.integraton.swagger.OpenApiV3Manager;
 import com.restbusters.integraton.swagger.SwaggerApiResourceFilter;
-import com.restbusters.integraton.swagger.SwaggerHelper;
+import com.restbusters.integraton.swagger.SwaggerManager;
 import com.restbusters.integraton.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
+import com.restbusters.util.common.RBFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  * @author Sasha Matsaylo on 2020-10-02
  * @project qreasp
  */
-public class TestSwaggerHelper {
+public class TestSwaggerManager {
 
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -30,6 +30,7 @@ public class TestSwaggerHelper {
     private List<String> swaggerUrls;
     private List<SwaggerDescriptor> swaggerDescriptors;
     private final int swaggerSize = 10;
+    private String jsonContent;
 
 
     @BeforeClass
@@ -37,6 +38,7 @@ public class TestSwaggerHelper {
         swaggerUrls = new ArrayList<>();
         this.swaggerDescriptors = new ArrayList<>();
         this.setUrls();
+        this.jsonContent = RBFileUtils.getFileOnClassPathAsString("swagger/open-api.json");
     }
 
     private void setUrls(){
@@ -48,24 +50,24 @@ public class TestSwaggerHelper {
 
     @Test()
     public void build_swagger_resource(){
-        Assert.assertNotNull(SwaggerHelper.getInstance().getSwaggerDescriptor(swaggerUrl));
+        Assert.assertNotNull(SwaggerManager.getInstance().getSwaggerDescriptor(swaggerUrl));
     }
 
     @Test()
     public void build_open_api_resource_from_url(){
-        Assert.assertNotNull(OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
+        Assert.assertNotNull(OpenApiV3Manager.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
     }
 
     @Test(enabled = true)
     public void build_swagger_descriptor(){
-        SwaggerDescriptor swaggerDescriptor = SwaggerHelper.getInstance().getSwaggerDescriptor(swaggerUrl);
+        SwaggerDescriptor swaggerDescriptor = SwaggerManager.getInstance().getSwaggerDescriptor(swaggerUrl);
         Assert.assertNotNull(swaggerDescriptor);
         this.swaggerDescriptors.add(swaggerDescriptor);
     }
 
     @Test(enabled = true)
     public void build_open_api_descriptor(){
-        SwaggerDescriptor swaggerDescriptor = OpenApiHelper.getInstance().getSwaggerDescriptorFromUrl(openApiUrl);
+        SwaggerDescriptor swaggerDescriptor = OpenApiV3Manager.getInstance().getSwaggerDescriptorFromUrl(openApiUrl);
         Assert.assertNotNull(swaggerDescriptor);
         this.swaggerDescriptors.add(swaggerDescriptor);
 
@@ -73,7 +75,7 @@ public class TestSwaggerHelper {
 
     @Test(enabled = true)
     public void build_swagger_from_list(){
-        List<SwaggerDescriptor> swaggerDescriptor = SwaggerHelper.getInstance().getSwaggerApiResources(this.swaggerUrls);
+        List<SwaggerDescriptor> swaggerDescriptor = SwaggerManager.getInstance().getSwaggerApiResources(this.swaggerUrls);
         Assert.assertNotNull(swaggerDescriptor);
         Assert.assertTrue(swaggerDescriptor.size() == this.swaggerSize - 1);
 
@@ -83,6 +85,12 @@ public class TestSwaggerHelper {
     public void build_swagger_filter() throws RecordNotFound {
         SwaggerApiResource swaggerApiResource = SwaggerApiResourceFilter.fetchApiResource(this.swaggerDescriptors, "Swagger Petstore - OpenAPI 3.0", "addPet");
         Assert.assertNotNull(swaggerApiResource);
+    }
+
+    @Test(enabled = true)
+    public void build_swagger_from_json_content(){
+        SwaggerDescriptor swaggerDescriptor = SwaggerManager.getInstance().getSwaggerDescriptorFromSwaggerContent(this.jsonContent);
+        Assert.assertNotNull(swaggerDescriptor);
     }
 
 

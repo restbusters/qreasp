@@ -32,19 +32,19 @@ import java.util.Map;
  * @author Sasha matsaylo on 2020-09-10
  * @project qreasp
  */
-public class OpenApiHelper {
+public class OpenApiV3Manager {
 
-    private static OpenApiHelper instance;
+    private static OpenApiV3Manager instance;
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
-    private OpenApiHelper() {
+    private OpenApiV3Manager() {
     }
 
-    public static synchronized OpenApiHelper getInstance() {
+    public static synchronized OpenApiV3Manager getInstance() {
         if (instance == null) {
-            instance = new OpenApiHelper();
+            instance = new OpenApiV3Manager();
         }
         return instance;
     }

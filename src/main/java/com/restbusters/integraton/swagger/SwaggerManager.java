@@ -16,6 +16,8 @@ import v2.io.swagger.models.HttpMethod;
 import v2.io.swagger.parser.SwaggerException;
 
 import java.lang.invoke.MethodHandles;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,19 +26,19 @@ import java.util.List;
  * @author Sasha matsaylo on 2020-09-10
  * @project qreasp
  */
-public class SwaggerHelper {
+public class SwaggerManager {
 
-    private static SwaggerHelper instance;
+    private static SwaggerManager instance;
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
-    private SwaggerHelper() {
+    private SwaggerManager() {
     }
 
-    public static synchronized SwaggerHelper getInstance() {
+    public static synchronized SwaggerManager getInstance() {
         if (instance == null) {
-            instance = new SwaggerHelper();
+            instance = new SwaggerManager();
         }
         return instance;
     }
@@ -49,42 +51,77 @@ public class SwaggerHelper {
         path.entrySet().forEach(entry -> {
             PathItem pathItem = entry.getValue();
             String resourcePath = serverUrl + entry.getKey();
+            SwaggerApiResource apiResource = null;
             if (pathItem.getGet() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getGet(), resourcePath, HttpMethod.GET.name()));
+                apiResource = createSwaggerApiResource(pathItem.getGet(), resourcePath, HttpMethod.GET.name());
             }
             if (pathItem.getPost() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getPost(), resourcePath, HttpMethod.POST.name()));
+                apiResource = createSwaggerApiResource(pathItem.getPost(), resourcePath, HttpMethod.POST.name());
             }
             if (pathItem.getPut() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getPut(), resourcePath, HttpMethod.PUT.name()));
+                apiResource = createSwaggerApiResource(pathItem.getPut(), resourcePath, HttpMethod.PUT.name());
             }
             if (pathItem.getPatch() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getPatch(), resourcePath, HttpMethod.PATCH.name()));
+                apiResource = createSwaggerApiResource(pathItem.getPatch(), resourcePath, HttpMethod.PATCH.name());
             }
             if (pathItem.getDelete() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getDelete(), resourcePath, HttpMethod.DELETE.name()));
+                apiResource = createSwaggerApiResource(pathItem.getDelete(), resourcePath, HttpMethod.DELETE.name());
             }
+            this.normalizeSwaggerApiResource(apiResource, serverUrl);
 
         });
         return apiResourceList;
     }
 
     public SwaggerDescriptor getSwaggerDescriptor(String url) {
+        OpenAPI openAPI = initOpenApi(url, "HTTP");
+        return buildDescriptor(openAPI);
+    }
+
+
+    public SwaggerDescriptor getSwaggerDescriptorFromSwaggerContent(String swaggerContent) {
+        OpenAPI openAPI = initOpenApi(swaggerContent, "JSON");
+        return buildDescriptor(openAPI);
+    }
+
+    private SwaggerDescriptor getNewDescriptor(){
+        return new SwaggerDescriptor();
+    }
+
+    private OpenAPI initOpenApi(String content, String type){
         OpenAPI openAPI = null;
-        openAPI = new OpenAPIV3Parser().read(url);
-        //openAPI = new OpenAPIV3Parser().readContents(body, null, null).getOpenAPI();
+        if(type.equalsIgnoreCase("HTTP")){
+            openAPI = new OpenAPIV3Parser().read(content);
+        }
+        if(type.equalsIgnoreCase("JSON")){
+            openAPI = new OpenAPIV3Parser().readContents(content, null, null).getOpenAPI();
+        }
         if(openAPI == null){
             throw new SwaggerException("Failed to build OpenApi");
         }
+        return openAPI;
+    }
 
+    private SwaggerDescriptor buildDescriptor( OpenAPI openAPI){
         SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
         swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
         swaggerDescriptor.setServerUrl(openAPI.getServers().get(0).getUrl());
         swaggerDescriptor.setApiVersion(openAPI.getOpenapi());
-        swaggerDescriptor.setSwaggerApiResources(buildSwaggerResources(openAPI));
+        swaggerDescriptor.setSwaggerApiResources(this.buildSwaggerResources(openAPI));
         return swaggerDescriptor;
+    }
 
 
+    private String getServiceUrl(String serviceUrl){
+        String host = null;
+        try {
+            URL url = new URL(serviceUrl);
+            host = url.getProtocol() + "//" + url.getHost();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return host;
     }
 
     public List<SwaggerDescriptor> getSwaggerApiResources(List<String> swaggerUrls) {
@@ -136,6 +173,39 @@ public class SwaggerHelper {
                     operationParametersList.add(operationParameters);
                 });
         return operationParametersList;
+    }
+
+    private void normalizeSwaggerApiResource(SwaggerApiResource swaggerApiResource, String serverUrl) {
+
+        swaggerApiResource.setPathParams(getNormalizedPathParams(swaggerApiResource.getResourcePath()));
+    }
+
+
+    private List<String> getNormalizedPathParams(String path) {
+
+        List<String> params= new ArrayList<>();
+
+        if (isBracesInPath(path)) {
+
+            int openBracePos = path.indexOf("{");
+
+            do {
+                int closeBracePos = path.indexOf("}", openBracePos);
+                if (closeBracePos == -1) {
+                    logger.info("Invalid Resource Path Braces in path: " + path);
+                }
+                else {
+                    params.add(path.substring(openBracePos + 1, closeBracePos));
+                    openBracePos = path.indexOf("{", closeBracePos + 1);
+                }
+            } while(openBracePos != -1);
+        }
+        return params;
+    }
+
+
+    private boolean isBracesInPath(String path) {
+        return path.contains("{") && path.contains("}");
     }
 
 }
