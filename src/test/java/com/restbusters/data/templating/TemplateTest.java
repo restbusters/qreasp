@@ -21,12 +21,6 @@ import java.lang.invoke.MethodHandles;
  */
 public class TemplateTest {
 
-    private final String baseDir = "src/test/resources";
-    private final String templateDir = "/payload/template/";
-    private final String dataDir = "/payload/test_data/";
-    private final String jsonSource = dataDir + "test_cases_exported.json";
-    private final String jsonSource1 = dataDir + "test_pizza_ordering.json";
-    private final String templateName = "jsonTestParamTemplate.ftl";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final String[] extension = { "ftl", "json" };
     private TemplateManager templateManager;
@@ -78,7 +72,7 @@ public class TemplateTest {
         this.templateManager.processTemplateWithJsonInput("sample3", "0.1", jsonPayload);
     }
 
-    @Test(description = "Check for Illegal argument exception", priority = 6, expectedExceptions = InvalidReferenceException.class)
+    @Test(description = "Check for InvalidReferenceException", priority = 6, expectedExceptions = InvalidReferenceException.class)
     private void test_invalid_payload_input() throws TemplateException, RecordNotFound, IOException {
         String jsonPayload = "{\"status\":\"fromInput\"}";
         this.templateManager.processTemplateWithJsonInput("sample3", "0.1", jsonPayload);
