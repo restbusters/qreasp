@@ -49,7 +49,7 @@ public class TemplateManager {
         return TemplateLoaderHelper.jsonToJson(this.freemarkerConfig, templateHolder);
     }
 
-    public String processTemplateWithJsonInput(String templateName, String version, @Nullable String jsonPayload) throws RecordNotFound, TemplateException, IOException {
+    public String processTemplateWithJsonInput(String templateName, String version, String jsonPayload) throws RecordNotFound, TemplateException, IOException {
         validateTemplateAndVersion(templateName, version);
         TemplateHolder templateHolder = findTemplate(templateName, version);
         if(StringUtils.isBlank(jsonPayload)){
