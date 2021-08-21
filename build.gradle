@@ -34,7 +34,7 @@ compileJava {
 
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
-version = '0.0.29'
+version = '0.0.32'
 
 dependencies {
     api 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
