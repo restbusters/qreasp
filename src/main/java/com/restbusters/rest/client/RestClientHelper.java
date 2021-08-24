@@ -408,7 +408,12 @@ public class RestClientHelper {
         } else if (httpMethod.equalsIgnoreCase(HttpMethods.PATCH.getValue())) {
             builder.patch(this.createRequestBody(requestBody, contentType));
         } else if (httpMethod.equalsIgnoreCase(HttpMethods.DELETE.getValue())) {
-            builder.patch(this.createRequestBody(requestBody, contentType));
+            if(requestBody == null){
+                builder.delete();
+            }
+            else {
+                builder.delete(this.createRequestBody(requestBody, contentType));
+            }
         } else if (httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
             builder.get();
         }

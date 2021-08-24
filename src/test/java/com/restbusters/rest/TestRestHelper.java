@@ -168,9 +168,16 @@ public class TestRestHelper {
     }
 
     @Test
-    public void testDoDeleteRequest() throws IOException {
-        HttpRestRequest httpRestRequest = new HttpRestRequest(HttpMethods.PUT.getValue(), this.commonUrl);
+    public void testDoDeleteRequestWithRequestBody() throws IOException {
+        HttpRestRequest httpRestRequest = new HttpRestRequest(HttpMethods.DELETE.getValue(), this.commonUrl);
         httpRestRequest.setRequestBody(this.requestBody);
+        Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
+        Assert.assertTrue(response.code() == 200);
+    }
+
+    @Test
+    public void testDoDeleteRequestWithNoBody() throws IOException {
+        HttpRestRequest httpRestRequest = new HttpRestRequest(HttpMethods.DELETE.getValue(), this.commonUrl);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRestRequest);
         Assert.assertTrue(response.code() == 200);
     }
