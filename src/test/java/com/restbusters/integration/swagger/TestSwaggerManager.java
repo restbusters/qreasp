@@ -3,6 +3,7 @@ package com.restbusters.integration.swagger;
 import com.restbusters.exception.RecordNotFound;
 import com.restbusters.integraton.swagger.OpenApiV3Manager;
 import com.restbusters.integraton.swagger.SwaggerApiResourceFilter;
+import com.restbusters.integraton.swagger.SwaggerDescriptorHelper;
 import com.restbusters.integraton.swagger.SwaggerManager;
 import com.restbusters.integraton.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
@@ -29,7 +30,7 @@ public class TestSwaggerManager {
     private final String openApiUrl = "https://petstore3.swagger.io/api/v3/openapi.json";
     private List<String> swaggerUrls;
     private List<SwaggerDescriptor> swaggerDescriptors;
-    private final int swaggerSize = 10;
+    private final int swaggerSize = 3;
     private String jsonContent;
 
 
@@ -91,6 +92,18 @@ public class TestSwaggerManager {
     public void build_swagger_from_json_content(){
         SwaggerDescriptor swaggerDescriptor = SwaggerManager.getInstance().getSwaggerDescriptorFromSwaggerContent(this.jsonContent);
         Assert.assertNotNull(swaggerDescriptor);
+    }
+
+    @Test(enabled = true)
+    public void build_descriptor_with_swagger_helper(){
+        SwaggerDescriptorHelper.getInstance().initNoneAuthSwaggers(this.swaggerUrls);
+        Assert.assertTrue(SwaggerDescriptorHelper.getInstance().getSwaggerDescriptor().size() == this.swaggerUrls.size());
+    }
+
+    @Test(enabled = true)
+    public void swagger_helper_search_api_resource() throws RecordNotFound {
+        SwaggerDescriptorHelper.getInstance().initNoneAuthSwaggers(this.swaggerUrls);
+        Assert.assertNotNull(SwaggerDescriptorHelper.getInstance().fetchApiResource("Swagger Petstore", "Finds Pets by status"));
     }
 
 

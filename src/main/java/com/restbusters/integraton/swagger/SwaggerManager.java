@@ -68,6 +68,7 @@ public class SwaggerManager {
                 apiResource = createSwaggerApiResource(pathItem.getDelete(), resourcePath, HttpMethod.DELETE.name());
             }
             this.normalizeSwaggerApiResource(apiResource, serverUrl);
+            apiResourceList.add(apiResource);
 
         });
         return apiResourceList;
