@@ -59,7 +59,7 @@ public class SwaggerDescriptorHelper {
         if(StringUtils.isBlank(apiTitle)){
             throw new IllegalArgumentException("Invalid argument apiTitle: " + apiTitle);
         }
-        if(StringUtils.isBlank(apiTitle)){
+        if(StringUtils.isBlank(operationIdOrSummary)){
             throw new IllegalArgumentException("Invalid argument operationIdOrSummary: " + operationIdOrSummary);
         }
         return SwaggerApiResourceFilter.fetchApiResource(this.swaggerDescriptors, apiTitle, operationIdOrSummary);
