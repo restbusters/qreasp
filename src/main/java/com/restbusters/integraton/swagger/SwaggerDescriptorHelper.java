@@ -74,6 +74,38 @@ public class SwaggerDescriptorHelper {
         return this.swaggerDescriptors;
     }
 
+    protected static SwaggerApiResource normalizeSwaggerApiResource(SwaggerApiResource swaggerApiResource, String serverUrl) {
+        swaggerApiResource.setPathParams(getNormalizedPathParams(swaggerApiResource.getResourcePath()));
+        return swaggerApiResource;
+    }
+
+    private static List<String> getNormalizedPathParams(String path) {
+
+        List<String> params= new ArrayList<>();
+
+        if (isBracesInPath(path)) {
+
+            int openBracePos = path.indexOf("{");
+
+            do {
+                int closeBracePos = path.indexOf("}", openBracePos);
+                if (closeBracePos == -1) {
+                    logger.info("Invalid Resource Path Braces in path: " + path);
+                }
+                else {
+                    params.add(path.substring(openBracePos + 1, closeBracePos));
+                    openBracePos = path.indexOf("{", closeBracePos + 1);
+                }
+            } while(openBracePos != -1);
+        }
+        return params;
+    }
+
+
+    private static boolean isBracesInPath(String path) {
+        return path.contains("{") && path.contains("}");
+    }
+
 
 
 }
