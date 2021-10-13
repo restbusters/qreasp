@@ -59,26 +59,33 @@ public class OpenApiV3Manager {
             PathItem pathItem = entry.getValue();
             String resourcePath = serverUrl + entry.getKey();
             if (pathItem.getGet() != null) {
-                apiResourceList.add(createSwaggerApiResource(pathItem.getGet(), resourcePath, HttpMethod.GET.name()));
+                Operation getOperation = pathItem.getGet();
+                SwaggerApiResource getApiResource = createSwaggerApiResource(getOperation, resourcePath, HttpMethod.GET.name());
+                getApiResource = SwaggerDescriptorHelper.normalizeSwaggerApiResource(getApiResource, serverUrl);
+                apiResourceList.add(setSwaggerApiResource(schemas, getApiResource, getOperation));
             }
             if (pathItem.getPost() != null) {
                 Operation postOperation = pathItem.getPost();
                 SwaggerApiResource postSwaggerApiResource = createSwaggerApiResource(postOperation, resourcePath, HttpMethod.POST.name());
+                postSwaggerApiResource = SwaggerDescriptorHelper.normalizeSwaggerApiResource(postSwaggerApiResource, serverUrl);
                 apiResourceList.add(setSwaggerApiResource(schemas, postSwaggerApiResource, postOperation));
             }
             if (pathItem.getPut() != null) {
                 Operation putOperation = pathItem.getPut();
                 SwaggerApiResource putSwaggerApiResource = createSwaggerApiResource(putOperation, resourcePath, HttpMethod.PUT.name());
+                putSwaggerApiResource = SwaggerDescriptorHelper.normalizeSwaggerApiResource(putSwaggerApiResource, serverUrl);
                 apiResourceList.add(setSwaggerApiResource(schemas, putSwaggerApiResource, putOperation));
             }
             if (pathItem.getPatch() != null) {
                 Operation patchOperation = pathItem.getPatch();
                 SwaggerApiResource patchSwaggerApiResource = createSwaggerApiResource(patchOperation, resourcePath, HttpMethod.PATCH.name());
+                patchSwaggerApiResource = SwaggerDescriptorHelper.normalizeSwaggerApiResource(patchSwaggerApiResource, serverUrl);
                 apiResourceList.add(setSwaggerApiResource(schemas, patchSwaggerApiResource, patchOperation));
             }
             if (pathItem.getDelete() != null) {
                 Operation deleteOperation = pathItem.getDelete();
                 SwaggerApiResource deleteSwaggerApiResource = createSwaggerApiResource(deleteOperation, resourcePath, HttpMethod.DELETE.name());
+                deleteSwaggerApiResource = SwaggerDescriptorHelper.normalizeSwaggerApiResource(deleteSwaggerApiResource, serverUrl);
                 apiResourceList.add(setSwaggerApiResource(schemas, deleteSwaggerApiResource, deleteOperation));
             }
 
