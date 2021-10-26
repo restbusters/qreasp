@@ -5,7 +5,7 @@
     },
     "urlParams": {"projectName":null, "repoName": null},
     "queryParams": {"since":null, "until":null, "start": null, "limit":"100"},
-    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits",
+    "uri": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits",
     "httpMethod": "GET"
   },
   "getCommitByHash": {
@@ -14,7 +14,7 @@
     },
     "urlParams": {"projectName":null, "repoName": null, "gitHash": null},
     "queryParams": null,
-    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits/{gitHash}",
+    "uri": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits/{gitHash}",
     "httpMethod": "GET"
   },
   "getCommitsInRangeApiV2": {
@@ -23,7 +23,7 @@
     },
     "urlParams": {"workSpace":null, "repoName": null},
     "queryParams": null,
-    "url": "/2.0/repositories/{workSpace}/{repoName}/commits",
+    "uri": "/2.0/repositories/{workSpace}/{repoName}/commits",
     "httpMethod": "GET"
   },
   "getTags": {
@@ -32,13 +32,13 @@
     },
     "urlParams": {"projectName":null, "repoName": null},
     "queryParams": {"start":"0", "limit": "25"},
-    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/tags",
+    "uri": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/tags",
     "httpMethod": "GET"
   },
   "getFileContent": {
     "urlParams": {"projectName":null, "repoName": null, "filePath": null},
     "queryParams": {"at":null},
-    "url": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/raw/{filePath}",
+    "uri": "/rest/api/1.0/projects/{projectName}/repos/{repoName}/raw/{filePath}",
     "httpMethod": "GET"
   },
   "getLastXCommits": {
@@ -47,7 +47,7 @@
     },
     "urlParams": {"projectName":null, "repoName": null},
     "queryParams": {"id":"refs/tags/0.6.0", "limit": "50"},
-    "url": "/rest/api/1.0/projects/rest/api/latest/projects/{projectName}/repos/{repoName}/commits",
+    "uri": "/rest/api/1.0/projects/rest/api/latest/projects/{projectName}/repos/{repoName}/commits",
     "httpMethod": "GET"
   }
 }

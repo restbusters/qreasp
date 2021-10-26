@@ -6,7 +6,6 @@ package com.restbusters.integration.stash.client;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.integraton.stash.client.StashRestClient;
 import com.restbusters.integraton.stash.client.model.StashResponse;
-import com.restbusters.integraton.stash.client.resoures.StashResourceManager;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.util.common.RBFileUtils;
 import com.restbusters.util.wiremock.WireMockManager;
@@ -19,6 +18,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.invoke.MethodHandles;
+import java.util.regex.Pattern;
 
 public class StashRestClientTest {
 
@@ -26,8 +26,7 @@ public class StashRestClientTest {
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private StashRestClient stashRestClient;
     private String token;
-    private String url;;
-    private StashResourceManager rc;
+    private String url;
     private WireMockManager wireMockManager;
 
     @BeforeClass(alwaysRun = true)
@@ -42,7 +41,6 @@ public class StashRestClientTest {
         //this.stashRestClient = new StashRestClient(url, token, "DummyProject", "dummyRepoName");
         //this.stashRestClient = new StashRestClient(url,  "dummyOne", "findDummyOne", "Restb", "m-test-rails");
         this.stashRestClient = new StashRestClient(url, "dummyToken", "myproject", "myrepo");
-        this.rc = StashResourceManager.getInstance();
         String wireMockStubs = RBFileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
         this.wireMockManager = WireMockManager.getInstance(wireMockStubs);
     }
@@ -82,6 +80,13 @@ public class StashRestClientTest {
     private void getCommitByHash() throws Exception {
         Response response = stashRestClient.getCommitByHash("dummyGitHash");
         Assert.assertEquals(response.code(), 200);
+    }
+
+    @Test
+    private void twoStashClients() throws Exception {
+        StashRestClient stashRestClient = new StashRestClient("http://newclient.com", "newDummyToken", "newProject", "newRepo");
+        Response response = stashRestClient.getCommitByHash("dummyGitHash");
+        Assert.assertEquals(response.code(), 404);
     }
 
 }

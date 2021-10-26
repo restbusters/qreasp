@@ -69,4 +69,9 @@ public class TeamCityClientTest {
         logger.info(rc.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body));
     }
 
+    @Test(description = "Check for Illegal argument exception", priority = 5, expectedExceptions = IllegalArgumentException.class)
+    private void test_invalid_json() throws Exception {
+        new TeamCityClient(null, token);
+    }
+
 }

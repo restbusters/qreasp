@@ -6,7 +6,7 @@
     },
     "urlParams": null,
     "queryParams": null,
-    "url": "/app/rest/builds",
+    "uri": "/app/rest/builds",
     "httpMethod": "GET",
     "contentType": null
   },
@@ -16,7 +16,7 @@
     },
     "urlParams": null,
     "queryParams": null,
-    "url": "/app/rest/builds/id:{id}",
+    "uri": "/app/rest/builds/id:{id}",
     "httpMethod": "GET"
   },
   "getBuildStatisticByBuildId": {
@@ -24,7 +24,7 @@
     "headers": null,
     "urlParams": null,
     "queryParams": null,
-    "url": "/app/rest/builds/id:{id}/statistics",
+    "uri": "/app/rest/builds/id:{id}/statistics",
     "httpMethod": "GET",
     "contentType": null
   },
@@ -33,7 +33,7 @@
     "headers": null,
     "urlParams": null,
     "queryParams": null,
-    "url": "/app/rest/changes/id:{id}",
+    "uri": "/app/rest/changes/id:{id}",
     "httpMethod": "GET",
     "contentType": null
   },
@@ -42,7 +42,7 @@
     "headers": {"Accept": "application/json"},
     "urlParams": null,
     "queryParams": null,
-    "url": "/app/rest/buildQueue",
+    "uri": "/app/rest/buildQueue",
     "httpMethod": "POST",
     "contentType": "application/json"
   }

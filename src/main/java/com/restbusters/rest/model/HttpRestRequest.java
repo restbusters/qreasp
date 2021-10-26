@@ -15,6 +15,7 @@ public class HttpRestRequest {
 
     private String httpMethod;
     private String url;
+    private String uri;
     private Map<String,String> urlParams;
     private Map<String,String> queryParams;
     private Map<String,String> headers;
