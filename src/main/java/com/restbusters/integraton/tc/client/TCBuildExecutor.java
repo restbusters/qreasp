@@ -163,10 +163,10 @@ public class TCBuildExecutor {
                     e.printStackTrace();
                 }
             }
-            // once you've submitted your last job to the service it should be shut down
-            threadPool.shutdown();
-            // wait for the threads to finish if necessary
-            threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         }
+        // once you've submitted your last job to the service it should be shut down
+        threadPool.shutdown();
+        // wait for the threads to finish if necessary
+        threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
 }
