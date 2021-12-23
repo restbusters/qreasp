@@ -29,13 +29,13 @@
     },
     "response": {
       "status": 200,
-      "body": "{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\",\"buildType\":{\"id\":\"My_Build_Type_ID\",\"name\":\"Deploy to your env\",\"projectName\":\"My_Build_Type_ID\",\"projectId\":\"My_Build_Type_ID\",\"href\":\"/app/rest/buildTypes/id:buildTypeId\",\"webUrl\":\"https://server.com/viewType.html?buildTypeId=buildTypeId\"},\"queuedDate\":\"20200325T170159+0000\",\"triggered\":{\"type\":\"user\",\"date\":\"20200325T170159+0000\",\"user\":{\"username\":\"user\",\"name\":\"User Name\",\"id\":1496,\"href\":\"/app/rest/users/id:1496\"}},\"changes\":{\"href\":\"/app/rest/changes?locator=build:(id:2750959)\"},\"revisions\":{\"count\":0},\"compatibleAgents\":{\"href\":\"/app/rest/agents?locator=compatible:(build:(id:2750959))\"},\"artifacts\":{\"href\":\"/app/rest/builds/id:2750959/artifacts/children/\"},\"properties\":{\"count\":27,\"property\":[{\"name\":\"artifactory-repository\",\"value\":\"core-service\",\"inherited\":true}]},\"snapshot-dependencies\":{\"count\":2,\"build\":[{\"id\":2750957,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750958,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750958\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750958\"}]}}\""
+      "body": "{\"id\":2750960,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\",\"buildType\":{\"id\":\"My_Build_Type_ID\",\"name\":\"Deploy to your env\",\"projectName\":\"My_Build_Type_ID\",\"projectId\":\"My_Build_Type_ID\",\"href\":\"/app/rest/buildTypes/id:buildTypeId\",\"webUrl\":\"https://server.com/viewType.html?buildTypeId=buildTypeId\"},\"queuedDate\":\"20200325T170159+0000\",\"triggered\":{\"type\":\"user\",\"date\":\"20200325T170159+0000\",\"user\":{\"username\":\"user\",\"name\":\"User Name\",\"id\":1496,\"href\":\"/app/rest/users/id:1496\"}},\"changes\":{\"href\":\"/app/rest/changes?locator=build:(id:2750959)\"},\"revisions\":{\"count\":0},\"compatibleAgents\":{\"href\":\"/app/rest/agents?locator=compatible:(build:(id:2750959))\"},\"artifacts\":{\"href\":\"/app/rest/builds/id:2750959/artifacts/children/\"},\"properties\":{\"count\":27,\"property\":[{\"name\":\"artifactory-repository\",\"value\":\"core-service\",\"inherited\":true}]},\"snapshot-dependencies\":{\"count\":2,\"build\":[{\"id\":2750957,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\""
     }
   },
   {
     "request": {
       "method": "GET",
-      "urlPattern": "/app/rest/builds/id:([0-9]*)",
+      "urlPattern": "/app/rest/builds/id:2750960",
       "headers": {
         "Authorization": {
           "matches": ".*"
@@ -47,7 +47,7 @@
     },
     "response": {
       "status": 200,
-      "body": "{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\",\"buildType\":{\"id\":\"My_Build_Type_ID\",\"name\":\"Deploy to your env\",\"projectName\":\"My_Build_Type_ID\",\"projectId\":\"My_Build_Type_ID\",\"href\":\"/app/rest/buildTypes/id:buildTypeId\",\"webUrl\":\"https://server.com/viewType.html?buildTypeId=buildTypeId\"},\"queuedDate\":\"20200325T170159+0000\",\"triggered\":{\"type\":\"user\",\"date\":\"20200325T170159+0000\",\"user\":{\"username\":\"user\",\"name\":\"User Name\",\"id\":1496,\"href\":\"/app/rest/users/id:1496\"}},\"changes\":{\"href\":\"/app/rest/changes?locator=build:(id:2750959)\"},\"revisions\":{\"count\":0},\"compatibleAgents\":{\"href\":\"/app/rest/agents?locator=compatible:(build:(id:2750959))\"},\"artifacts\":{\"href\":\"/app/rest/builds/id:2750959/artifacts/children/\"},\"properties\":{\"count\":27,\"property\":[{\"name\":\"artifactory-repository\",\"value\":\"core-service\",\"inherited\":true}]},\"snapshot-dependencies\":{\"count\":2,\"build\":[{\"id\":2750957,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750958,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750958\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750958\"}]}}\""
+      "body": "{\"id\":2750960,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\",\"buildType\":{\"id\":\"My_Build_Type_ID\",\"name\":\"Deploy to your env\",\"projectName\":\"My_Build_Type_ID\",\"projectId\":\"My_Build_Type_ID\",\"href\":\"/app/rest/buildTypes/id:buildTypeId\",\"webUrl\":\"https://server.com/viewType.html?buildTypeId=buildTypeId\"},\"queuedDate\":\"20200325T170159+0000\",\"triggered\":{\"type\":\"user\",\"date\":\"20200325T170159+0000\",\"user\":{\"username\":\"user\",\"name\":\"User Name\",\"id\":1496,\"href\":\"/app/rest/users/id:1496\"}},\"changes\":{\"href\":\"/app/rest/changes?locator=build:(id:2750959)\"},\"revisions\":{\"count\":0},\"compatibleAgents\":{\"href\":\"/app/rest/agents?locator=compatible:(build:(id:2750959))\"},\"artifacts\":{\"href\":\"/app/rest/builds/id:2750959/artifacts/children/\"},\"properties\":{\"count\":27,\"property\":[{\"name\":\"artifactory-repository\",\"value\":\"core-service\",\"inherited\":true}]},\"snapshot-dependencies\":{\"count\":2,\"build\":[{\"id\":2750957,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\""
     }
   },
   {
@@ -120,6 +120,128 @@
     "response": {
       "status": 200,
       "body": "{\"id\":\"dummyGitHash\",\"displayId\":\"w13cef8gwbe\",\"author\":{\"name\":\"name\",\"emailAddress\":\"name@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"authorTimestamp\":1588164087000,\"committer\":{\"name\":\"dummyName\",\"emailAddress\":\"dummyName@dummyServer.com\",\"id\":123,\"displayName\":\"display name\",\"active\":true,\"slug\":\"dummyName\",\"type\":\"NORMAL\",\"links\":{\"self\":[{\"href\":\"https://stash.dummyServer.com/users/dummyName\"}]}},\"committerTimestamp\":1588164087000,\"message\":\"dummyMessage\",\"parents\":[{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"},{\"id\":\"123b2b1a01123e376791fcf84123b14c03639wy2\",\"displayId\":\"123b2b1a011\"}],\"properties\":{\"jira-key\":[\"DUMMY-123\"]}}"
+    }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "Started",
+    "newScenarioState": "1 job in queue",
+    "request": {
+      "method": "POST",
+      "urlPattern": "/app/rest/buildQueue",
+      "headers": {
+        "Authorization": {
+          "matches": ".*"
+        },
+        "Accept": {
+          "matches": "application/json"
+        }
+      },
+      "bodyPatterns": [
+        {
+          "equalTo": "{\"buildType\":{\"id\":\"testBuildConfigId\",\"projectId\":\"testProject\"}}"
+        }
+      ]
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\""    }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "1 job in queue",
+    "newScenarioState": "2 job in queue",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\"" }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "2 job in queue",
+    "newScenarioState": "1 job running",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"number\":\"195\",\"status\":\"SUCCESS\",\"state\":\"running\",\"percentageComplete\":271,\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\""}
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "1 job running",
+    "newScenarioState": "2 job running",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"number\":\"195\",\"status\":\"SUCCESS\",\"state\":\"running\",\"percentageComplete\":271, \"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\""    }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "2 job running",
+    "newScenarioState": "3 job running",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"number\":\"195\",\"status\":\"SUCCESS\",\"state\":\"running\",\"percentageComplete\":272, \"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\"" }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "3 job running",
+    "newScenarioState": "1 job finished",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"number\":\"195\",\"status\":\"SUCCESS\",\"state\":\"running\",\"percentageComplete\":273, \"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\""    }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "1 job finished",
+    "newScenarioState": "2 job finished",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"number\":\"195\",\"status\":\"SUCCESS\",\"state\":\"finished\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\"" }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "2 job finished",
+    "newScenarioState": "3 job finished",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"number\":\"195\",\"status\":\"SUCCESS\",\"state\":\"finished\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750957\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750957\"},{\"id\":2750959,\"buildTypeId\":\"My_Build_Type_ID\",\"state\":\"queued\",\"branchName\":\"<default>\",\"defaultBranch\":true,\"href\":\"/app/rest/buildQueue/id:2750959\",\"webUrl\":\"https://server.com/viewQueued.html?itemId=2750959\"}]}}\""    }
+  },
+  {
+    "scenarioName": "run job success",
+    "requiredScenarioState": "3 job finished",
+    "newScenarioState": "Started",
+    "request": {
+      "method": "GET",
+      "urlPattern": "/app/rest/builds/id:2750959"
+    },
+    "response": {
+      "status": 200,
+      "body": "{\"id\":2750959,\"buildTypeId\":\"test_job\",\"number\":\"195\",\"status\":\"SUCCESS\",\"state\":\"finished\", \\\"branchName\\\":\\\"<default>\\\",\\\"defaultBranch\\\":true,\\\"href\\\":\\\"/app/rest/buildQueue/id:2750957\\\",\\\"webUrl\\\":\\\"https://server.com/viewQueued.html?itemId=2750957\\\"},{\\\"id\\\":2750959,\\\"buildTypeId\\\":\\\"My_Build_Type_ID\\\",\\\"state\\\":\\\"queued\\\",\\\"branchName\\\":\\\"<default>\\\",\\\"defaultBranch\\\":true,\\\"href\\\":\\\"/app/rest/buildQueue/id:2750959\\\",\\\"webUrl\\\":\\\"https://server.com/viewQueued.html?itemId=2750959\\\"}]}}\\\"\"}"
     }
   }
 ]

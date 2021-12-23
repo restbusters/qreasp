@@ -57,7 +57,7 @@ public class TeamCityClient {
         return null;
     }
 
-    public Response getBuildById(String buildId) throws Exception {
+    public Response getBuildById(String buildId){
         Map<String, String> urlParams = new HashMap<>();
         urlParams.put("id", buildId);
         HttpRestRequest httpRestRequest = this.tcRequests.getGetBuildById();
@@ -65,7 +65,7 @@ public class TeamCityClient {
         return executeCall(httpRestRequest);
     }
 
-    public Response postBuild(String jsonRequestBody) throws Exception {
+    public Response postBuild(String jsonRequestBody) {
         HttpRestRequest httpRestRequest = this.tcRequests.getPostBuild();
         httpRestRequest.setRequestBody(jsonRequestBody);
         return executeCall(httpRestRequest);

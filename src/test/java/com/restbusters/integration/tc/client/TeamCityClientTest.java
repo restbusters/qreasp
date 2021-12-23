@@ -2,11 +2,16 @@
 package com.restbusters.integration.tc.client;
 
 import com.jayway.jsonpath.JsonPath;
+import com.restbusters.integraton.tc.client.TCBuildExecutor;
+import com.restbusters.integraton.tc.client.TCHelper;
 import com.restbusters.integraton.tc.client.TeamCityClient;
+import com.restbusters.integraton.tc.client.model.post.job.PostBuild;
+import com.restbusters.integraton.tc.client.model.task.BuildExecutorTask;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.util.common.RBFileUtils;
 import com.restbusters.util.wiremock.WireMockManager;
 import okhttp3.Response;
+import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -15,6 +20,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class TeamCityClientTest {
 
@@ -25,6 +33,7 @@ public class TeamCityClientTest {
     private String url;
     private GlobalResourceManager rc;
     private WireMockManager wireMockManager;
+    private TCBuildExecutor tcBuildExecutor;
 
     @BeforeClass(alwaysRun = true)
     private void setUp() throws Exception {
@@ -53,8 +62,9 @@ public class TeamCityClientTest {
 
     @Test
     private void getBuildById() throws Exception {
-        Response response = tcClient.getBuildById("2750959");
+        Response response = tcClient.getBuildById("2750960");
         String body = response.body().string();
+        logger.info(body);
         Assert.assertEquals("queued", JsonPath.read(body, "$.state"));
         logger.info(rc.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body));
     }
@@ -69,9 +79,25 @@ public class TeamCityClientTest {
         logger.info(rc.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(body));
     }
 
-    @Test(description = "Check for Illegal argument exception", priority = 5, expectedExceptions = IllegalArgumentException.class)
+    @Test(description = "Check for Illegal argument exception", expectedExceptions = IllegalArgumentException.class)
     private void test_invalid_json() throws Exception {
         new TeamCityClient(null, token);
+    }
+
+    @Test()
+    private void test_executor() throws Exception {
+        PostBuild postBuild = TCHelper.buildTeamCityTriggerBuildRequest("testProject", "testBuildConfigId", null, null, null);
+        BuildExecutorTask buildExecutorTask = new BuildExecutorTask();
+        buildExecutorTask.setDescription("Test desc");
+        List<PostBuild> postBuilds = new ArrayList<>();
+        postBuilds.add(postBuild);
+        buildExecutorTask.setPostBuild(postBuilds);
+        buildExecutorTask.setMaxAttemptBuildCounter(10);
+        buildExecutorTask.setMaxWaitTime(3000);
+        this.tcBuildExecutor = new TCBuildExecutor(buildExecutorTask, this.tcClient);
+        this.tcBuildExecutor.executeBuilds();
+        Map<String,String> result = this.tcBuildExecutor.getBuildMetaData();
+        Assert.assertNotNull(MapUtils.isNotEmpty(result));
     }
 
 }
