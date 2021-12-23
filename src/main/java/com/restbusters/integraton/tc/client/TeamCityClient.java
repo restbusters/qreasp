@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * @author smatsaylo on 6/2/21
+ * @author smatsaylo
  * @project tc-client
  */
 public class TeamCityClient {

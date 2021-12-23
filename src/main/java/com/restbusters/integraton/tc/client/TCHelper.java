@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Sasha Matsaylo on 12/22/21
+ * @author Sasha Matsaylo
  * @project qreasp
  */
 public class TCHelper {

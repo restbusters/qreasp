@@ -1,7 +1,7 @@
 package com.restbusters.integraton.tc.client;
 
 /**
- * @author Sasha Matsaylo on 12/25/21
+ * @author Sasha Matsaylo
  * @project qreasp
  */
 public class TcConstant {

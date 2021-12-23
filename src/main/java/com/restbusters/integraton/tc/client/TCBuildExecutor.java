@@ -24,7 +24,7 @@ import java.util.concurrent.*;
 import static com.jayway.jsonpath.JsonPath.read;
 
 /**
- * @author Sasha Matsaylo on 12/25/21
+ * @author Sasha Matsaylo
  * @project qreasp
  */
 public class TCBuildExecutor {
