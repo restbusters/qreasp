@@ -9,7 +9,7 @@ import lombok.Setter;
 public class BuildType {
 
     @JsonProperty("id")
-    private String id;
+    private String buildTypeId;
 
     @JsonProperty("projectId")
     private String projectId;
