@@ -154,15 +154,6 @@ public class TCBuildExecutor {
                     return null;
                 }
             }));
-            for (Future f : futures) {
-                try {
-                    f.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         // once you've submitted your last job to the service it should be shut down
         threadPool.shutdown();
