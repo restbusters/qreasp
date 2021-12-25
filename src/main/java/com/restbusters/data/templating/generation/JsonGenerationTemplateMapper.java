@@ -10,11 +10,9 @@
 
 package com.restbusters.data.templating.generation;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restbusters.resource.GlobalResourceManager;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

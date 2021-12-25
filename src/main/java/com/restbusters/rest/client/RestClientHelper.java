@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author amatsaylo on 9/17/18
+ * @author Sasha Matsaylo on 9/17/18
  * @project qreasp
  */
 public class RestClientHelper {

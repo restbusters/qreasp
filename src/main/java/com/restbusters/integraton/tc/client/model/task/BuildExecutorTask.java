@@ -2,6 +2,7 @@ package com.restbusters.integraton.tc.client.model.task;
 
 import com.restbusters.integraton.tc.client.model.post.job.PostBuild;
 import lombok.Data;
+
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class BuildExecutorTask {
     private String taskName;
     private String taskStatus;
     private String description;
-    private Map<String,String> buildMetaData;
+    private Map<String,BuildExecResult> buildMetaData;
     private int maxAttemptBuildCounter;
     private int maxWaitTime;
 

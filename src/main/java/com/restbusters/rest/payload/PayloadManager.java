@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author amatsaylo on 10/15/18
+ * @author Sasha Matsaylo on 10/15/18
  * @project qreasp
  */
 

@@ -7,7 +7,7 @@ import lombok.Setter;
 
 /**
  * @author smatsaylo on 6/2/21
- * @project tc-client
+ * @project qreasp
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Setter

@@ -14,5 +14,6 @@ public class TcConstant {
     public static final String BUILD_STATE_RUNNING = "running";
     public static final String BUILD_STATE_FINISHED = "finished";
     public static final String BUILD_STATE_QUEUED = "queued";
-    public static final String EXCEPTION_MESSAGE_QUEUE_EXCEEDED_TIME = "Build has exceeded allowed time in the queue";
+    public static final String ERROR_QUEUE_EXCEEDED_TIME = "Build has exceeded allowed time in the queue";
+    public static final String ERROR_FAILED_TO_TRIGGER_BUILD = "Failed to trigger build";
 }
