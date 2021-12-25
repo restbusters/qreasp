@@ -1,14 +1,13 @@
 package com.restbusters.integraton.tc.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.base.Stopwatch;
-import com.restbusters.integraton.tc.client.model.post.job.*;
+import com.restbusters.integraton.tc.client.model.post.job.PostBuild;
+import com.restbusters.integraton.tc.client.model.task.BuildExecResult;
 import com.restbusters.integraton.tc.client.model.task.BuildExecutorTask;
 import com.restbusters.resource.GlobalResourceManager;
+import com.restbusters.util.common.TaskStatus;
 import okhttp3.Response;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -31,34 +29,46 @@ public class TCBuildExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private TeamCityClient teamCityClient;
-    private Map<String, String> buildMetaData;
+    private Map<String, BuildExecResult> buildMetaData;
     private BuildExecutorTask buildExecutorTask;
 
     public TCBuildExecutor(BuildExecutorTask buildExecutorTask, TeamCityClient teamCityClient) {
         this.buildExecutorTask = buildExecutorTask;
         this.teamCityClient = teamCityClient;
-        this.buildMetaData = new HashMap<>();
+        this.buildMetaData = new ConcurrentHashMap<>();
     }
 
-    private void executeBuild(PostBuild postBuild) {
+    public BuildExecResult executeBuild(PostBuild postBuild) {
+        BuildExecResult buildExecResult = new BuildExecResult();
+        buildExecResult.setState(TaskStatus.STARTED.getValue());
         this.threadSleep(2000);
         String buildId = null;
+        String triggerRespBody = null;
         try {
             Response triggerJobResp = this.teamCityClient.postBuild(GlobalResourceManager.getInstance().getObjectMapper().writeValueAsString(postBuild));
-            String triggerRespBody = triggerJobResp.body().string();
-            if (!triggerJobResp.isSuccessful()) {
-                buildMetaData.put(postBuild.getBuildType().getBuildTypeId(), triggerRespBody);
-            } else {
-                buildId = readBuildQueueId(triggerRespBody);
-                ifBuildInQueueWait(buildId, this.buildExecutorTask.getMaxAttemptBuildCounter(),
-                        this.buildExecutorTask.getMaxWaitTime());
-                if (whatIsBuildState(buildId).equalsIgnoreCase(TcConstant.BUILD_STATE_QUEUED)) {
-                    throw new IllegalStateException(TcConstant.EXCEPTION_MESSAGE_QUEUE_EXCEEDED_TIME);
+            if(triggerJobResp == null){
+                setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(),TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild );
+            }
+            else {
+                triggerRespBody = triggerJobResp.body().string();
+                if (!triggerJobResp.isSuccessful()) {
+                    buildExecResult.setExecutionMetaData(triggerRespBody);
+                    setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(),TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
+                } else {
+                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(), null, postBuild );
+                    buildId = readBuildQueueId(triggerRespBody);
+                    buildExecResult.setBuildId(buildId);
+                    ifBuildInQueueWait(buildId, this.buildExecutorTask.getMaxAttemptBuildCounter(),
+                            this.buildExecutorTask.getMaxWaitTime());
+                    if (whatIsBuildState(buildId).equalsIgnoreCase(TcConstant.BUILD_STATE_QUEUED)) {
+                        setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(),TcConstant.ERROR_QUEUE_EXCEEDED_TIME, postBuild );
+                        return buildExecResult;
+                    }
+                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(),null, postBuild);
+                    this.ifBuildRunningWait(buildExecResult, this.buildExecutorTask.getMaxAttemptBuildCounter(),
+                            this.buildExecutorTask.getMaxWaitTime());
+                    setExecutionResults(buildExecResult, TaskStatus.FINISHED.getValue(),null, postBuild);
                 }
-                setBuildMetaData(buildId);
-                this.ifBuildRunningWait(buildId, this.buildExecutorTask.getMaxAttemptBuildCounter(),
-                        this.buildExecutorTask.getMaxWaitTime());
-                setBuildMetaData(buildId);
             }
 
         } catch (JsonProcessingException e) {
@@ -68,6 +78,14 @@ public class TCBuildExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return buildExecResult;
+    }
+
+    private void setExecutionResults(BuildExecResult buildExecResult, String taskState, @Nullable  String taskError, PostBuild postBuild){
+        buildExecResult.setState(taskState);
+        buildExecResult.setErrors(taskError);
+        this.buildMetaData.put(postBuild.getBuildType().getBuildTypeId(), buildExecResult);
+        this.buildExecutorTask.setBuildMetaData(this.buildMetaData);
     }
 
     private void ifBuildInQueueWait(String buildQueueId, int maxAttempt, int waitTime) {
@@ -76,7 +94,7 @@ public class TCBuildExecutor {
         boolean isBuildInQueue = true;
         while (isBuildInQueue && buildQueueCounter <= maxAttempt) {
             buildState = this.whatIsBuildState(buildQueueId);
-            if (buildState.equalsIgnoreCase("queued")) {
+            if (buildState.equalsIgnoreCase(TcConstant.BUILD_STATE_QUEUED)) {
                 this.threadSleep(waitTime);
             } else {
                 isBuildInQueue = false;
@@ -106,28 +124,31 @@ public class TCBuildExecutor {
         String buildMetaData = null;
         try {
             Response response = this.teamCityClient.getBuildById(buildId);
-            buildMetaData = response.body().string();
+            if (response != null) {
+                buildMetaData = response.body().string();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return buildMetaData;
     }
 
-    private void setBuildMetaData(String buildId) {
-        String buildMetaData = getBuildMetaData(buildId);
+    private String setBuildMetaData(BuildExecResult buildExecResult) {
+        String buildMetaData = getBuildMetaData(buildExecResult.getBuildId());
         if (StringUtils.isNotBlank(buildMetaData)) {
-            this.buildMetaData.put(read(buildMetaData, TcConstant.JSON_PATH_BUILD_TYPE_ID), buildMetaData);
+            buildExecResult.setExecutionMetaData(buildMetaData);
         }
+        return buildMetaData;
     }
 
-    private void ifBuildRunningWait(String buildId, int maxAttempt, int waitTime) {
+    private void ifBuildRunningWait(BuildExecResult buildExecResult, int maxAttempt, int waitTime) {
         String buildState = null;
         int buildRunningCounter = 0;
         boolean isBuildRunning = true;
         while (isBuildRunning && buildRunningCounter <= maxAttempt) {
-            buildState = this.whatIsBuildState(buildId);
+            buildState = this.whatIsBuildState(buildExecResult.getBuildId());
             if (buildState.equalsIgnoreCase(TcConstant.BUILD_STATE_RUNNING)) {
-                setBuildMetaData(buildId);
+                setBuildMetaData(buildExecResult);
                 this.threadSleep(waitTime);
             } else {
                 isBuildRunning = false;
@@ -136,28 +157,37 @@ public class TCBuildExecutor {
         }
     }
 
-    public Map<String, String> getBuildMetaData() {
-        return buildMetaData;
-    }
-
     public void executeBuilds() throws Exception {
-        //RandomUtils.nextInt(1000, 5000);
-        // create a pool of threads, 10 max jobs will execute in parallel
-        ExecutorService threadPool = Executors.newFixedThreadPool(this.buildExecutorTask.getPostBuild().size());
-        // submit jobs to be executing by the pool
-        // clean resources
+        ExecutorService executorService = Executors.newFixedThreadPool(this.buildExecutorTask.getPostBuild().size());
         List<Future> futures = new ArrayList<Future>();
-        for (PostBuild postBuild : buildExecutorTask.getPostBuild()) {
-            futures.add(threadPool.submit(new Callable<Void>() {
+        for (PostBuild postBuild : this.buildExecutorTask.getPostBuild()) {
+            futures.add(executorService.submit(new Callable<Void>() {
                 public Void call() throws IOException, InterruptedException {
                     executeBuild(postBuild);
                     return null;
                 }
             }));
+            for (Future f : futures) {
+                try {
+                    f.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        // once you've submitted your last job to the service it should be shut down
-        threadPool.shutdown();
-        // wait for the threads to finish if necessary
-        threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+        }
+    }
+
+    public BuildExecutorTask getBuildExecutorTask() {
+        return buildExecutorTask;
     }
 }

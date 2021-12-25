@@ -6,6 +6,7 @@ import com.restbusters.integraton.tc.client.TCBuildExecutor;
 import com.restbusters.integraton.tc.client.TCHelper;
 import com.restbusters.integraton.tc.client.TeamCityClient;
 import com.restbusters.integraton.tc.client.model.post.job.PostBuild;
+import com.restbusters.integraton.tc.client.model.task.BuildExecResult;
 import com.restbusters.integraton.tc.client.model.task.BuildExecutorTask;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.util.common.RBFileUtils;
@@ -90,14 +91,20 @@ public class TeamCityClientTest {
         BuildExecutorTask buildExecutorTask = new BuildExecutorTask();
         buildExecutorTask.setDescription("Test desc");
         List<PostBuild> postBuilds = new ArrayList<>();
+        PostBuild postBuild2 = TCHelper.buildTeamCityTriggerBuildRequest("testProject2", "testBuildConfigId2", null, null, null);
+        PostBuild postBuild3 = TCHelper.buildTeamCityTriggerBuildRequest("testProject3", "testBuildConfigId3", null, null, null);
         postBuilds.add(postBuild);
+        postBuilds.add(postBuild2);
+        postBuilds.add(postBuild3);
         buildExecutorTask.setPostBuild(postBuilds);
         buildExecutorTask.setMaxAttemptBuildCounter(10);
         buildExecutorTask.setMaxWaitTime(3000);
         this.tcBuildExecutor = new TCBuildExecutor(buildExecutorTask, this.tcClient);
         this.tcBuildExecutor.executeBuilds();
-        Map<String,String> result = this.tcBuildExecutor.getBuildMetaData();
-        Assert.assertNotNull(MapUtils.isNotEmpty(result));
+        BuildExecutorTask result = this.tcBuildExecutor.getBuildExecutorTask();
+        Assert.assertNotNull(MapUtils.isNotEmpty(result.getBuildMetaData()));
+        Assert.assertEquals(result.getBuildMetaData().size(), 3);
+        logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(buildExecutorTask));
     }
 
 }

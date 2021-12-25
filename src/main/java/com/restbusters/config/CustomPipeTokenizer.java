@@ -3,7 +3,7 @@ package com.restbusters.config;
 import org.aeonbits.owner.Tokenizer;
 
 /**
- * @author amatsaylo on 10/10/19
+ * @author Sasha Matsaylo on 10/10/19
  * @project qreasp
  */
 

@@ -7,7 +7,7 @@ import okhttp3.Response;
 import java.io.IOException;
 
 /**
- * @author amatsaylo on 9/17/19
+ * @author Sasha Matsaylo on 9/17/19
  * @project qreasp
  */
 

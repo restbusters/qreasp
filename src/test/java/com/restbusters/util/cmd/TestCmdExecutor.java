@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import java.lang.invoke.MethodHandles;
 
 /**
- * @author amatsaylo on 9/27/19
+ * @author Sasha Matsaylo on 9/27/19
  * @project qreasp
  */
 public class TestCmdExecutor {

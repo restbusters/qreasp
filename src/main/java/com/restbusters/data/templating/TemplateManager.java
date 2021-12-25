@@ -15,10 +15,8 @@ import com.restbusters.exception.RecordNotFound;
 import com.restbusters.util.common.GenericUtils;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
-import freemarker.template.TemplateModelException;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

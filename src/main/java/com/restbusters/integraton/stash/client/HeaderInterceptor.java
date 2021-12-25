@@ -13,7 +13,7 @@ import java.lang.invoke.MethodHandles;
 
 
 /**
- * @author amatsaylo on 9/17/19
+ * @author Sasha Matsaylo on 9/17/19
  * @project qreasp
  */
 public class HeaderInterceptor implements Interceptor {

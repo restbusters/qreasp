@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author amatsaylo on 9/17/19
+ * @author Sasha Matsaylo on 9/17/19
  * @project qreasp
  */
 public class TestRestHelper {
