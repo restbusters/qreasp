@@ -41,7 +41,7 @@ public class TCBuildExecutor {
         this.buildMetaData = new LinkedHashMap();
     }
 
-    public BuildExecResult executeBuild(PostBuild postBuild) {
+    private BuildExecResult executeBuild(PostBuild postBuild) {
         logger.info("Starting to process {}", postBuild);
         BuildExecResult buildExecResult = new BuildExecResult();
         buildExecResult.setState(TaskStatus.STARTED.getValue());
