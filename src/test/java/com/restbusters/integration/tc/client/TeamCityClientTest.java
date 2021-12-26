@@ -16,9 +16,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.testng.ITestContext;
+import org.testng.annotations.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class TeamCityClientTest {
     private WireMockManager wireMockManager;
     private TCBuildExecutor tcBuildExecutor;
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeSuite(alwaysRun = true)
     private void setUp() throws Exception {
         //this.url = System.getenv("TC_AUTH_URL");
         this.url = "http://localhost:8090";
@@ -85,25 +84,61 @@ public class TeamCityClientTest {
         new TeamCityClient(null, token);
     }
 
+    //@BeforeTest
+    private void resetWireMock(){
+        this.wireMockManager.resetScenarios();
+    }
     @Test()
     private void test_executor() throws Exception {
-        PostBuild postBuild = TCHelper.buildTeamCityTriggerBuildRequest("testProject", "testBuildConfigId", null, null, null);
+        PostBuild priorityPostBuild = TCHelper.buildTeamCityTriggerBuildRequest("testProject0", "testBuildConfigId0", null, null, null);
+        PostBuild postBuild = TCHelper.buildTeamCityTriggerBuildRequest("testProject1", "testBuildConfigId1", null, null, null);
         BuildExecutorTask buildExecutorTask = new BuildExecutorTask();
         buildExecutorTask.setDescription("Test desc");
         List<PostBuild> postBuilds = new ArrayList<>();
+        List<PostBuild> priorityPostBuilds = new ArrayList<>();
         PostBuild postBuild2 = TCHelper.buildTeamCityTriggerBuildRequest("testProject2", "testBuildConfigId2", null, null, null);
         PostBuild postBuild3 = TCHelper.buildTeamCityTriggerBuildRequest("testProject3", "testBuildConfigId3", null, null, null);
         postBuilds.add(postBuild);
         postBuilds.add(postBuild2);
         postBuilds.add(postBuild3);
+        priorityPostBuilds.add(priorityPostBuild);
         buildExecutorTask.setPostBuild(postBuilds);
+        buildExecutorTask.setPriorityBuilds(priorityPostBuilds);
         buildExecutorTask.setMaxAttemptBuildCounter(10);
         buildExecutorTask.setMaxWaitTime(3000);
         this.tcBuildExecutor = new TCBuildExecutor(buildExecutorTask, this.tcClient);
         this.tcBuildExecutor.executeBuilds();
         BuildExecutorTask result = this.tcBuildExecutor.getBuildExecutorTask();
         Assert.assertNotNull(MapUtils.isNotEmpty(result.getBuildMetaData()));
-        Assert.assertEquals(result.getBuildMetaData().size(), 3);
+        Assert.assertEquals(result.getBuildMetaData().size(), 4);
+        Assert.assertTrue(result.isPriorityDeploymentSuccess());
+        logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(buildExecutorTask));
+    }
+
+    @Test()
+    private void test_executor_fail_priority(ITestContext iTestContext) throws Exception {
+        BuildExecutorTask buildExecutorTask = new BuildExecutorTask();
+        PostBuild priorityPostBuild = TCHelper.buildTeamCityTriggerBuildRequest("test_executor_fail_priority", "test_executor_fail_priority", null, null, null);
+        PostBuild postBuild = TCHelper.buildTeamCityTriggerBuildRequest("testProject1", "testBuildConfigId1", null, null, null);
+        buildExecutorTask.setDescription("Test desc");
+        List<PostBuild> postBuilds = new ArrayList<>();
+        List<PostBuild> priorityPostBuilds = new ArrayList<>();
+        PostBuild postBuild2 = TCHelper.buildTeamCityTriggerBuildRequest("testProject2", "testBuildConfigId2", null, null, null);
+        PostBuild postBuild3 = TCHelper.buildTeamCityTriggerBuildRequest("testProject3", "testBuildConfigId3", null, null, null);
+        postBuilds.add(postBuild);
+        postBuilds.add(postBuild2);
+        postBuilds.add(postBuild3);
+        priorityPostBuilds.add(priorityPostBuild);
+        buildExecutorTask.setPostBuild(postBuilds);
+        buildExecutorTask.setPriorityBuilds(priorityPostBuilds);
+        buildExecutorTask.setMaxAttemptBuildCounter(10);
+        buildExecutorTask.setMaxWaitTime(3000);
+        this.tcBuildExecutor = new TCBuildExecutor(buildExecutorTask, this.tcClient);
+        this.tcBuildExecutor.executeBuilds();
+        BuildExecutorTask result = this.tcBuildExecutor.getBuildExecutorTask();
+        Assert.assertNotNull(MapUtils.isNotEmpty(result.getBuildMetaData()));
+        Assert.assertEquals(result.getBuildMetaData().size(), 1);
+        Assert.assertFalse(result.isPriorityDeploymentSuccess());
         logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(buildExecutorTask));
     }
 

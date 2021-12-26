@@ -60,6 +60,10 @@ public class WireMockManager {
         this.wireMockServer.resetAll();
     }
 
+    public void resetScenarios(){
+        this.wireMockServer.resetScenarios();
+    }
+
     public List<StubMapping> getWireMockStubs(){
         return this.wireMockServer.getStubMappings();
     }
