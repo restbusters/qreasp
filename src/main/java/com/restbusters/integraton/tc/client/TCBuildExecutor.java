@@ -1,6 +1,7 @@
 package com.restbusters.integraton.tc.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jayway.jsonpath.JsonPath;
 import com.restbusters.integraton.tc.client.model.post.job.PostBuild;
 import com.restbusters.integraton.tc.client.model.task.BuildExecResult;
 import com.restbusters.integraton.tc.client.model.task.BuildExecutorTask;
@@ -8,18 +9,18 @@ import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.util.common.GenericUtils;
 import com.restbusters.util.common.TaskStatus;
 import okhttp3.Response;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 
 import static com.jayway.jsonpath.JsonPath.read;
 
@@ -37,40 +38,39 @@ public class TCBuildExecutor {
     public TCBuildExecutor(BuildExecutorTask buildExecutorTask, TeamCityClient teamCityClient) {
         this.buildExecutorTask = buildExecutorTask;
         this.teamCityClient = teamCityClient;
-        this.buildMetaData = new HashMap<>();
+        this.buildMetaData = new LinkedHashMap();
     }
 
-    public BuildExecResult executeBuild(PostBuild postBuild) {
+    private BuildExecResult executeBuild(PostBuild postBuild) {
         logger.info("Starting to process {}", postBuild);
         BuildExecResult buildExecResult = new BuildExecResult();
         buildExecResult.setState(TaskStatus.STARTED.getValue());
-        //this.threadSleep(GenericUtils.getRandomNumber(1000, 3000));
+        this.threadSleep(GenericUtils.getRandomNumber(1000, 3000));
         String buildId = null;
         String triggerRespBody = null;
         try {
             Response triggerJobResp = this.teamCityClient.postBuild(GlobalResourceManager.getInstance().getObjectMapper().writeValueAsString(postBuild));
-            if(triggerJobResp == null){
-                setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(),TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild );
-            }
-            else {
+            if (triggerJobResp == null) {
+                setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(), TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
+            } else {
                 triggerRespBody = triggerJobResp.body().string();
                 if (!triggerJobResp.isSuccessful()) {
                     buildExecResult.setExecutionMetaData(triggerRespBody);
-                    setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(),TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
+                    setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(), TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
                 } else {
-                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(), null, postBuild );
+                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(), null, postBuild);
                     buildId = readBuildQueueId(triggerRespBody);
                     buildExecResult.setBuildId(buildId);
                     ifBuildInQueueWait(buildId, this.buildExecutorTask.getMaxAttemptBuildCounter(),
                             this.buildExecutorTask.getMaxWaitTime());
                     if (whatIsBuildState(buildId).equalsIgnoreCase(TcConstant.BUILD_STATE_QUEUED)) {
-                        setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(),TcConstant.ERROR_QUEUE_EXCEEDED_TIME, postBuild );
+                        setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(), TcConstant.ERROR_QUEUE_EXCEEDED_TIME, postBuild);
                         return buildExecResult;
                     }
-                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(),null, postBuild);
+                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(), null, postBuild);
                     this.ifBuildRunningWait(buildExecResult, this.buildExecutorTask.getMaxAttemptBuildCounter(),
                             this.buildExecutorTask.getMaxWaitTime());
-                    setExecutionResults(buildExecResult, TaskStatus.FINISHED.getValue(),null, postBuild);
+                    setExecutionResults(buildExecResult, TaskStatus.FINISHED.getValue(), null, postBuild);
                 }
             }
 
@@ -84,9 +84,9 @@ public class TCBuildExecutor {
         return buildExecResult;
     }
 
-    private void setExecutionResults(BuildExecResult buildExecResult, String taskState, @Nullable  String taskError, PostBuild postBuild){
+    private void setExecutionResults(BuildExecResult buildExecResult, String taskState, @Nullable String taskError, PostBuild postBuild) {
         buildExecResult.setState(taskState);
-        buildExecResult.setErrors(taskError);
+        buildExecResult.getErrors().add(taskError);
         this.buildMetaData.put(postBuild.getBuildType().getBuildTypeId(), buildExecResult);
         this.buildExecutorTask.setBuildMetaData(this.buildMetaData);
     }
@@ -98,7 +98,7 @@ public class TCBuildExecutor {
         while (isBuildInQueue && buildQueueCounter <= maxAttempt) {
             buildState = this.whatIsBuildState(buildQueueId);
             if (buildState.equalsIgnoreCase(TcConstant.BUILD_STATE_QUEUED)) {
-                //this.threadSleep(waitTime);
+                this.threadSleep(waitTime);
             } else {
                 isBuildInQueue = false;
             }
@@ -152,48 +152,71 @@ public class TCBuildExecutor {
             buildState = this.whatIsBuildState(buildExecResult.getBuildId());
             if (buildState.equalsIgnoreCase(TcConstant.BUILD_STATE_RUNNING)) {
                 setBuildMetaData(buildExecResult);
-                //this.threadSleep(waitTime);
+                this.threadSleep(waitTime);
             } else {
                 isBuildRunning = false;
+                setBuildMetaData(buildExecResult);
             }
             buildRunningCounter++;
         }
     }
 
-    public void executeBuilds() throws Exception {
-        ExecutorService executorService = Executors.newFixedThreadPool(this.buildExecutorTask.getPostBuild().size());
-        List<Future> futures = new ArrayList<Future>();
-        for (PostBuild postBuild : this.buildExecutorTask.getPostBuild()) {
-            futures.add(executorService.submit(new Callable<Void>() {
-                public Void call() throws IOException, InterruptedException {
-                    executeBuild(postBuild);
-                    return null;
-                }
-            }));
-            boolean areAllBuildsCompleted = false;
-            while (areAllBuildsCompleted){
-                logger.info("waiting");
-                for (Future f : futures) {
-                    if(f.isDone()){
-                        areAllBuildsCompleted = true;
-                    }
-                    else {
-                        areAllBuildsCompleted = false;
+    public void executeBuilds() {
+        if (CollectionUtils.isNotEmpty(buildExecutorTask.getPriorityBuilds())) {
+            for (PostBuild postBuild : buildExecutorTask.getPriorityBuilds()) {
+                BuildExecResult buildExecResult = this.executeBuild(postBuild);
+                if (buildExecResult.getState().equalsIgnoreCase(TcConstant.BUILD_STATE_FINISHED)) {
+                    String status = JsonPath.read(buildExecResult.getExecutionMetaData(), TcConstant.JSON_PATH_BUILD_STATUS);
+                    if (status.equalsIgnoreCase(TcConstant.BUILD_STATUS_FAILURE) || status.equalsIgnoreCase(TcConstant.BUILD_STATUS_UNKNOWN)) {
+                        setBuildErrors(postBuild.getBuildType().getBuildTypeId(), TcConstant.ERROR_PRIORITY_BUILD_FAILURE);
+                        this.buildExecutorTask.setPriorityDeploymentSuccess(false);
+                        if(!this.buildExecutorTask.isContinueIfPriorityDeploymentFail()){
+                            break;
+                        }
+                    } else {
+                        this.buildExecutorTask.setPriorityDeploymentSuccess(true);
                     }
                 }
             }
         }
-        executorService.shutdown();
-        try {
-            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-                executorService.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executorService.shutdownNow();
+        else {
+            //no deployment priority exist setting value to true
+            this.buildExecutorTask.setPriorityDeploymentSuccess(true);
         }
+        if ((this.buildExecutorTask.isPriorityDeploymentSuccess()) || (!this.buildExecutorTask.isPriorityDeploymentSuccess() && this.buildExecutorTask.isContinueIfPriorityDeploymentFail())) {
+            ForkJoinPool pool = forkJoinPoolGet(this.buildExecutorTask.getPostBuild().size(), true);
+            buildExecutorTask.getPostBuild()
+                    .parallelStream()
+                    .forEach(
+                            postBuild -> {
+                                try {
+                                    pool.submit(() -> executeBuild(postBuild)).get();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    if (pool != null) {
+                                        pool.shutdown(); //always remember to shutdown the pool
+                                    }
+                                }
+                            });
+        }
+    }
+
+
+    public ForkJoinPool forkJoinPoolGet(int threadCount, boolean asyncMode) {
+        return new ForkJoinPool(
+                threadCount, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, asyncMode);
     }
 
     public BuildExecutorTask getBuildExecutorTask() {
         return buildExecutorTask;
+    }
+
+    private void setBuildErrors(String errorKey, String errorValue) {
+        Map<String, String> result = new HashMap<>();
+        result.put(errorKey, errorValue);
+        this.buildExecutorTask.getErrors().add(result);
     }
 }
