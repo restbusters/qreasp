@@ -5,6 +5,7 @@ import com.restbusters.integraton.tc.client.model.post.job.PostBuild;
 import com.restbusters.integraton.tc.client.model.task.BuildExecResult;
 import com.restbusters.integraton.tc.client.model.task.BuildExecutorTask;
 import com.restbusters.resource.GlobalResourceManager;
+import com.restbusters.util.common.GenericUtils;
 import com.restbusters.util.common.TaskStatus;
 import okhttp3.Response;
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +16,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -35,13 +37,14 @@ public class TCBuildExecutor {
     public TCBuildExecutor(BuildExecutorTask buildExecutorTask, TeamCityClient teamCityClient) {
         this.buildExecutorTask = buildExecutorTask;
         this.teamCityClient = teamCityClient;
-        this.buildMetaData = new ConcurrentHashMap<>();
+        this.buildMetaData = new HashMap<>();
     }
 
     public BuildExecResult executeBuild(PostBuild postBuild) {
+        logger.info("Starting to process {}", postBuild);
         BuildExecResult buildExecResult = new BuildExecResult();
         buildExecResult.setState(TaskStatus.STARTED.getValue());
-        this.threadSleep(2000);
+        //this.threadSleep(GenericUtils.getRandomNumber(1000, 3000));
         String buildId = null;
         String triggerRespBody = null;
         try {
@@ -95,7 +98,7 @@ public class TCBuildExecutor {
         while (isBuildInQueue && buildQueueCounter <= maxAttempt) {
             buildState = this.whatIsBuildState(buildQueueId);
             if (buildState.equalsIgnoreCase(TcConstant.BUILD_STATE_QUEUED)) {
-                this.threadSleep(waitTime);
+                //this.threadSleep(waitTime);
             } else {
                 isBuildInQueue = false;
             }
@@ -149,7 +152,7 @@ public class TCBuildExecutor {
             buildState = this.whatIsBuildState(buildExecResult.getBuildId());
             if (buildState.equalsIgnoreCase(TcConstant.BUILD_STATE_RUNNING)) {
                 setBuildMetaData(buildExecResult);
-                this.threadSleep(waitTime);
+                //this.threadSleep(waitTime);
             } else {
                 isBuildRunning = false;
             }
@@ -167,13 +170,16 @@ public class TCBuildExecutor {
                     return null;
                 }
             }));
-            for (Future f : futures) {
-                try {
-                    f.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+            boolean areAllBuildsCompleted = false;
+            while (areAllBuildsCompleted){
+                logger.info("waiting");
+                for (Future f : futures) {
+                    if(f.isDone()){
+                        areAllBuildsCompleted = true;
+                    }
+                    else {
+                        areAllBuildsCompleted = false;
+                    }
                 }
             }
         }
