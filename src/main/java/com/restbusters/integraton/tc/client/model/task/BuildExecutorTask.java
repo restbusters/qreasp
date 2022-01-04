@@ -21,6 +21,7 @@ public class BuildExecutorTask {
     private boolean isPriorityDeploymentSuccess;
     private String taskName;
     private String taskStatus;
+    private String taskState;
     private String description;
     private Map<String,BuildExecResult> buildMetaData;
     private int maxAttemptBuildCounter;
