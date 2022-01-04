@@ -23,6 +23,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 public class TeamCityClientTest {
 
@@ -135,10 +136,14 @@ public class TeamCityClientTest {
         buildExecutorTask.setMaxWaitTime(3000);
         this.tcBuildExecutor = new TCBuildExecutor(buildExecutorTask, this.tcClient);
         this.tcBuildExecutor.executeBuilds();
-        BuildExecutorTask result = this.tcBuildExecutor.getBuildExecutorTask();
+        Future<BuildExecutorTask> resultFuture = this.tcBuildExecutor.executeBuildsAsync();
+        //BuildExecutorTask result = this.tcBuildExecutor.getBuildExecutorTask();
+        BuildExecutorTask result = resultFuture.get();
         Assert.assertNotNull(MapUtils.isNotEmpty(result.getBuildMetaData()));
         Assert.assertEquals(result.getBuildMetaData().size(), 1);
         Assert.assertFalse(result.isPriorityDeploymentSuccess());
+        this.tcBuildExecutor.initBuildExecutorTask(new BuildExecutorTask());
+        Assert.assertTrue(this.tcBuildExecutor.getBuildExecutorTask().getBuildMetaData() == null);
         logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(buildExecutorTask));
     }
 
