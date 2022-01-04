@@ -1,13 +1,16 @@
 package com.restbusters.util.common;
 
-public enum TaskStatus {
+public enum TaskState {
 
-    SUCCESS("STARTED"),
-    FAILURE("FAILURE");
+    STARTED("STARTED"),
+    RUNNING("RUNNING"),
+    FINISHED("FINISHED"),
+    ABORTED("ABORTED");
+
 
     String value;
 
-    TaskStatus(final String value) {
+    TaskState(final String value) {
         this.value = value;
     }
 

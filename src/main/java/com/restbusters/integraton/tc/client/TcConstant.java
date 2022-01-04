@@ -17,6 +17,8 @@ public class TcConstant {
     public static final String BUILD_STATUS_SUCCESS = "SUCCESS";
     public static final String BUILD_STATUS_UNKNOWN = "UNKNOWN";
     public static final String BUILD_STATUS_FAILURE = "FAILURE";
+    public static final String TASK_STATUS_SUCCESS = "SUCCESS";
+    public static final String TASK_STATUS_FAILURE = "FAILURE";
     public static final String BUILD_STATE_QUEUED = "queued";
     public static final String ERROR_QUEUE_EXCEEDED_TIME = "Build has exceeded allowed time in the queue";
     public static final String ERROR_PRIORITY_BUILD_FAILURE = "Build with priority failed";

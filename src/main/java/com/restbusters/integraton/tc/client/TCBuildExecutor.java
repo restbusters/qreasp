@@ -7,6 +7,7 @@ import com.restbusters.integraton.tc.client.model.task.BuildExecResult;
 import com.restbusters.integraton.tc.client.model.task.BuildExecutorTask;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.util.common.GenericUtils;
+import com.restbusters.util.common.TaskState;
 import com.restbusters.util.common.TaskStatus;
 import okhttp3.Response;
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,33 +48,33 @@ public class TCBuildExecutor {
     private BuildExecResult executeBuild(PostBuild postBuild) {
         logger.info("Starting to process {}", postBuild);
         BuildExecResult buildExecResult = new BuildExecResult();
-        buildExecResult.setState(TaskStatus.STARTED.getValue());
+        buildExecResult.setState(TaskState.STARTED.getValue());
         this.threadSleep(GenericUtils.getRandomNumber(1000, 3000));
         String buildId = null;
         String triggerRespBody = null;
         try {
             Response triggerJobResp = this.teamCityClient.postBuild(GlobalResourceManager.getInstance().getObjectMapper().writeValueAsString(postBuild));
             if (triggerJobResp == null) {
-                setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(), TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
+                setExecutionResults(buildExecResult, TaskState.ABORTED.getValue(), TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
             } else {
                 triggerRespBody = triggerJobResp.body().string();
                 if (!triggerJobResp.isSuccessful()) {
                     buildExecResult.setExecutionMetaData(triggerRespBody);
-                    setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(), TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
+                    setExecutionResults(buildExecResult, TaskState.ABORTED.getValue(), TcConstant.ERROR_FAILED_TO_TRIGGER_BUILD, postBuild);
                 } else {
-                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(), null, postBuild);
+                    setExecutionResults(buildExecResult, TaskState.RUNNING.getValue(), null, postBuild);
                     buildId = readBuildQueueId(triggerRespBody);
                     buildExecResult.setBuildId(buildId);
                     ifBuildInQueueWait(buildId, this.buildExecutorTask.getMaxAttemptBuildCounter(),
                             this.buildExecutorTask.getMaxWaitTime());
                     if (whatIsBuildState(buildId).equalsIgnoreCase(TcConstant.BUILD_STATE_QUEUED)) {
-                        setExecutionResults(buildExecResult, TaskStatus.ABORTED.getValue(), TcConstant.ERROR_QUEUE_EXCEEDED_TIME, postBuild);
+                        setExecutionResults(buildExecResult, TaskState.ABORTED.getValue(), TcConstant.ERROR_QUEUE_EXCEEDED_TIME, postBuild);
                         return buildExecResult;
                     }
-                    setExecutionResults(buildExecResult, TaskStatus.RUNNING.getValue(), null, postBuild);
+                    setExecutionResults(buildExecResult, TaskState.RUNNING.getValue(), null, postBuild);
                     this.ifBuildRunningWait(buildExecResult, this.buildExecutorTask.getMaxAttemptBuildCounter(),
                             this.buildExecutorTask.getMaxWaitTime());
-                    setExecutionResults(buildExecResult, TaskStatus.FINISHED.getValue(), null, postBuild);
+                    setExecutionResults(buildExecResult, TaskState.FINISHED.getValue(), null, postBuild);
                 }
             }
 
@@ -207,6 +208,19 @@ public class TCBuildExecutor {
         }
 
         return this.buildExecutorTask;
+    }
+
+    private BuildExecutorTask finalizeResult(BuildExecutorTask buildExecutorTask){
+        for(Map.Entry<String, BuildExecResult> entry : buildExecutorTask.getBuildMetaData().entrySet()){
+            if(StringUtils.isNotBlank(entry.getValue().getExecutionMetaData())){
+                String buildStatus = JsonPath.read(entry.getValue(), TcConstant.JSON_PATH_BUILD_STATUS);
+                if(!buildStatus.equalsIgnoreCase(TcConstant.BUILD_STATUS_SUCCESS)){
+                    buildExecutorTask.setTaskStatus(TaskStatus.FAILURE.getValue());
+                }
+            }
+        }
+        buildExecutorTask.setTaskState(TaskState.FINISHED.getValue());
+        return buildExecutorTask;
     }
 
     public Future<BuildExecutorTask> executeBuildsAsync() throws InterruptedException {
