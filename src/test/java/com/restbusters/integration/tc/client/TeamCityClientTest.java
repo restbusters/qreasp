@@ -139,6 +139,8 @@ public class TeamCityClientTest {
         Assert.assertNotNull(MapUtils.isNotEmpty(result.getBuildMetaData()));
         Assert.assertEquals(result.getBuildMetaData().size(), 1);
         Assert.assertFalse(result.isPriorityDeploymentSuccess());
+        this.tcBuildExecutor.initBuildExecutorTask(new BuildExecutorTask());
+        Assert.assertTrue(this.tcBuildExecutor.getBuildExecutorTask().getBuildMetaData() == null);
         logger.info(GlobalResourceManager.getInstance().getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(buildExecutorTask));
     }
 
