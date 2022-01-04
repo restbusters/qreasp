@@ -19,8 +19,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 
 import static com.jayway.jsonpath.JsonPath.read;
 
@@ -43,7 +42,7 @@ public class TCBuildExecutor {
 
     public void initBuildExecutorTask(BuildExecutorTask buildExecutorTask){
         this.buildExecutorTask = buildExecutorTask;
-    }qq
+    }
 
     private BuildExecResult executeBuild(PostBuild postBuild) {
         logger.info("Starting to process {}", postBuild);
@@ -165,7 +164,7 @@ public class TCBuildExecutor {
         }
     }
 
-    public void executeBuilds() {
+    public BuildExecutorTask executeBuilds() {
         if (CollectionUtils.isNotEmpty(buildExecutorTask.getPriorityBuilds())) {
             for (PostBuild postBuild : buildExecutorTask.getPriorityBuilds()) {
                 BuildExecResult buildExecResult = this.executeBuild(postBuild);
@@ -206,10 +205,24 @@ public class TCBuildExecutor {
                                 }
                             });
         }
+
+        return this.buildExecutorTask;
+    }
+
+    public Future<BuildExecutorTask> executeBuildsAsync() throws InterruptedException {
+        CompletableFuture<BuildExecutorTask> completableFuture = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            Thread.sleep(500);
+            completableFuture.complete(executeBuilds());
+            return null;
+        });
+
+        return completableFuture;
     }
 
 
-    public ForkJoinPool forkJoinPoolGet(int threadCount, boolean asyncMode) {
+    private ForkJoinPool forkJoinPoolGet(int threadCount, boolean asyncMode) {
         return new ForkJoinPool(
                 threadCount, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, asyncMode);
     }
