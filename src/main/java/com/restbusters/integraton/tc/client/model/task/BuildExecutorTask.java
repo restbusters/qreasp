@@ -16,9 +16,8 @@ import java.util.Map;
 public class BuildExecutorTask {
 
     private List<PostBuild> postBuild;
-    private List<PostBuild> priorityBuilds;
-    private boolean continueIfPriorityDeploymentFail = false;
-    private boolean isPriorityDeploymentSuccess;
+    private boolean continueIfSequentialDeploymentFail = false;
+    private boolean isDeploymentSequential;
     private String taskName;
     private String taskStatus;
     private String taskState;

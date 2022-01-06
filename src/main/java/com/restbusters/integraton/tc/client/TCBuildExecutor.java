@@ -41,7 +41,7 @@ public class TCBuildExecutor {
         this.buildMetaData = new LinkedHashMap();
     }
 
-    public void initBuildExecutorTask(BuildExecutorTask buildExecutorTask){
+    public void initBuildExecutorTask(BuildExecutorTask buildExecutorTask) {
         this.buildExecutorTask = buildExecutorTask;
     }
 
@@ -165,68 +165,66 @@ public class TCBuildExecutor {
         }
     }
 
-    public BuildExecutorTask executeBuilds() {
-        if (CollectionUtils.isNotEmpty(buildExecutorTask.getPriorityBuilds())) {
-            for (PostBuild postBuild : buildExecutorTask.getPriorityBuilds()) {
-                BuildExecResult buildExecResult = this.executeBuild(postBuild);
-                if (buildExecResult.getState().equalsIgnoreCase(TcConstant.BUILD_STATE_FINISHED)) {
-                    String status = JsonPath.read(buildExecResult.getExecutionMetaData(), TcConstant.JSON_PATH_BUILD_STATUS);
-                    if (status.equalsIgnoreCase(TcConstant.BUILD_STATUS_FAILURE) || status.equalsIgnoreCase(TcConstant.BUILD_STATUS_UNKNOWN)) {
-                        setBuildErrors(postBuild.getBuildType().getBuildTypeId(), TcConstant.ERROR_PRIORITY_BUILD_FAILURE);
-                        this.buildExecutorTask.setPriorityDeploymentSuccess(false);
-                        if(!this.buildExecutorTask.isContinueIfPriorityDeploymentFail()){
-                            break;
-                        }
-                    } else {
-                        this.buildExecutorTask.setPriorityDeploymentSuccess(true);
-                    }
-                }
-            }
-        }
-        else {
-            //no deployment priority exist setting value to true
-            this.buildExecutorTask.setPriorityDeploymentSuccess(true);
-        }
-        if ((this.buildExecutorTask.isPriorityDeploymentSuccess()) || (!this.buildExecutorTask.isPriorityDeploymentSuccess() && this.buildExecutorTask.isContinueIfPriorityDeploymentFail())) {
-            ForkJoinPool pool = forkJoinPoolGet(this.buildExecutorTask.getPostBuild().size(), true);
-            buildExecutorTask.getPostBuild()
-                    .parallelStream()
-                    .forEach(
-                            postBuild -> {
-                                try {
-                                    pool.submit(() -> executeBuild(postBuild)).get();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    if (pool != null) {
-                                        pool.shutdown(); //always remember to shutdown the pool
-                                    }
+    private BuildExecutorTask executeBuildsParallel() {
+        ForkJoinPool pool = forkJoinPoolGet(this.buildExecutorTask.getPostBuild().size(), true);
+        buildExecutorTask.getPostBuild()
+                .parallelStream()
+                .forEach(
+                        postBuild -> {
+                            try {
+                                pool.submit(() -> executeBuild(postBuild)).get();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } finally {
+                                if (pool != null) {
+                                    pool.shutdown(); //always remember to shutdown the pool
                                 }
-                            });
-        }
+                            }
+                        });
 
         return finalizeResult(this.buildExecutorTask);
     }
 
-    private BuildExecutorTask finalizeResult(BuildExecutorTask buildExecutorTask){
+    private BuildExecutorTask executeBuildsSequential() {
+        for (PostBuild postBuild : buildExecutorTask.getPostBuild()) {
+            BuildExecResult buildExecResult = this.executeBuild(postBuild);
+            if (buildExecResult.getState().equalsIgnoreCase(TaskState.FINISHED.getValue())) {
+                String status = JsonPath.read(buildExecResult.getExecutionMetaData(), TcConstant.JSON_PATH_BUILD_STATUS);
+                if (status.equalsIgnoreCase(TcConstant.BUILD_STATUS_FAILURE) || status.equalsIgnoreCase(TcConstant.BUILD_STATUS_UNKNOWN)) {
+                    setBuildErrors(postBuild.getBuildType().getBuildTypeId(), TcConstant.ERROR_PRIORITY_BUILD_FAILURE);
+                    if (!this.buildExecutorTask.isContinueIfSequentialDeploymentFail()) {
+                        break;
+                    }
+                }
+            }
+            else if(buildExecResult.getState().equalsIgnoreCase(TaskState.ABORTED.getValue())){
+                if (!this.buildExecutorTask.isContinueIfSequentialDeploymentFail()) {
+                    break;
+                }
+            }
+        }
+        return finalizeResult(this.buildExecutorTask);
+    }
+
+
+    private BuildExecutorTask finalizeResult(BuildExecutorTask buildExecutorTask) {
         buildExecutorTask.setTaskStatus(TaskStatus.SUCCESS.getValue());
-        for(Map.Entry<String, BuildExecResult> entry : buildExecutorTask.getBuildMetaData().entrySet()){
-            if(StringUtils.isNotBlank(entry.getValue().getExecutionMetaData())){
+        for (Map.Entry<String, BuildExecResult> entry : buildExecutorTask.getBuildMetaData().entrySet()) {
+            if (StringUtils.isNotBlank(entry.getValue().getExecutionMetaData())) {
                 String buildStatus = null;
-                if(entry.getValue().getState().equalsIgnoreCase(TcConstant.BUILD_STATE_FINISHED)){
+                if (entry.getValue().getState().equalsIgnoreCase(TcConstant.BUILD_STATE_FINISHED)) {
                     try {
                         buildStatus = JsonPath.read(entry.getValue(), TcConstant.JSON_PATH_BUILD_STATUS);
-                        if(buildStatus == null && !buildStatus.equalsIgnoreCase(TcConstant.BUILD_STATUS_SUCCESS)){
+                        if (buildStatus == null && !buildStatus.equalsIgnoreCase(TcConstant.BUILD_STATUS_SUCCESS)) {
                             buildExecutorTask.setTaskStatus(TaskStatus.FAILURE.getValue());
                             break;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else {
+                } else {
                     buildExecutorTask.setTaskStatus(TaskStatus.FAILURE.getValue());
                 }
             }
@@ -240,13 +238,17 @@ public class TCBuildExecutor {
 
         Executors.newCachedThreadPool().submit(() -> {
             Thread.sleep(500);
-            completableFuture.complete(executeBuilds());
+            if(this.buildExecutorTask.isDeploymentSequential()){
+                completableFuture.complete(this.executeBuildsSequential());
+            }
+            else {
+                completableFuture.complete(this.executeBuildsParallel());
+            }
             return null;
         });
 
         return completableFuture;
     }
-
 
     private ForkJoinPool forkJoinPoolGet(int threadCount, boolean asyncMode) {
         return new ForkJoinPool(

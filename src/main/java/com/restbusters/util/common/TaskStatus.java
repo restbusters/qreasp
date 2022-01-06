@@ -2,7 +2,7 @@ package com.restbusters.util.common;
 
 public enum TaskStatus {
 
-    SUCCESS("STARTED"),
+    SUCCESS("SUCCESS"),
     FAILURE("FAILURE");
 
     String value;
