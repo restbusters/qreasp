@@ -217,7 +217,7 @@ public class TCBuildExecutor {
                 if (entry.getValue().getState().equalsIgnoreCase(TcConstant.BUILD_STATE_FINISHED)) {
                     try {
                         buildStatus = JsonPath.read(entry.getValue().getExecutionMetaData(), TcConstant.JSON_PATH_BUILD_STATUS);
-                        if (buildStatus == null && !buildStatus.equalsIgnoreCase(TcConstant.BUILD_STATUS_SUCCESS)) {
+                        if (buildStatus == null || !buildStatus.equalsIgnoreCase(TcConstant.BUILD_STATUS_SUCCESS)) {
                             buildExecutorTask.setTaskStatus(TaskStatus.FAILURE.getValue());
                             break;
                         }
