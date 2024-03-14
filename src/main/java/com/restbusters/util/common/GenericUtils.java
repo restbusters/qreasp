@@ -1,7 +1,9 @@
 package com.restbusters.util.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.diff.JsonDiff;
 import com.google.common.base.Splitter;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
@@ -9,6 +11,7 @@ import com.restbusters.resource.GlobalResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
@@ -63,7 +66,6 @@ public class GenericUtils {
         return buffer.toString();
     }
 
-
     public static Optional<String> convertYamlToJson(ObjectMapper objectMapper, ObjectMapper yamlObjectMapper, String yaml) {
         try {
             Object obj = yamlObjectMapper.readValue(yaml, Object.class);
@@ -82,7 +84,7 @@ public class GenericUtils {
         return JsonPath.using(jacksonConfiguration).parse(json).set(pathSpec, value).jsonString();
     }
 
-    public static boolean isJSONValid(String jsonInString ) {
+    public static boolean isJSONValid(String jsonInString) {
         try {
             GlobalResourceManager.getInstance().getObjectMapper().readTree(jsonInString);
             return true;
@@ -106,4 +108,23 @@ public class GenericUtils {
         return (int) ((Math.random() * (max - min)) + min);
     }
 
+
+    public static JsonNode generateJsonPatch(String json1, String json2, @Nullable ObjectMapper mapper) {
+        if (!GenericUtils.isJSONValid(json1) && !GenericUtils.isJSONValid(json2)) {
+            throw new RuntimeException("One of provided strings is not valid JSON object");
+        }
+        if (mapper == null) {
+            mapper = new ObjectMapper();
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode1;
+        JsonNode jsonNode2;
+        try {
+            jsonNode1 = mapper.readTree(json1);
+            jsonNode2 = mapper.readTree(json2);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return JsonDiff.asJson(jsonNode1, jsonNode2);
+    }
 }
