@@ -55,7 +55,7 @@ public class GenericUtils {
     }
 
     private static String processMatcher(Matcher matcher, Map<String, String> variables) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         while (matcher.find()) {
             if (variables.containsKey(matcher.group(1))) {
                 String replacement = variables.get(matcher.group(1));
@@ -116,7 +116,6 @@ public class GenericUtils {
         if (mapper == null) {
             mapper = new ObjectMapper();
         }
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode1;
         JsonNode jsonNode2;
         try {
