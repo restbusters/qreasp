@@ -34,7 +34,7 @@ compileJava {
 
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
-version = '0.0.52'
+version = '0.0.53'
 
 dependencies {
     api 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
@@ -47,10 +47,10 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 
     //json/models
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
     implementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.9.0'
-    implementation group: 'net.minidev', name: 'json-smart', version: '2.4.2'
+    implementation group: 'net.minidev', name: 'json-smart', version: '2.5.0'
 
     //jira
     api 'io.atlassian.fugue:fugue:4.7.2'
