@@ -1,5 +1,6 @@
 package com.restbusters.util.common;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -18,7 +19,7 @@ import java.util.Optional;
  */
 public class TestGenericUtil {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private ObjectMapper yamlObjectMapper = GlobalResourceManager.getInstance().getYamlObjectMapper();
+    private final ObjectMapper yamlObjectMapper = GlobalResourceManager.getInstance().getYamlObjectMapper();
     private ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
     String yaml = "---\n" +
             "string: test\n" +
@@ -59,8 +60,26 @@ public class TestGenericUtil {
                 "<#list body.projects as project>\n";
         //String pattern = "(<#--.*)(name:.*|description:.*|version:.*)(.*-->)";
         String pattern = "<#--.*\\$(.*)\\$.*-->";
-        org.junit.Assert.assertEquals("name=sample1;description=sample1;version=01", GenericUtils.RegexMatcher(text, pattern, 1));
+        Assert.assertEquals("name=sample1;description=sample1;version=01", GenericUtils.RegexMatcher(text, pattern, 1));
 
+    }
+
+    @Test
+    private void validateJsonPatch() {
+
+        String json1 = "{\"key1\": \"value1\",\"key2\":\"value2\"}";
+        String json2 = "{\"key1\": \"value11\",\"key22\":\"value22\", \"key3\":\"value3\"}";
+        JsonNode patch = GenericUtils.generateJsonPatch(json1, json2, GlobalResourceManager.getInstance().getObjectMapper());
+        Assert.assertTrue(patch.size() == 4, "Expecting size diff ");
+    }
+
+    @Test
+    private void validateJsonPatchObjectMapperNull() {
+
+        String json1 = "{\"key1\": \"value1\",\"key2\":\"value2\"}";
+        String json2 = "{\"key1\": \"value11\",\"key22\":\"value22\", \"key3\":\"value3\"}";
+        JsonNode patch = GenericUtils.generateJsonPatch(json1, json2, null);
+        Assert.assertTrue(patch.size() == 4, "Expecting size diff ");
     }
 
 }
