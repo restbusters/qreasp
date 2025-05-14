@@ -8,7 +8,7 @@ import com.restbusters.integraton.stash.client.model.StashResponse;
 import com.restbusters.integraton.stash.client.resoures.StashConstant;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.RestClientHelper;
-import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRequest;
 import com.restbusters.util.common.RBFileUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -81,26 +81,26 @@ public class StashRestClient {
 
 
     public Response getCommitsInRangeV1(String since, String until, @Nullable Integer start, @Nullable Integer limit) {
-        HttpRestRequest httpRestRequest = this.stashRequests.getGetCommitsInRange();
-        Map<String, String> queryParams = httpRestRequest.getQueryParams();
+        HttpRequest httpRequest = this.stashRequests.getGetCommitsInRange();
+        Map<String, String> queryParams = httpRequest.getQueryParams();
         queryParams.put(StashConstant.MAP_QUERY_PARAM_KEY_SINCE, since);
         queryParams.put(StashConstant.MAP_QUERY_PARAM_KEY_UNTIL, until);
-        httpRestRequest.setQueryParams(setQueryParamsStarLimit(start, limit, queryParams));
-        httpRestRequest.setQueryParams(queryParams);
-        return executeCall(httpRestRequest, StashConstant.API_V1);
+        httpRequest.setQueryParams(setQueryParamsStarLimit(start, limit, queryParams));
+        httpRequest.setQueryParams(queryParams);
+        return executeCall(httpRequest, StashConstant.API_V1);
     }
 
     public Response getTagsV1(@Nullable Integer start, @Nullable Integer limit) {
-        HttpRestRequest httpRestRequest = this.stashRequests.getGetTags();
-        Map<String, String> queryParams = httpRestRequest.getQueryParams();
-        httpRestRequest.setQueryParams(setQueryParamsStarLimit(start, limit, queryParams));
-        return executeCall(httpRestRequest, StashConstant.API_V1);
+        HttpRequest httpRequest = this.stashRequests.getGetTags();
+        Map<String, String> queryParams = httpRequest.getQueryParams();
+        httpRequest.setQueryParams(setQueryParamsStarLimit(start, limit, queryParams));
+        return executeCall(httpRequest, StashConstant.API_V1);
     }
 
     public Response getCommitsInRangeV2() {
-        HttpRestRequest httpRestRequest = this.stashRequests.getGetCommitsInRangeApiV2();
-        httpRestRequest = setDefaultUrlParamsV2(httpRestRequest);
-        return executeCall(httpRestRequest, StashConstant.API_V2);
+        HttpRequest httpRequest = this.stashRequests.getGetCommitsInRangeApiV2();
+        httpRequest = setDefaultUrlParamsV2(httpRequest);
+        return executeCall(httpRequest, StashConstant.API_V2);
     }
 
     /**
@@ -122,22 +122,22 @@ public class StashRestClient {
         if (StringUtils.isBlank(gitReference)) {
             throw new InvalidParameterException("Parameter gitReference must not be null");
         }
-        HttpRestRequest httpRestRequest = this.stashRequests.getGetFileContent();
-        Map<String, String> queryParams = httpRestRequest.getQueryParams();
+        HttpRequest httpRequest = this.stashRequests.getGetFileContent();
+        Map<String, String> queryParams = httpRequest.getQueryParams();
         queryParams.put("at", StringUtils.removeStartIgnoreCase(gitReference, "/"));
-        httpRestRequest.setQueryParams(queryParams);
-        Map<String,String> urlParam = httpRestRequest.getUrlParams();
+        httpRequest.setQueryParams(queryParams);
+        Map<String,String> urlParam = httpRequest.getUrlParams();
         urlParam.put("filePath", StringUtils.removeStartIgnoreCase(filePath, "/"));
-        return buildStashResponse(executeCall(httpRestRequest, StashConstant.API_V1));
+        return buildStashResponse(executeCall(httpRequest, StashConstant.API_V1));
 
     }
 
     public Response getCommitByHash(String gitHash) {
-        HttpRestRequest httpRestRequest = this.stashRequests.getGetCommitByHash();
-        Map<String, String> urlParams = httpRestRequest.getUrlParams();
+        HttpRequest httpRequest = this.stashRequests.getGetCommitByHash();
+        Map<String, String> urlParams = httpRequest.getUrlParams();
         urlParams.put(StashConstant.MAP_URL_PARAM_KEY_GIT_HASH, gitHash);
-        httpRestRequest.setUrlParams(urlParams);
-        return executeCall(httpRestRequest, StashConstant.API_V1);
+        httpRequest.setUrlParams(urlParams);
+        return executeCall(httpRequest, StashConstant.API_V1);
     }
 
     private StashResponse buildStashResponse(Response response){
@@ -174,36 +174,36 @@ public class StashRestClient {
         return queryParams;
     }
 
-    private Response executeCall(HttpRestRequest httpRestRequest, String apiVersion) {
+    private Response executeCall(HttpRequest httpRequest, String apiVersion) {
         try {
             if(apiVersion.equalsIgnoreCase(StashConstant.API_V1)){
-                httpRestRequest = setDefaultUrlParamsV1(httpRestRequest);
+                httpRequest = setDefaultUrlParamsV1(httpRequest);
             }
             else if(apiVersion.equalsIgnoreCase(StashConstant.API_V2)){
-                httpRestRequest = setDefaultUrlParamsV1(httpRestRequest);
+                httpRequest = setDefaultUrlParamsV1(httpRequest);
             }
             else {
                 throw new RuntimeException("Api Version not supported");
             }
-            return RestClientHelper.getInstance().executeRequest(tcClient, httpRestRequest);
+            return RestClientHelper.getInstance().executeRequest(tcClient, httpRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private HttpRestRequest setDefaultUrlParamsV1(HttpRestRequest httpRestRequest) {
-        Map<String, String> urlParams = httpRestRequest.getUrlParams();
+    private HttpRequest setDefaultUrlParamsV1(HttpRequest httpRequest) {
+        Map<String, String> urlParams = httpRequest.getUrlParams();
         urlParams.put(StashConstant.MAP_URL_PARAM_KEY_PROJECT_NAME, this.projectName);
         urlParams.put(StashConstant.MAP_URL_PARAM_KEY_REPO_NAME, this.repoName);
-        return httpRestRequest;
+        return httpRequest;
     }
 
-    private HttpRestRequest setDefaultUrlParamsV2(HttpRestRequest httpRestRequest) {
-        Map<String, String> urlParams = httpRestRequest.getUrlParams();
+    private HttpRequest setDefaultUrlParamsV2(HttpRequest httpRequest) {
+        Map<String, String> urlParams = httpRequest.getUrlParams();
         urlParams.put(StashConstant.MAP_URL_PARAM_KEY_WORKSPACE_NAME, this.workSpaceName);
         urlParams.put(StashConstant.MAP_URL_PARAM_KEY_REPO_NAME, this.repoName);
-        return httpRestRequest;
+        return httpRequest;
     }
 
     private void resetProjectAndRepo(String projectName, String repoName) {
@@ -217,11 +217,11 @@ public class StashRestClient {
     }
 
     public void initServerUrl(String serverUrl) {
-        Map<String, HttpRestRequest> restRequestMap;
+        Map<String, HttpRequest> restRequestMap;
         restRequestMap =
                 GlobalResourceManager.getInstance().getObjectMapper().convertValue(
-                        stashRequests, new TypeReference<Map<String, HttpRestRequest>>() {});
-        for (Map.Entry<String, HttpRestRequest> entry : restRequestMap.entrySet()) {
+                        stashRequests, new TypeReference<Map<String, HttpRequest>>() {});
+        for (Map.Entry<String, HttpRequest> entry : restRequestMap.entrySet()) {
             entry.getValue().setUrl(serverUrl + entry.getValue().getUri());
         }
         try {

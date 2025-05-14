@@ -48,30 +48,30 @@ public class HttpRequestBuilder {
         return this;
     }
 
-    public HttpRestRequest build() {
-        HttpRestRequest httpRestRequest = new HttpRestRequest(this.httpMethod, this.url);
+    public HttpRequest build() {
+        HttpRequest httpRequest = new HttpRequest(this.httpMethod, this.url);
 
         if(this.urlParams != null){
-            httpRestRequest.setUrlParams(this.urlParams);
+            httpRequest.setUrlParams(this.urlParams);
         }
 
         if(this.queryParams != null){
-            httpRestRequest.setQueryParams(this.queryParams);
+            httpRequest.setQueryParams(this.queryParams);
         }
 
         if(this.headers != null){
-            httpRestRequest.setHeaders(this.headers);
+            httpRequest.setHeaders(this.headers);
         }
 
         if(this.requestBody != null){
-            httpRestRequest.setRequestBody(this.requestBody);
+            httpRequest.setRequestBody(this.requestBody);
         }
 
         if(this.contentType != null){
-            httpRestRequest.setContentType(this.contentType);
+            httpRequest.setContentType(this.contentType);
         }
 
-        return httpRestRequest;
+        return httpRequest;
 
     }
 }

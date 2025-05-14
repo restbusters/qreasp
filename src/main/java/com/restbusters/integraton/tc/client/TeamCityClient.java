@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restbusters.integraton.tc.client.model.TCRequests;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.RestClientHelper;
-import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRequest;
 import com.restbusters.util.common.RBFileUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -59,20 +59,20 @@ public class TeamCityClient {
     public Response getBuildById(String buildId){
         Map<String, String> urlParams = new HashMap<>();
         urlParams.put("id", buildId);
-        HttpRestRequest httpRestRequest = this.tcRequests.getGetBuildById();
-        httpRestRequest.setUrlParams(urlParams);
-        return executeCall(httpRestRequest);
+        HttpRequest httpRequest = this.tcRequests.getGetBuildById();
+        httpRequest.setUrlParams(urlParams);
+        return executeCall(httpRequest);
     }
 
     public Response postBuild(String jsonRequestBody) {
-        HttpRestRequest httpRestRequest = this.tcRequests.getPostBuild();
-        httpRestRequest.setRequestBody(jsonRequestBody);
-        return executeCall(httpRestRequest);
+        HttpRequest httpRequest = this.tcRequests.getPostBuild();
+        httpRequest.setRequestBody(jsonRequestBody);
+        return executeCall(httpRequest);
     }
 
-    private Response executeCall(HttpRestRequest httpRestRequest){
+    private Response executeCall(HttpRequest httpRequest){
         try {
-            return RestClientHelper.getInstance().executeRequest(tcClient, httpRestRequest);
+            return RestClientHelper.getInstance().executeRequest(tcClient, httpRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,11 +86,11 @@ public class TeamCityClient {
     }
 
     public void initServerUrl(String serverUrl) {
-        Map<String, HttpRestRequest> restRequestMap;
+        Map<String, HttpRequest> restRequestMap;
         restRequestMap =
                 objectMapper.convertValue(
-                        tcRequests, new TypeReference<Map<String, HttpRestRequest>>() {});
-        for (Map.Entry<String, HttpRestRequest> entry : restRequestMap.entrySet()) {
+                        tcRequests, new TypeReference<Map<String, HttpRequest>>() {});
+        for (Map.Entry<String, HttpRequest> entry : restRequestMap.entrySet()) {
             entry.getValue().setUrl(serverUrl + entry.getValue().getUri());
         }
         try {

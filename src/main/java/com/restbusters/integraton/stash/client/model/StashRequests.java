@@ -1,7 +1,7 @@
 package com.restbusters.integraton.stash.client.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +14,11 @@ import lombok.Setter;
 @Getter
 public class StashRequests {
 
-    private HttpRestRequest getCommitsInRange;
-    private HttpRestRequest getTags;
-    private HttpRestRequest getManifestFileContent;
-    private HttpRestRequest getLastXCommits;
-    private HttpRestRequest getCommitByHash;
-    private HttpRestRequest getCommitsInRangeApiV2;
-    private HttpRestRequest getFileContent;
+    private HttpRequest getCommitsInRange;
+    private HttpRequest getTags;
+    private HttpRequest getManifestFileContent;
+    private HttpRequest getLastXCommits;
+    private HttpRequest getCommitByHash;
+    private HttpRequest getCommitsInRangeApiV2;
+    private HttpRequest getFileContent;
 }

@@ -1,7 +1,7 @@
 package com.restbusters.integraton.tc.client.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,9 +14,9 @@ import lombok.Setter;
 @Getter
 public class TCRequests {
 
-    private HttpRestRequest getBuilds;
-    private HttpRestRequest getBuildById;
-    private HttpRestRequest getBuildStatisticByBuildId;
-    private HttpRestRequest getBuildChangesByBuildId;
-    private HttpRestRequest postBuild;
+    private HttpRequest getBuilds;
+    private HttpRequest getBuildById;
+    private HttpRequest getBuildStatisticByBuildId;
+    private HttpRequest getBuildChangesByBuildId;
+    private HttpRequest postBuild;
 }

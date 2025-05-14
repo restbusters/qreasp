@@ -1,7 +1,7 @@
 package com.restbusters.rest.client;
 
 import com.jayway.jsonpath.JsonPath;
-import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRequest;
 import com.restbusters.util.common.GenericUtils;
 import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;
@@ -319,12 +319,12 @@ public class RestClientHelper {
     }
 
 
-    public Response executeRequest(OkHttpClient okHttpClient, HttpRestRequest httpRestRequest) throws IOException {
-        if (MapUtils.isNotEmpty(httpRestRequest.getHeaders())) {
-            addHeaders(okHttpClient, httpRestRequest.getHeaders());
+    public Response executeRequest(OkHttpClient okHttpClient, HttpRequest httpRequest) throws IOException {
+        if (MapUtils.isNotEmpty(httpRequest.getHeaders())) {
+            addHeaders(okHttpClient, httpRequest.getHeaders());
         }
 
-        return okHttpClient.newCall(convertToOkHttpRequest(httpRestRequest)).execute();
+        return okHttpClient.newCall(convertToOkHttpRequest(httpRequest)).execute();
     }
 
 
@@ -362,24 +362,24 @@ public class RestClientHelper {
     }
 
 
-    private Request convertToOkHttpRequest(HttpRestRequest httpRestRequest) {
-        String url = httpRestRequest.getUrl();
+    private Request convertToOkHttpRequest(HttpRequest httpRequest) {
+        String url = httpRequest.getUrl();
         if (StringUtils.isAllBlank(url)) {
             throw new RuntimeException(ConstantsErrors.INVALID_URL);
         }
-        if (StringUtils.isAllBlank(httpRestRequest.getHttpMethod())) {
+        if (StringUtils.isAllBlank(httpRequest.getHttpMethod())) {
             throw new RuntimeException(ConstantsErrors.HTTP_METHOD_BLANK);
         }
-        if (HttpMethods.findByValue(httpRestRequest.getHttpMethod()) == null) {
+        if (HttpMethods.findByValue(httpRequest.getHttpMethod()) == null) {
             throw new RuntimeException(ConstantsErrors.HTTP_METHOD_INVALID);
         }
-        if (MapUtils.isNotEmpty(httpRestRequest.getUrlParams())) {
-            url = substituteUrlParams(httpRestRequest.getUrl(), httpRestRequest.getUrlParams());
+        if (MapUtils.isNotEmpty(httpRequest.getUrlParams())) {
+            url = substituteUrlParams(httpRequest.getUrl(), httpRequest.getUrlParams());
         }
-        if (MapUtils.isNotEmpty(httpRestRequest.getQueryParams())) {
-            url = addQueryParams(url, httpRestRequest.getQueryParams());
+        if (MapUtils.isNotEmpty(httpRequest.getQueryParams())) {
+            url = addQueryParams(url, httpRequest.getQueryParams());
         }
-        return buildRequest(url, httpRestRequest.getRequestBody(), httpRestRequest.getHttpMethod(), httpRestRequest.getHeaders(), httpRestRequest.getContentType());
+        return buildRequest(url, httpRequest.getRequestBody(), httpRequest.getHttpMethod(), httpRequest.getHeaders(), httpRequest.getContentType());
 
     }
 

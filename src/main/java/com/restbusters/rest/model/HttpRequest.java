@@ -11,7 +11,7 @@ import java.util.Map;
  */
 @Setter
 @Getter
-public class HttpRestRequest {
+public class HttpRequest {
 
     private String httpMethod;
     private String url;
@@ -22,10 +22,10 @@ public class HttpRestRequest {
     private String requestBody;
     private String contentType;
 
-    public HttpRestRequest(){;
+    public HttpRequest(){;
     }
 
-    public HttpRestRequest(String httpMethod, String url) {
+    public HttpRequest(String httpMethod, String url) {
         this.httpMethod = httpMethod;
         this.url = url;
     }

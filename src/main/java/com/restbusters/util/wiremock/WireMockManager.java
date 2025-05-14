@@ -6,7 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.HttpMethods;
 import com.restbusters.rest.client.RestClientHelper;
-import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRequest;
 import net.minidev.json.JSONArray;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -74,9 +74,9 @@ public class WireMockManager {
         JSONArray jsonArray = JsonPath.read(this.jsonWireMockStubs, "$");
         for (Object stub : jsonArray) {
             String jsonStub = GlobalResourceManager.getInstance().getObjectMapper().writeValueAsString(stub);
-            HttpRestRequest httpRestRequest = new HttpRestRequest(HttpMethods.POST.getValue(), wireMockAdminUrl);
-            httpRestRequest.setRequestBody(jsonStub);
-            Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRestRequest);
+            HttpRequest httpRequest = new HttpRequest(HttpMethods.POST.getValue(), wireMockAdminUrl);
+            httpRequest.setRequestBody(jsonStub);
+            Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRequest);
             if(!response.isSuccessful()){
                 logger.error("Failed to set wire mock stub {}", jsonStub);
                 logger.error(jsonStub);

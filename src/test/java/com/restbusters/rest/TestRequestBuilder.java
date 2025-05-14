@@ -1,7 +1,7 @@
 package com.restbusters.rest;
 
 import com.restbusters.rest.model.HttpRequestBuilder;
-import com.restbusters.rest.model.HttpRestRequest;
+import com.restbusters.rest.model.HttpRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -28,7 +28,7 @@ public class TestRequestBuilder {
                 .setRequestBody("")
                 .setContentType("");
 
-        HttpRestRequest httpRestRequest = builder.build();
-        Assert.assertEquals(httpRestRequest.getHttpMethod(), "GET");
+        HttpRequest httpRequest = builder.build();
+        Assert.assertEquals(httpRequest.getHttpMethod(), "GET");
     }
 }
