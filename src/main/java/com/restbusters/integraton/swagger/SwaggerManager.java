@@ -3,17 +3,19 @@ package com.restbusters.integraton.swagger;
 import com.restbusters.integraton.swagger.model.OperationParameters;
 import com.restbusters.integraton.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
-import io.swagger.oas.models.OpenAPI;
-import io.swagger.oas.models.Operation;
-import io.swagger.oas.models.PathItem;
-import io.swagger.oas.models.Paths;
-import io.swagger.oas.models.parameters.Parameter;
-import io.swagger.parser.v3.OpenAPIV3Parser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import v2.io.swagger.models.HttpMethod;
-import v2.io.swagger.parser.SwaggerException;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
+import com.restbusters.integraton.swagger.model.OpenApiParseException;
+//import v2.io.swagger.models.HttpMethod;
+//import v2.io.swagger.parser.SwaggerException;
 
 import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
@@ -86,13 +88,25 @@ public class SwaggerManager {
     }
 
     public SwaggerDescriptor getSwaggerDescriptor(String url) {
-        OpenAPI openAPI = initOpenApi(url, "HTTP");
+        OpenAPI openAPI = null;
+        try{
+          openAPI = initOpenApi(url, "HTTP");
+        }
+        catch(OpenApiParseException e){
+          System.out.println("OpenApiParseException" + e.getMessage());
+        }
         return buildDescriptor(openAPI);
     }
 
 
     public SwaggerDescriptor getSwaggerDescriptorFromSwaggerContent(String swaggerContent) {
-        OpenAPI openAPI = initOpenApi(swaggerContent, "JSON");
+        OpenAPI openAPI = null;
+        try{
+          openAPI = initOpenApi(swaggerContent, "JSON");
+        }
+        catch(OpenApiParseException e){
+          System.out.println("OpenApiParseException" + e.getMessage());
+        }
         return buildDescriptor(openAPI);
     }
 
@@ -100,7 +114,7 @@ public class SwaggerManager {
         return new SwaggerDescriptor();
     }
 
-    private OpenAPI initOpenApi(String content, String type){
+    private OpenAPI initOpenApi(String content, String type) throws OpenApiParseException{
         OpenAPI openAPI = null;
         if(type.equalsIgnoreCase("HTTP")){
             openAPI = new OpenAPIV3Parser().read(content);
@@ -109,7 +123,7 @@ public class SwaggerManager {
             openAPI = new OpenAPIV3Parser().readContents(content, null, null).getOpenAPI();
         }
         if(openAPI == null){
-            throw new SwaggerException("Failed to build OpenApi");
+            throw new OpenApiParseException("Failed to build OpenApi");
         }
         return openAPI;
     }

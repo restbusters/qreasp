@@ -2,7 +2,7 @@ package com.restbusters.integraton.tc.client;
 
 import com.restbusters.integraton.tc.client.model.post.job.*;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

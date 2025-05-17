@@ -7,6 +7,7 @@ import com.restbusters.integraton.swagger.SwaggerDescriptorHelper;
 import com.restbusters.integraton.swagger.SwaggerManager;
 import com.restbusters.integraton.swagger.model.SwaggerApiResource;
 import com.restbusters.integraton.swagger.model.SwaggerDescriptor;
+import com.restbusters.integraton.swagger.model.OpenApiParseException;
 import com.restbusters.util.common.RBFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.testng.annotations.Test;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * @author Sasha Matsaylo on 2020-10-02
@@ -56,19 +58,41 @@ public class TestSwaggerManager {
 
     @Test()
     public void build_open_api_resource_from_url(){
-        Assert.assertNotNull(OpenApiV3Manager.getInstance().getSwaggerDescriptorFromUrl(openApiUrl));
+      SwaggerDescriptor swaggerDescriptor = null;
+        try{
+           swaggerDescriptor = OpenApiV3Manager.getInstance().getSwaggerDescriptorFromUrl(openApiUrl);
+        }
+        catch (Exception e) {
+          logger.error("Failed to obtains swagger resource for url: {}", openApiUrl);
+          e.printStackTrace();
+        }
+        Assert.assertNotNull(swaggerDescriptor);
     }
 
     @Test(enabled = true)
     public void build_swagger_descriptor(){
-        SwaggerDescriptor swaggerDescriptor = SwaggerManager.getInstance().getSwaggerDescriptor(swaggerUrl);
+        SwaggerDescriptor swaggerDescriptor = null;
+        try{
+           swaggerDescriptor = SwaggerManager.getInstance().getSwaggerDescriptor(swaggerUrl);
+         }
+         catch (Exception e) {
+           logger.error("Failed to obtains swagger resource for url: {}", swaggerUrl);
+           e.printStackTrace();
+        }
         Assert.assertNotNull(swaggerDescriptor);
         this.swaggerDescriptors.add(swaggerDescriptor);
     }
 
     @Test(enabled = true)
     public void build_open_api_descriptor(){
-        SwaggerDescriptor swaggerDescriptor = OpenApiV3Manager.getInstance().getSwaggerDescriptorFromUrl(openApiUrl);
+        SwaggerDescriptor swaggerDescriptor = null;
+        try{
+         swaggerDescriptor = OpenApiV3Manager.getInstance().getSwaggerDescriptorFromUrl(openApiUrl);
+        }
+        catch (Exception e) {
+           logger.error("Failed to obtains swagger resource for url: {}", openApiUrl);
+           e.printStackTrace();
+        }
         Assert.assertNotNull(swaggerDescriptor);
         this.swaggerDescriptors.add(swaggerDescriptor);
 

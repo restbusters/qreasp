@@ -19,8 +19,10 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import v2.io.swagger.models.HttpMethod;
-import v2.io.swagger.parser.SwaggerException;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
+//import io.swagger.v3.oas.parser.Exception;
+import com.restbusters.integraton.swagger.model.OpenApiParseException;
+
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
@@ -109,10 +111,10 @@ public class OpenApiV3Manager {
         return swaggerApiResource;
     }
 
-    public SwaggerDescriptor getSwaggerDescriptorFromUrl(String swaggerUrl) {
+    public SwaggerDescriptor getSwaggerDescriptorFromUrl(String swaggerUrl) throws OpenApiParseException {
         io.swagger.v3.oas.models.OpenAPI openAPI = new OpenAPIV3Parser().read(swaggerUrl);
         if(openAPI == null){
-            throw new SwaggerException("Failed to build openapi");
+            throw new OpenApiParseException("Failed to build openapi");
         }
 
         SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
@@ -124,10 +126,10 @@ public class OpenApiV3Manager {
 
     }
 
-    public SwaggerDescriptor getSwaggerDescriptor(String swaggerContent) {
+    public SwaggerDescriptor getSwaggerDescriptor(String swaggerContent) throws OpenApiParseException {
         io.swagger.v3.oas.models.OpenAPI openAPI = new OpenAPIV3Parser().readContents(swaggerContent, null, null).getOpenAPI();
         if(openAPI == null){
-            throw new SwaggerException("Failed to build openapi");
+            throw new OpenApiParseException("Failed to build openapi");
         }
 
         SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
