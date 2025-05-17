@@ -9,12 +9,16 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.payload.model.PayloadTemplate;
-import org.jtwig.JtwigModel;
-import org.jtwig.JtwigTemplate;
-import org.jtwig.environment.EnvironmentConfiguration;
-import org.jtwig.environment.EnvironmentConfigurationBuilder;
-import org.jtwig.json.JsonExtension;
-import org.jtwig.json.configuration.JsonMapperProviderConfigurationBuilder;
+//import org.jtwig.JtwigModel;
+//import org.jtwig.JtwigTemplate;
+//import org.jtwig.environment.EnvironmentConfiguration;
+//import org.jtwig.environment.EnvironmentConfigurationBuilder;
+//import org.jtwig.json.JsonExtension;
+//import org.jtwig.json.configuration.JsonMapperProviderConfigurationBuilder;
+import freemarker.template.*;
+import freemarker.cache.*;
+
+import java.io.StringWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,24 +38,28 @@ public class PayloadManager {
 
     private static PayloadManager instance;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private EnvironmentConfiguration configuration;
+    //private EnvironmentConfiguration configuration;
     private String payloadsAsJson;
     private List<PayloadTemplate> payloadTemplates;
     private ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
     private Map<String, Object> defaultMap;
 
 
+    // private PayloadManager(String jsonPayloads) {
+    //     configuration = EnvironmentConfigurationBuilder
+    //             .configuration()
+    //             .extensions()
+    //             .add(new JsonExtension(JsonMapperProviderConfigurationBuilder
+    //                     .jsonConfiguration()
+    //                     .build())
+    //             )
+    //             .and()
+    //             .build();
+    //     initPayloads(jsonPayloads);
+    // }
     private PayloadManager(String jsonPayloads) {
-        configuration = EnvironmentConfigurationBuilder
-                .configuration()
-                .extensions()
-                .add(new JsonExtension(JsonMapperProviderConfigurationBuilder
-                        .jsonConfiguration()
-                        .build())
-                )
-                .and()
-                .build();
-        initPayloads(jsonPayloads);
+
+         initPayloads(jsonPayloads);
     }
 
     private void initPayloads(String jsonPayloads) {
@@ -72,7 +80,24 @@ public class PayloadManager {
         return instance;
     }
 
-    public String renderPayload(String payLoadTemplate, Map<String, Object>... templateReplacementMap) {
+    // public String renderPayload(String payLoadTemplate, Map<String, Object>... templateReplacementMap) {
+    //     Map<String, Object> userSubstitutionPayloadParamsMap = null;
+    //     if (templateReplacementMap.length == 1) {
+    //         userSubstitutionPayloadParamsMap = templateReplacementMap[0];
+    //     } else {
+    //         setDefaultPayloadMap();
+    //         userSubstitutionPayloadParamsMap = this.defaultMap;
+    //     }
+    //     JtwigTemplate template = JtwigTemplate.inlineTemplate(payLoadTemplate, configuration);
+    //     JtwigModel model = JtwigModel.newModel(userSubstitutionPayloadParamsMap);
+    //     return template.render(model);
+    // }
+
+    public String renderPayload(String payLoadTemplate, Map<String, Object> ... templateReplacementMap) throws Exception {
+        //FreeMarker configuration setup
+        Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
+        cfg.setDefaultEncoding("UTF-8");
+
         Map<String, Object> userSubstitutionPayloadParamsMap = null;
         if (templateReplacementMap.length == 1) {
             userSubstitutionPayloadParamsMap = templateReplacementMap[0];
@@ -80,9 +105,19 @@ public class PayloadManager {
             setDefaultPayloadMap();
             userSubstitutionPayloadParamsMap = this.defaultMap;
         }
-        JtwigTemplate template = JtwigTemplate.inlineTemplate(payLoadTemplate, configuration);
-        JtwigModel model = JtwigModel.newModel(userSubstitutionPayloadParamsMap);
-        return template.render(model);
+
+        // Load template from string
+        // StringTemplateLoader stringLoader = new StringTemplateLoader();
+        // stringLoader.putTemplate("payLoadTemplate", userSubstitutionPayloadParamsMap);
+        // cfg.setTemplateLoader(stringLoader);
+
+        Template template = cfg.getTemplate(payLoadTemplate);
+
+        // Render the template with the data
+        StringWriter writer = new StringWriter();
+        //template.process(userSubstitutionMap, writer);
+
+        return writer.toString();
     }
 
     private void setDefaultPayloadMap() {
@@ -91,11 +126,17 @@ public class PayloadManager {
         }
     }
 
+    // public String renderPayload(Object model) {
+    //
+    //     JtwigTemplate jtwigTemplate = JtwigTemplate.inlineTemplate("{{ json_encode(variable) }}", configuration);
+    //     JtwigModel jtwigModel= JtwigModel.newModel().with("variable", model);
+    //     return jtwigTemplate.render(jtwigModel);
+    // }
+
+    //TODO - convert to FreeMarker
     public String renderPayload(Object model) {
 
-        JtwigTemplate jtwigTemplate = JtwigTemplate.inlineTemplate("{{ json_encode(variable) }}", configuration);
-        JtwigModel jtwigModel= JtwigModel.newModel().with("variable", model);
-        return jtwigTemplate.render(jtwigModel);
+        return null;
     }
 
     public Map<String, Object> getPayloadMetaData(Map<String, String> filterMap) {
@@ -154,4 +195,3 @@ public class PayloadManager {
     }
 
 }
-
