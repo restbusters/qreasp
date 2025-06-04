@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.ConstantsErrors;
+import com.restbusters.rest.client.CustomHeaderInterceptor;
 import com.restbusters.rest.client.HttpMethods;
 import com.restbusters.rest.client.RestClientHelper;
 import com.restbusters.rest.model.HttpRequest;
@@ -202,6 +203,26 @@ public class TestRestHelper {
         params.put("param3", "paramValue3");
         String token = RestClientHelper.getInstance().getOAuth2Token("http://localhost:8090/oauth/token", params, "$.access_token");
         Assert.assertEquals(token, "dummytoken", "tokens should match");
+    }
+
+    @Test//(threadPoolSize = 3, invocationCount = 6)
+    public void testCustomHeaderListener() throws IOException {
+        // Create a client with a custom header interceptor
+        String myCustomHeader = "X-Custom-Header";
+        String myCustomHeaderValue = "CustomValue";
+        OkHttpClient client = RestClientHelper.getInstance().buildNoAuthClient();
+        client = RestClientHelper.getInstance().registerInterceptor(
+                client, new CustomHeaderInterceptor(myCustomHeader, myCustomHeaderValue)
+        );
+
+// Use the client to make requests
+        HttpRequest request = new HttpRequest(HttpMethods.GET.getValue(), "https://httpbin.org/anything");
+        Response response = RestClientHelper.getInstance().executeRequest(client, request);
+        Assert.assertTrue(response.code() == 200);
+        String responseBody = response.body().string();
+        String actualHeaderValue = JsonPath.read(responseBody, "$.headers." + myCustomHeader);
+        Assert.assertEquals(actualHeaderValue, myCustomHeaderValue);
+
     }
 
 
