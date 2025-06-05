@@ -453,4 +453,16 @@ public class RestClientHelper {
         return null;
     }
 
+    /**
+     * Registers any OkHttp interceptor to an existing client
+     * @param okHttpClient The existing client
+     * @param interceptor The interceptor to register
+     * @return A new OkHttpClient with the interceptor added
+     */
+    public OkHttpClient registerInterceptor(OkHttpClient okHttpClient, Interceptor interceptor) {
+        return okHttpClient.newBuilder()
+                .addInterceptor(interceptor)
+                .build();
+    }
+
 }
