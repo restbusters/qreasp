@@ -1,7 +1,7 @@
 package com.restbusters.rest;
 
-import com.restbusters.rest.model.HttpRequestBuilder;
 import com.restbusters.rest.model.HttpRequest;
+import com.restbusters.rest.model.HttpRequestBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
