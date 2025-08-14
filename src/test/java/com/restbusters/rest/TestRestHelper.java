@@ -2,6 +2,9 @@ package com.restbusters.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import com.restbusters.data.templating.TemplateManager;
+import com.restbusters.exception.RecordNotFound;
+import com.restbusters.http.helper.HttpRequestHelper;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.client.ConstantsErrors;
 import com.restbusters.rest.client.CustomHeaderInterceptor;
@@ -9,12 +12,15 @@ import com.restbusters.rest.client.HttpMethods;
 import com.restbusters.rest.client.RestClientHelper;
 import com.restbusters.rest.model.HttpRequest;
 import com.restbusters.util.common.RBFileUtils;
+import com.restbusters.util.performance.PerformanceTestUtil;
 import com.restbusters.util.wiremock.WireMockManager;
+import freemarker.template.TemplateException;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -40,6 +46,12 @@ public class TestRestHelper {
     private final String headerKey = "Headerkey";
     private final String headerValue = "headerValue";
     private WireMockManager wireMockManager;
+    private TemplateManager tmpMgr;
+    private String[] extension;
+
+    public TestRestHelper() {
+        extension = new String[0];
+    }
 
     @BeforeClass
     public void setUp() throws IOException {
@@ -47,6 +59,8 @@ public class TestRestHelper {
         String wireMockJsonStubs = RBFileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
         this.wireMockManager = WireMockManager.getInstance(wireMockJsonStubs);
         this.okHttpClient = RestClientHelper.getInstance().buildBasicAuthClient(userName, password);
+        this.extension = new String[]{"ftl,json"};
+        this.tmpMgr = new TemplateManager("src/test/resources/payload/template", extension, true, ";", "=");
     }
 
 
@@ -224,6 +238,20 @@ public class TestRestHelper {
         Assert.assertEquals(actualHeaderValue, myCustomHeaderValue);
 
     }
+
+    @Test(description = "test perf util")
+    public void testPerformanceUtil(ITestContext context) throws IOException, TemplateException, RecordNotFound, InterruptedException {
+        HttpRequest request = new HttpRequest(HttpMethods.POST.getValue(), this.commonUrl);
+        request.setRequestBody(this.requestBody);
+        Long startRange = 1L;
+        Long endRange = 1000L;
+        String result = PerformanceTestUtil.runPerformanceTest(
+                this.okHttpClient, request, this.objectMapper, 1, 4, 3, startRange, endRange);
+        Integer expectedTotalRequests = 7;
+        Integer actualTotalRequests = JsonPath.read(result, "$.totalRequests");
+        Assert.assertEquals(actualTotalRequests, expectedTotalRequests, "expected total requests should match actual total requests");
+    }
+
 
 
 }
