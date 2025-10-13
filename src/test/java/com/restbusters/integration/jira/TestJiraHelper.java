@@ -54,8 +54,8 @@ public class TestJiraHelper {
     @Test(enabled = false)
     private void create_issue() throws Exception {
         List<String> comps = Arrays.asList("auto");
-        Long issueTypeId = new Long(10004);
-        Long priorityId = new Long(3);
+        Long issueTypeId = Long.valueOf(10004L);
+        Long priorityId = Long.valueOf(3L);
         List<String> versions = Arrays.asList("versionName");
         BasicIssue basicIssue = jiraHelper.createIssue("project", "TEST1", "sasha matsaylo", comps, "summary", issueTypeId, priorityId, versions);
         Assert.assertNotNull(basicIssue);
