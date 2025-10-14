@@ -1,17 +1,16 @@
-Here's an improved version of your markdown file with WebDriver usage included:
-
-```markdown
 # QREASP - Quality, Release and Automation Support Library
 
 🧪 Comprehensive test automation framework (Java-based)
 
-This framework provides a robust and flexible solution for automating both API and UI tests, written in Java. It features a state-driven WebDriver architecture for browser automation, templating for easy test case creation, and seamless integration with key development and project management tools using Gradle as its build system.
+This framework provides a robust and flexible solution for automating both API and UI tests, written in Java. It features a state-driven WebDriver architecture for browser automation, REST API client utilities, templating for easy test case creation, and seamless integration with key development and project management tools using Gradle as its build system.
 
 ## ✨ Features
 
 ### API Testing
+- **REST Client**: Modern HTTP client wrapper built on OkHttp3 with support for various authentication methods
 - **Templating**: Utilize templates for creating API test requests and assertions, simplifying test case development and promoting consistency
 - **Swagger Integration**: Utilize Swagger definitions to generate or validate API requests and responses, streamlining API test creation and ensuring adherence to API specifications
+- **Request/Response Management**: Flexible HttpRequest model for declarative API testing
 
 ### UI Testing (WebDriver)
 - **State-Driven Architecture**: Innovative state management approach for WebDriver actions - pass state objects instead of imperative commands
@@ -49,6 +48,226 @@ This framework provides a robust and flexible solution for automating both API a
 3. **Configure Integrations**
    Configure the framework with your Jira, Stash, and TeamCity instances as needed (e.g., provide API credentials or configuration files)
 
+## 📡 REST API Client Usage
+
+The framework provides two REST client implementations: the legacy `RestClientHelper` (singleton-based) and the modern `RestClient` (dependency injection friendly).
+
+### Modern Approach: RestClient (Recommended)
+
+The new `RestClient` class provides better testability, no singleton dependency, and cleaner API.
+
+#### Basic GET Request
+
+```java
+import com.restbusters.rest.client.RestClient;
+import com.restbusters.rest.model.HttpRequest;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+
+// Create RestClient instance
+RestClient restClient = new RestClient();
+
+// Create HTTP client
+OkHttpClient client = restClient.createClient();
+
+// Build request
+HttpRequest httpRequest = new HttpRequest();
+httpRequest.setHttpMethod("GET");
+httpRequest.setUrl("https://api.example.com/users");
+
+// Execute request
+Response response = restClient.executeRequest(client, httpRequest);
+
+if (response.isSuccessful()) {
+    String responseBody = response.body().string();
+    System.out.println(responseBody);
+}
+```
+
+#### POST Request with JSON Body
+
+```java
+RestClient restClient = new RestClient();
+
+// Create request with JSON body
+HttpRequest httpRequest = new HttpRequest();
+httpRequest.setHttpMethod("POST");
+httpRequest.setUrl("https://api.example.com/users");
+httpRequest.setRequestBody("{\"name\":\"John Doe\",\"email\":\"john@example.com\"}");
+httpRequest.setContentType("application/json");
+
+// Execute with basic client
+OkHttpClient client = restClient.createClient();
+Response response = restClient.executeRequest(client, httpRequest);
+```
+
+#### Bearer Token Authentication
+
+```java
+RestClient restClient = new RestClient();
+
+// Create client with Bearer token
+String token = "your-bearer-token";
+OkHttpClient client = restClient.createBearerClient(token);
+
+// Build request
+HttpRequest httpRequest = new HttpRequest();
+httpRequest.setHttpMethod("GET");
+httpRequest.setUrl("https://api.example.com/protected/data");
+
+// Execute - Authorization header is automatically added
+Response response = restClient.executeRequest(client, httpRequest);
+```
+
+#### Basic Authentication
+
+```java
+RestClient restClient = new RestClient();
+
+// Create client with Basic Auth
+OkHttpClient client = restClient.createBasicAuthClient("username", "password");
+
+HttpRequest httpRequest = new HttpRequest();
+httpRequest.setHttpMethod("GET");
+httpRequest.setUrl("https://api.example.com/secure/endpoint");
+
+Response response = restClient.executeRequest(client, httpRequest);
+```
+
+#### Custom Headers
+
+```java
+RestClient restClient = new RestClient();
+
+// Add headers at client level
+Map<String, String> clientHeaders = new HashMap<>();
+clientHeaders.put("X-API-Key", "your-api-key");
+clientHeaders.put("X-Client-Version", "1.0");
+
+OkHttpClient client = restClient.createClientWithHeaders(clientHeaders);
+
+// Or add headers at request level
+HttpRequest httpRequest = new HttpRequest();
+httpRequest.setHttpMethod("GET");
+httpRequest.setUrl("https://api.example.com/data");
+
+Map<String, String> requestHeaders = new HashMap<>();
+requestHeaders.put("X-Request-ID", "req-12345");
+httpRequest.setHeaders(requestHeaders);
+
+Response response = restClient.executeRequest(client, httpRequest);
+```
+
+#### URL Parameters and Query Strings
+
+```java
+RestClient restClient = new RestClient();
+OkHttpClient client = restClient.createClient();
+
+HttpRequest httpRequest = new HttpRequest();
+httpRequest.setHttpMethod("GET");
+httpRequest.setUrl("https://api.example.com/users/{userId}/posts/{postId}");
+
+// URL path parameters
+Map<String, String> urlParams = new HashMap<>();
+urlParams.put("userId", "123");
+urlParams.put("postId", "456");
+httpRequest.setUrlParams(urlParams);
+
+// Query parameters
+Map<String, String> queryParams = new HashMap<>();
+queryParams.put("page", "1");
+queryParams.put("size", "20");
+httpRequest.setQueryParams(queryParams);
+
+// Final URL: https://api.example.com/users/123/posts/456?page=1&size=20
+Response response = restClient.executeRequest(client, httpRequest);
+```
+
+#### OAuth2 Token Retrieval
+
+```java
+RestClient restClient = new RestClient();
+
+Map<String, String> formBody = new HashMap<>();
+formBody.put("grant_type", "client_credentials");
+formBody.put("client_id", "your-client-id");
+formBody.put("client_secret", "your-client-secret");
+
+String token = restClient.getOAuth2Token(
+    "https://auth.example.com/oauth/token",
+    formBody,
+    "$.access_token"  // JsonPath to extract token
+);
+
+// Use the token
+OkHttpClient client = restClient.createBearerClient(token);
+```
+
+#### Custom Timeouts
+
+```java
+// Create RestClient with custom timeouts (in seconds)
+RestClient restClient = new RestClient(
+    30L,  // connect timeout
+    60L,  // read timeout
+    60L   // write timeout
+);
+
+Map<String, String> headers = new HashMap<>();
+headers.put("X-API-Key", "key");
+
+// Or specify timeouts per request
+OkHttpClient client = restClient.createClientWithHeaders(
+    headers,
+    10L,  // connect timeout
+    30L,  // read timeout
+    30L   // write timeout
+);
+```
+
+### Legacy Approach: RestClientHelper
+
+The legacy singleton-based approach is still supported for backward compatibility.
+
+```java
+import com.restbusters.rest.client.RestClientHelper;
+import com.restbusters.rest.model.HttpRequest;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+
+// Get singleton instance
+RestClientHelper helper = RestClientHelper.getInstance();
+
+// Create client
+OkHttpClient client = helper.buildBearerClient("your-token");
+
+// Build and execute request
+HttpRequest httpRequest = new HttpRequest();
+httpRequest.setHttpMethod("GET");
+httpRequest.setUrl("https://api.example.com/data");
+
+Response response = helper.executeRequest(client, httpRequest);
+```
+
+### Migration Guide: Old to New
+
+| Old (RestClientHelper) | New (RestClient) |
+|------------------------|------------------|
+| `RestClientHelper.getInstance()` | `new RestClient()` |
+| `buildBearerClient(token)` | `createBearerClient(token)` |
+| `buildBasicAuthClient(user, pass)` | `createBasicAuthClient(user, pass)` |
+| `buildNoAuthClient()` | `createClient()` |
+| `buildClientWithHeaders(headers)` | `createClientWithHeaders(headers)` |
+| `executeRequest(client, request)` | `executeRequest(client, request)` (same) |
+
+**Benefits of migrating:**
+- ✅ No singleton dependency - easier testing with dependency injection
+- ✅ Configurable timeouts per instance
+- ✅ Better resource management
+- ✅ Cleaner, more predictable API
+- ✅ Proper exception handling with `IllegalArgumentException`
+
 ## 📖 WebDriver Usage
 
 ### Basic Example
@@ -57,7 +276,6 @@ This framework provides a robust and flexible solution for automating both API a
 import com.restbusters.webdriver.core.WebDriverHelper;
 import com.restbusters.webdriver.enums.ActionType;
 import com.restbusters.webdriver.enums.DriverType;
-import com.restbusters.webdriver.enums.LocatorType;
 import com.restbusters.webdriver.models.WebDriverState;
 import com.restbusters.webdriver.models.ExecutionResult;
 import org.openqa.selenium.WebDriver;
@@ -184,6 +402,22 @@ helper.executeAction(waitState);
 
 ## 🏗️ Framework Architecture
 
+### REST Client Package Structure
+```
+com.restbusters.rest/
+├── client/
+│   ├── RestClient.java              # Modern REST client (recommended)
+│   ├── RestClientHelper.java        # Legacy singleton client
+│   ├── BasicAuthInterceptor.java    # Basic authentication
+│   ├── BearerAuthInterceptor.java   # Bearer token authentication
+│   └── LoggingInterceptor.java      # Request/response logging
+├── model/
+│   ├── HttpRequest.java             # HTTP request metadata
+│   └── HttpMethods.java             # HTTP method enums
+└── exceptions/
+    └── ConstantsErrors.java         # Error constants
+```
+
 ### WebDriver Package Structure
 ```
 com.restbusters.webdriver/
@@ -202,79 +436,4 @@ com.restbusters.webdriver/
 │   ├── DriverType.java           # Browser types
 │   └── RetryStrategy.java        # Retry mechanisms
 ├── utils/
-│   ├── LocatorUtils.java         # Locator conversions
-│   ├── WaitUtils.java            # Wait operations
-│   └── ScreenshotUtils.java      # Screenshot handling
-└── exceptions/
-    ├── WebDriverStateException.java
-    └── StateExecutionException.java
-```
-
-## 🧪 Running Tests
-
-### Run All Tests
-```bash
-./gradlew clean test
-```
-
-### Run Specific Test Suite
-```bash
-./gradlew test --tests "com.yourpackage.LoginTests"
-```
-
-### Run with Specific Browser
-```bash
-./gradlew test -Dbrowser=chrome
-./gradlew test -Dbrowser=firefox
-```
-
-### Run in Headless Mode
-```bash
-./gradlew test -Dheadless=true
-```
-
-## 📊 Test Reporting
-
-Test results can be exported as JSON through TestNG listeners for integration with reporting tools.
-
-## 🔧 Configuration
-
-### Gradle Dependencies
-```gradle
-dependencies {
-    testImplementation 'org.seleniumhq.selenium:selenium-java:4.15.0'
-    testImplementation 'io.github.bonigarcia:webdrivermanager:5.6.2'
-    testImplementation 'org.testng:testng:7.8.0'
-    // ... other dependencies
-}
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Please ensure:
-- All tests pass before submitting a PR
-- Code follows the existing style and patterns
-- Documentation is updated for new features
-
-## 📝 License
-
-[Your License Here]
-
-## 🆘 Support
-
-For issues or questions, please create an issue in the repository or contact the development team.
-
----
-
-**Note**: This framework uses a state-driven approach for WebDriver automation, which provides better test maintainability, debugging capabilities, and context management compared to traditional imperative WebDriver code.
-```
-
-This updated README includes:
-- ✅ Clear WebDriver usage examples
-- ✅ Architecture overview
-- ✅ Available action types
-- ✅ Multiple usage patterns (basic, fluent, forms, waits)
-- ✅ Running tests with different configurations
-- ✅ Better structure and organization
-- ✅ Visual hierarchy with emojis
-- ✅ Package structure visualization
+│   ├── LocatorUtils.java
