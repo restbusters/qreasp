@@ -18,19 +18,19 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Modern REST client implementation with improved design and testability.
- * This class provides a cleaner API while maintaining compatibility with HttpRequest model.
+ * HTTP Client Manager for creating and managing OkHttpClient instances with various configurations.
+ * This class manages multiple client instances and executes HttpRequest objects with any HTTP client.
  *
  * Usage:
  * <pre>
- * RestClient restClient = new RestClient();
- * OkHttpClient client = restClient.createBearerClient(token);
- * Response response = restClient.executeRequest(client, httpRequest);
+ * HttpClientManager manager = new HttpClientManager();
+ * OkHttpClient client = manager.createBearerClient(token);
+ * Response response = manager.executeRequest(client, httpRequest);
  * </pre>
- *
+ * @project qreasp
  * @author Sasha Matsaylo
  */
-public class RestClient {
+public class HttpClientManager {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
@@ -41,20 +41,20 @@ public class RestClient {
     private final long defaultWriteTimeout;
 
     /**
-     * Creates a RestClient with default timeouts (180 seconds)
+     * Creates an HttpClientManager with default timeouts (180 seconds)
      */
-    public RestClient() {
+    public HttpClientManager() {
         this(180L, 180L, 180L);
     }
 
     /**
-     * Creates a RestClient with custom timeouts
+     * Creates an HttpClientManager with custom timeouts
      *
      * @param connectTimeout Connection timeout in seconds
      * @param readTimeout Read timeout in seconds
      * @param writeTimeout Write timeout in seconds
      */
-    public RestClient(long connectTimeout, long readTimeout, long writeTimeout) {
+    public HttpClientManager(long connectTimeout, long readTimeout, long writeTimeout) {
         this.defaultConnectTimeout = connectTimeout;
         this.defaultReadTimeout = readTimeout;
         this.defaultWriteTimeout = writeTimeout;
@@ -426,8 +426,10 @@ public class RestClient {
 
         try (Response response = baseClient.newCall(request).execute()) {
             if (response.isSuccessful() && response.body() != null) {
-                String body = response.body().string();
-                return JsonPath.read(body, jsonPathExtractor);
+                try (ResponseBody responseBody = response.body()) {
+                    String body = responseBody.string();
+                    return JsonPath.read(body, jsonPathExtractor);
+                }
             } else {
                 logger.error("OAuth2 token request failed with status: {}", response.code());
             }

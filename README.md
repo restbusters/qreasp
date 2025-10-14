@@ -50,11 +50,11 @@ This framework provides a robust and flexible solution for automating both API a
 
 ## 📡 REST API Client Usage
 
-The framework provides two REST client implementations: the legacy `RestClientHelper` (singleton-based) and the modern `RestClient` (dependency injection friendly).
+The framework provides two HTTP client implementations: the legacy `RestClientHelper` (singleton-based) and the modern `HttpClientManager` (dependency injection friendly).
 
-### Modern Approach: RestClient (Recommended)
+### Modern Approach: HttpClientManager (Recommended)
 
-The new `RestClient` class provides better testability, no singleton dependency, and cleaner API.
+The new `HttpClientManager` class provides better testability, no singleton dependency, and cleaner API. It manages multiple OkHttpClient instances and can execute HttpRequest objects with any client configuration.
 
 #### Basic GET Request
 
@@ -436,4 +436,98 @@ com.restbusters.webdriver/
 │   ├── DriverType.java           # Browser types
 │   └── RetryStrategy.java        # Retry mechanisms
 ├── utils/
-│   ├── LocatorUtils.java
+│   ├── LocatorUtils.java         # Locator conversions
+│   ├── WaitUtils.java            # Wait operations
+│   └── ScreenshotUtils.java      # Screenshot handling
+└── exceptions/
+    ├── WebDriverStateException.java
+    └── StateExecutionException.java
+```
+
+## 🧪 Running Tests
+
+### Run All Tests
+```bash
+./gradlew clean test
+```
+
+### Run Specific Test Suite
+```bash
+./gradlew test --tests "com.yourpackage.LoginTests"
+```
+
+### Run Specific Test Class
+```bash
+./gradlew test --tests "com.restbusters.rest.client.RestClientTest"
+```
+
+### Run with Specific Browser
+```bash
+./gradlew test -Dbrowser=chrome
+./gradlew test -Dbrowser=firefox
+```
+
+### Run in Headless Mode
+```bash
+./gradlew test -Dheadless=true
+```
+
+## 📊 Test Reporting
+
+Test results can be exported as JSON through TestNG listeners for integration with reporting tools. Reports are generated at:
+```
+build/reports/tests/test/index.html
+```
+
+## 🔧 Configuration
+
+### Gradle Dependencies
+```gradle
+dependencies {
+    // REST Client
+    api 'com.squareup.okhttp3:okhttp:5.0.0-alpha.14'
+    implementation 'com.jayway.jsonpath:json-path:2.8.0'
+    implementation 'org.apache.commons:commons-collections4:4.4'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    
+    // WebDriver
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.15.0'
+    testImplementation 'io.github.bonigarcia:webdrivermanager:5.6.2'
+    
+    // Testing
+    testImplementation 'org.testng:testng:7.8.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.14'
+    
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+}
+
+test {
+    useTestNG()
+}
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please ensure:
+- All tests pass before submitting a PR
+- Code follows the existing style and patterns
+- Documentation is updated for new features
+- New features include comprehensive tests
+
+## 📝 License
+
+[Your License Here]
+
+## 🆘 Support
+
+For issues or questions, please create an issue in the repository or contact the development team.
+
+---
+
+**Note**: This framework uses modern design patterns including:
+- State-driven approach for WebDriver automation (better maintainability and debugging)
+- Dependency injection friendly REST client (easier testing and composition)
+- Builder pattern for readable test code
+- Comprehensive error handling and logging

@@ -1,4 +1,4 @@
-package com.restbusters.rest;
+package com.restbusters.rest.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -219,9 +219,8 @@ public class TestRestHelper {
         Assert.assertEquals(token, "dummytoken", "tokens should match");
     }
 
-    @Test//(threadPoolSize = 3, invocationCount = 6)
+    @Test
     public void testCustomHeaderListener() throws IOException {
-        // Create a client with a custom header interceptor
         String myCustomHeader = "X-Custom-Header";
         String myCustomHeaderValue = "CustomValue";
         OkHttpClient client = RestClientHelper.getInstance().buildNoAuthClient();
@@ -229,14 +228,20 @@ public class TestRestHelper {
                 client, new CustomHeaderInterceptor(myCustomHeader, myCustomHeaderValue)
         );
 
-// Use the client to make requests
         HttpRequest request = new HttpRequest(HttpMethods.GET.getValue(), "https://httpbin.org/anything");
         Response response = RestClientHelper.getInstance().executeRequest(client, request);
-        Assert.assertTrue(response.code() == 200);
+
+        // Debug output
+        System.out.println("Response code: " + response.code());
+        System.out.println("Response message: " + response.message());
+        if (!response.isSuccessful()) {
+            System.out.println("Response body: " + response.body().string());
+        }
+
+        Assert.assertTrue(response.code() == 200, "Expected 200 but got: " + response.code());
         String responseBody = response.body().string();
         String actualHeaderValue = JsonPath.read(responseBody, "$.headers." + myCustomHeader);
         Assert.assertEquals(actualHeaderValue, myCustomHeaderValue);
-
     }
 
     @Test(description = "test perf util")

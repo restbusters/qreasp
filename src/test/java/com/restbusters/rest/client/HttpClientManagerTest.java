@@ -16,16 +16,16 @@ import java.util.Map;
 import static org.testng.Assert.*;
 
 /**
- * TestNG test class for RestClient
+ * TestNG test class for HttpClientManager
  */
-public class RestClientTest {
+public class HttpClientManagerTest {
 
-    private RestClient restClient;
+    private HttpClientManager httpClientManager;
     private MockWebServer mockWebServer;
 
     @BeforeMethod
     public void setUp() throws IOException {
-        restClient = new RestClient();
+        httpClientManager = new HttpClientManager();
         mockWebServer = new MockWebServer();
         mockWebServer.start();
     }
@@ -43,7 +43,7 @@ public class RestClientTest {
 
     @Test(description = "Should create basic client with default timeouts")
     public void testCreateClient() {
-        OkHttpClient client = restClient.createClient();
+        OkHttpClient client = httpClientManager.createClient();
 
         assertNotNull(client);
         assertEquals(client.connectTimeoutMillis() / 1000, 180);
@@ -53,16 +53,16 @@ public class RestClientTest {
 
     @Test(description = "Should create client with custom timeouts")
     public void testCreateClientWithCustomTimeouts() {
-        RestClient customRestClient = new RestClient(30L, 60L, 90L);
+        HttpClientManager customManager = new HttpClientManager(30L, 60L, 90L);
 
-        assertEquals(customRestClient.getDefaultConnectTimeout(), 30L);
-        assertEquals(customRestClient.getDefaultReadTimeout(), 60L);
-        assertEquals(customRestClient.getDefaultWriteTimeout(), 90L);
+        assertEquals(customManager.getDefaultConnectTimeout(), 30L);
+        assertEquals(customManager.getDefaultReadTimeout(), 60L);
+        assertEquals(customManager.getDefaultWriteTimeout(), 90L);
     }
 
     @Test(description = "Should create client without logging")
     public void testCreateClientNoLogging() {
-        OkHttpClient client = restClient.createClientNoLogging();
+        OkHttpClient client = httpClientManager.createClientNoLogging();
 
         assertNotNull(client);
         assertTrue(client.interceptors().isEmpty());
@@ -74,7 +74,7 @@ public class RestClientTest {
         headers.put("X-Custom-Header", "test-value");
         headers.put("X-API-Key", "secret-key");
 
-        OkHttpClient client = restClient.createClientWithHeaders(headers);
+        OkHttpClient client = httpClientManager.createClientWithHeaders(headers);
 
         assertNotNull(client);
         assertFalse(client.interceptors().isEmpty());
@@ -98,7 +98,7 @@ public class RestClientTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("X-Custom-Header", "test");
 
-        OkHttpClient client = restClient.createClientWithHeaders(headers, 10L, 20L, 30L);
+        OkHttpClient client = httpClientManager.createClientWithHeaders(headers, 10L, 20L, 30L);
 
         assertNotNull(client);
         assertEquals(client.connectTimeoutMillis() / 1000, 10);
@@ -108,7 +108,7 @@ public class RestClientTest {
 
     @Test(description = "Should create basic auth client")
     public void testCreateBasicAuthClient() throws Exception {
-        OkHttpClient client = restClient.createBasicAuthClient("username", "password");
+        OkHttpClient client = httpClientManager.createBasicAuthClient("username", "password");
 
         assertNotNull(client);
         assertFalse(client.interceptors().isEmpty());
@@ -130,7 +130,7 @@ public class RestClientTest {
     @Test(description = "Should create bearer auth client")
     public void testCreateBearerClient() throws Exception {
         String token = "test-bearer-token";
-        OkHttpClient client = restClient.createBearerClient(token);
+        OkHttpClient client = httpClientManager.createBearerClient(token);
 
         assertNotNull(client);
         assertFalse(client.interceptors().isEmpty());
@@ -154,7 +154,7 @@ public class RestClientTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("X-Request-ID", "12345");
 
-        OkHttpClient client = restClient.createBearerClient(token, headers);
+        OkHttpClient client = httpClientManager.createBearerClient(token, headers);
 
         assertNotNull(client);
 
@@ -180,7 +180,7 @@ public class RestClientTest {
             return chain.proceed(request);
         };
 
-        OkHttpClient client = restClient.createClientWithInterceptor(customInterceptor);
+        OkHttpClient client = httpClientManager.createClientWithInterceptor(customInterceptor);
 
         assertNotNull(client);
 
@@ -198,7 +198,7 @@ public class RestClientTest {
 
     @Test(description = "Should add interceptor to existing client")
     public void testAddInterceptor() throws Exception {
-        OkHttpClient baseClient = restClient.createClient();
+        OkHttpClient baseClient = httpClientManager.createClient();
 
         Interceptor customInterceptor = chain -> {
             Request request = chain.request().newBuilder()
@@ -207,7 +207,7 @@ public class RestClientTest {
             return chain.proceed(request);
         };
 
-        OkHttpClient clientWithInterceptor = restClient.addInterceptor(baseClient, customInterceptor);
+        OkHttpClient clientWithInterceptor = httpClientManager.addInterceptor(baseClient, customInterceptor);
 
         assertNotNull(clientWithInterceptor);
         assertNotSame(clientWithInterceptor, baseClient);
@@ -236,8 +236,8 @@ public class RestClientTest {
         httpRequest.setHttpMethod("GET");
         httpRequest.setUrl(getBaseUrl() + "api/users");
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
         assertEquals(response.code(), 200);
@@ -257,8 +257,8 @@ public class RestClientTest {
         httpRequest.setRequestBody("{\"name\":\"John Doe\",\"email\":\"john@example.com\"}");
         httpRequest.setContentType("application/json");
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -277,8 +277,8 @@ public class RestClientTest {
         httpRequest.setUrl(getBaseUrl() + "api/users/1");
         httpRequest.setRequestBody("{\"name\":\"Jane Doe\"}");
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -295,8 +295,8 @@ public class RestClientTest {
         httpRequest.setUrl(getBaseUrl() + "api/users/1");
         httpRequest.setRequestBody("{\"email\":\"newemail@example.com\"}");
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -312,8 +312,8 @@ public class RestClientTest {
         httpRequest.setHttpMethod("DELETE");
         httpRequest.setUrl(getBaseUrl() + "api/users/1");
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertEquals(response.code(), 204);
 
@@ -330,8 +330,8 @@ public class RestClientTest {
         httpRequest.setUrl(getBaseUrl() + "api/users");
         httpRequest.setRequestBody("{\"ids\":[1,2,3]}");
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -353,8 +353,8 @@ public class RestClientTest {
         urlParams.put("postId", "456");
         httpRequest.setUrlParams(urlParams);
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -376,8 +376,8 @@ public class RestClientTest {
         queryParams.put("sort", "name");
         httpRequest.setQueryParams(queryParams);
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -401,8 +401,8 @@ public class RestClientTest {
         headers.put("X-Request-ID", "req-12345");
         httpRequest.setHeaders(headers);
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -421,8 +421,8 @@ public class RestClientTest {
         httpRequest.setRequestBody("{\"key\":\"value\"}");
         // Not setting contentType - should auto-detect
 
-        OkHttpClient client = restClient.createClient();
-        Response response = restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         assertTrue(response.isSuccessful());
 
@@ -441,8 +441,8 @@ public class RestClientTest {
         httpRequest.setHttpMethod("GET");
         httpRequest.setUrl("");
 
-        OkHttpClient client = restClient.createClient();
-        restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        httpClientManager.executeRequest(client, httpRequest);
     }
 
     @Test(description = "Should throw exception when HTTP method is blank",
@@ -452,8 +452,8 @@ public class RestClientTest {
         httpRequest.setUrl(getBaseUrl());
         httpRequest.setHttpMethod("");
 
-        OkHttpClient client = restClient.createClient();
-        restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        httpClientManager.executeRequest(client, httpRequest);
     }
 
     @Test(description = "Should throw exception when HTTP method is invalid",
@@ -463,8 +463,8 @@ public class RestClientTest {
         httpRequest.setUrl(getBaseUrl());
         httpRequest.setHttpMethod("INVALID");
 
-        OkHttpClient client = restClient.createClient();
-        restClient.executeRequest(client, httpRequest);
+        OkHttpClient client = httpClientManager.createClient();
+        httpClientManager.executeRequest(client, httpRequest);
     }
 
     // ==================== OAuth2 Tests ====================
@@ -481,7 +481,7 @@ public class RestClientTest {
         formBody.put("client_id", "test-client");
         formBody.put("client_secret", "test-secret");
 
-        String token = restClient.getOAuth2Token(
+        String token = httpClientManager.getOAuth2Token(
                 getBaseUrl() + "oauth/token",
                 formBody,
                 "$.access_token"
@@ -501,7 +501,7 @@ public class RestClientTest {
         Map<String, String> formBody = new HashMap<>();
         formBody.put("grant_type", "client_credentials");
 
-        String token = restClient.getOAuth2Token(
+        String token = httpClientManager.getOAuth2Token(
                 getBaseUrl() + "oauth/token",
                 formBody,
                 "$.access_token"
@@ -512,7 +512,7 @@ public class RestClientTest {
 
     @Test(description = "Should return null when form body is empty")
     public void testGetOAuth2TokenEmptyFormBody() {
-        String token = restClient.getOAuth2Token(
+        String token = httpClientManager.getOAuth2Token(
                 getBaseUrl() + "oauth/token",
                 new HashMap<>(),
                 "$.access_token"
@@ -533,7 +533,7 @@ public class RestClientTest {
         String token = "secure-token-123";
         Map<String, String> clientHeaders = new HashMap<>();
         clientHeaders.put("X-Client-Version", "1.0");
-        OkHttpClient client = restClient.createBearerClient(token, clientHeaders);
+        OkHttpClient client = httpClientManager.createBearerClient(token, clientHeaders);
 
         // Build request
         HttpRequest httpRequest = new HttpRequest();
@@ -556,7 +556,7 @@ public class RestClientTest {
         httpRequest.setContentType("application/json");
 
         // Execute request
-        Response response = restClient.executeRequest(client, httpRequest);
+        Response response = httpClientManager.executeRequest(client, httpRequest);
 
         // Verify response
         assertTrue(response.isSuccessful());

@@ -3,12 +3,11 @@ package com.restbusters.rest.client;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.rest.model.HttpRequest;
 import com.restbusters.util.common.GenericUtils;
-import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import okhttp3.*;
 import javax.annotation.Nullable;
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -49,17 +48,23 @@ public class RestClientHelper {
                 .build();
     }
 
+    // FIX: Use addHeader instead of headers() to preserve existing headers
     private OkHttpClient buildClientFromShared(Object auth, Map<String, String> headers) {
-        return sharedOkHttpClient.newBuilder()
+        OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder()
                 .addNetworkInterceptor(new LoggingInterceptor())
-                .addInterceptor(chain -> {
-                    Request request = chain.request().newBuilder()
-                            .headers(Headers.of(headers))
-                            .build();
-                    return chain.proceed(request);
-                })
-                .addInterceptor((Interceptor) auth)
-                .build();
+                .addInterceptor((Interceptor) auth);
+
+        if (MapUtils.isNotEmpty(headers)) {
+            builder.addInterceptor(chain -> {
+                Request.Builder requestBuilder = chain.request().newBuilder();
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    requestBuilder.addHeader(header.getKey(), header.getValue());
+                }
+                return chain.proceed(requestBuilder.build());
+            });
+        }
+
+        return builder.build();
     }
 
     private OkHttpClient buildClientFromSharedWithUserInterceptor(Object auth, Object userDefinedInterceptor) {
@@ -88,11 +93,11 @@ public class RestClientHelper {
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)
                 .addInterceptor(chain -> {
-                    Request original = chain.request();
-                    Request.Builder requestBuilder = original.newBuilder()
-                            .headers(Headers.of(headers));
-                    Request request = requestBuilder.build();
-                    return chain.proceed(request);
+                    Request.Builder requestBuilder = chain.request().newBuilder();
+                    for (Map.Entry<String, String> header : headers.entrySet()) {
+                        requestBuilder.addHeader(header.getKey(), header.getValue());
+                    }
+                    return chain.proceed(requestBuilder.build());
                 });
         return httpClient.build();
     }
@@ -100,42 +105,49 @@ public class RestClientHelper {
     public OkHttpClient buildClientWithHeaders(Map<String, String> headers) {
         OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
         httpClient.addInterceptor(chain -> {
-            Request original = chain.request();
-            Request.Builder requestBuilder = original.newBuilder()
-                    .headers(Headers.of(headers));
-            Request request = requestBuilder.build();
-            return chain.proceed(request);
+            Request.Builder requestBuilder = chain.request().newBuilder();
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                requestBuilder.addHeader(header.getKey(), header.getValue());
+            }
+            return chain.proceed(requestBuilder.build());
         });
         return httpClient.build();
     }
 
+    // FIX: Use addHeader instead of headers() to preserve auth headers
     private OkHttpClient buildClientFromSharedWithBearerInterceptor(Object auth, @Nullable Map<String, String> headers) {
         OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
         builder.addNetworkInterceptor(new LoggingInterceptor());
-        if (headers != null) {
+        builder.addInterceptor((Interceptor) auth);
+
+        if (MapUtils.isNotEmpty(headers)) {
             builder.addInterceptor(chain -> {
-                Request request = chain.request().newBuilder()
-                        .headers(Headers.of(headers))
-                        .build();
-                return chain.proceed(request);
+                Request.Builder requestBuilder = chain.request().newBuilder();
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    requestBuilder.addHeader(header.getKey(), header.getValue());
+                }
+                return chain.proceed(requestBuilder.build());
             });
         }
-        builder.addInterceptor((Interceptor) auth);
+
         return builder.build();
     }
 
     private OkHttpClient buildClientFromSharedUserDefinedInterceptor(Object userInterceptor, @Nullable Map<String, String> headers) {
         OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
         builder.addNetworkInterceptor(new LoggingInterceptor());
-        if (headers != null) {
+        builder.addInterceptor((Interceptor) userInterceptor);
+
+        if (MapUtils.isNotEmpty(headers)) {
             builder.addInterceptor(chain -> {
-                Request request = chain.request().newBuilder()
-                        .headers(Headers.of(headers))
-                        .build();
-                return chain.proceed(request);
+                Request.Builder requestBuilder = chain.request().newBuilder();
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    requestBuilder.addHeader(header.getKey(), header.getValue());
+                }
+                return chain.proceed(requestBuilder.build());
             });
         }
-        builder.addInterceptor((Interceptor) userInterceptor);
+
         return builder.build();
     }
 
@@ -260,11 +272,11 @@ public class RestClientHelper {
                 .writeTimeout(90, TimeUnit.SECONDS)
                 .readTimeout(90, TimeUnit.SECONDS)
                 .addInterceptor(chain -> {
-                    Request original = chain.request();
-                    Request.Builder requestBuilder = original.newBuilder()
-                            .headers(Headers.of(headers));
-                    Request request = requestBuilder.build();
-                    return chain.proceed(request);
+                    Request.Builder requestBuilder = chain.request().newBuilder();
+                    for (Map.Entry<String, String> header : headers.entrySet()) {
+                        requestBuilder.addHeader(header.getKey(), header.getValue());
+                    }
+                    return chain.proceed(requestBuilder.build());
                 });
         return httpClient.build();
     }
@@ -331,6 +343,7 @@ public class RestClientHelper {
                 httpRequest.getHeaders(), httpRequest.getContentType());
     }
 
+    // FIX: Use addHeader instead of headers() to preserve interceptor headers
     private Request buildRequest(String url, @Nullable String requestBody, String httpMethod,
                                  @Nullable Map<String, String> headers, @Nullable String contentType) {
         if (!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
@@ -344,8 +357,11 @@ public class RestClientHelper {
         Request.Builder builder = new Request.Builder();
         builder.url(url);
 
-        if (headers != null) {
-            builder.headers(Headers.of(headers));
+        // FIX: Use addHeader instead of headers() to preserve existing headers
+        if (MapUtils.isNotEmpty(headers)) {
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                builder.addHeader(header.getKey(), header.getValue());
+            }
         }
 
         if (!httpMethod.equalsIgnoreCase(HttpMethods.GET.getValue())) {
@@ -375,6 +391,7 @@ public class RestClientHelper {
 
     public String getOAuth2Token(String url, Map<String, String> formBodyPairs, String jsonPathExtractor) {
         if (MapUtils.isEmpty(formBodyPairs)) {
+            logger.warn("Form body pairs are empty for OAuth2 token request");
             return null;
         }
 
@@ -388,14 +405,17 @@ public class RestClientHelper {
                 .method(HttpMethods.POST.getValue(), requestBodyBuilder.build())
                 .build();
 
-        try {
-            Response response = this.sharedOkHttpClient.newCall(request).execute();
+        try (Response response = this.sharedOkHttpClient.newCall(request).execute()) {
             if (response.isSuccessful() && response.body() != null) {
-                String body = response.body().string();
-                return JsonPath.read(body, jsonPathExtractor);
+                try (ResponseBody responseBody = response.body()) {
+                    String body = responseBody.string();
+                    return JsonPath.read(body, jsonPathExtractor);
+                }
+            } else {
+                logger.error("OAuth2 token request failed with status: {}", response != null ? response.code() : "null response");
             }
         } catch (IOException e) {
-            logger.error("Failed to get OAuth2 token", e);
+            logger.error("Failed to retrieve OAuth2 token from URL: {}", url, e);
         }
 
         return null;
