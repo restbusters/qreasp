@@ -10,6 +10,7 @@ import com.restbusters.rest.model.HttpRequest;
 import net.minidev.json.JSONArray;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,19 +72,44 @@ public class WireMockManager {
     private void wireMockSetInitialState() throws IOException {
         wireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort));
         startWireMock();
+
+        // Give WireMock a moment to fully start
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         JSONArray jsonArray = JsonPath.read(this.jsonWireMockStubs, "$");
         for (Object stub : jsonArray) {
             String jsonStub = GlobalResourceManager.getInstance().getObjectMapper().writeValueAsString(stub);
             HttpRequest httpRequest = new HttpRequest(HttpMethods.POST.getValue(), wireMockAdminUrl);
             httpRequest.setRequestBody(jsonStub);
-            Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRequest);
-            if(!response.isSuccessful()){
-                logger.error("Failed to set wire mock stub {}", jsonStub);
-                logger.error(jsonStub);
+
+            // CRITICAL FIX: Always close the response to prevent connection corruption
+            try (Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, httpRequest)) {
+                if (response.isSuccessful()) {
+                    // Consume the response body to fully complete the request
+                    if (response.body() != null) {
+                        response.body().close();
+                    }
+                    logger.debug("Successfully registered WireMock stub");
+                } else {
+                    logger.error("Failed to set WireMock stub with status: {}", response.code());
+                    logger.error("Stub content: {}", jsonStub);
+
+                    // Log response body if available
+                    if (response.body() != null) {
+                        try (ResponseBody body = response.body()) {
+                            logger.error("Response: {}", body.string());
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("IOException while registering WireMock stub", e);
+                logger.error("Stub content: {}", jsonStub);
+                throw e;
             }
         }
     }
 }
-
-
-
