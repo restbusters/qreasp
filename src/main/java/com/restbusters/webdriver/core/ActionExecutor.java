@@ -50,9 +50,9 @@ public class ActionExecutor {
             // Execute the action
             String resultValue = performAction(state);
 
-            // Take screenshot after action if requested
+            // Take screenshot after action if requested, or if the action IS taking a screenshot
             byte[] screenshotAfter = null;
-            if (state.isTakeScreenshotAfter()) {
+            if (state.isTakeScreenshotAfter() || state.getActionType() == ActionType.TAKE_SCREENSHOT) {
                 screenshotAfter = ScreenshotUtils.takeScreenshot(state.getWebDriver());
             }
 
@@ -133,6 +133,7 @@ public class ActionExecutor {
             case SWITCH_TO_DEFAULT_CONTENT:
             case TAKE_SCREENSHOT:
             case EXECUTE_JAVASCRIPT:
+            case VALIDATE_TITLE:  // Title validation doesn't need an element locator
             case FILL_FORM:  // FILL_FORM uses formDataList, not a single locator
                 return false;
             default:

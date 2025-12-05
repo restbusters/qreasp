@@ -5,6 +5,7 @@ package com.restbusters.webdriver.models;
  * @project qreasp
  */
 import com.restbusters.webdriver.enums.LocatorType;
+import com.restbusters.webdriver.utils.LocatorUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +35,7 @@ public class FormData {
      * Creates FormData with basic locator and value.
      */
     public FormData(LocatorType locatorType, String locatorValue, String value) {
-        this.locator = Map.of("locatorType", locatorType.name(), "locatorValue", locatorValue);
+        this.locator = LocatorUtils.createLocatorMap(locatorType.name().toLowerCase(), locatorValue);
         this.value = value;
         this.clearBeforeType = true;
     }
@@ -43,7 +44,7 @@ public class FormData {
      * Creates FormData with locator, value, and field name.
      */
     public FormData(LocatorType locatorType, String locatorValue, String value, String fieldName) {
-        this.locator = Map.of("locatorType", locatorType.name(), "locatorValue", locatorValue);
+        this.locator = LocatorUtils.createLocatorMap(locatorType.name().toLowerCase(), locatorValue);
         this.value = value;
         this.fieldName = fieldName;
         this.clearBeforeType = true;
@@ -53,13 +54,13 @@ public class FormData {
      * Gets the locator type from the locator map.
      */
     public LocatorType getLocatorType() {
-        return locator != null ? LocatorType.valueOf(locator.get("locatorType")) : null;
+        return locator != null ? LocatorType.valueOf(locator.get("strategy").toUpperCase()) : null;
     }
 
     /**
      * Gets the locator value from the locator map.
      */
     public String getLocatorValue() {
-        return locator != null ? locator.get("locatorValue") : null;
+        return locator != null ? locator.get("value") : null;
     }
 }

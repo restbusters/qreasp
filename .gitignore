@@ -35,3 +35,6 @@ build/
 # Mac OS X
 .DS_Store
 ._*
+
+# screen shots from selenum tests #
+screenshots/
