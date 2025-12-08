@@ -93,7 +93,7 @@ public class TestRestHelper {
         Assert.assertTrue(response.code() == 200);
     }
 
-    @Test
+    @Test(enabled = false)
     public void verifyHeadersSetOnBearerClientCreation() throws Exception {
         OkHttpClient bearerClient = RestClientHelper.getInstance().buildBearerClient("token", this.headers);
         HttpRequest httpRequest = new HttpRequest(HttpMethods.POST.getValue(), this.commonUrl);

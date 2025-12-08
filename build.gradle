@@ -38,6 +38,9 @@ version = '0.1.2'
 
 dependencies {
     api 'com.squareup.okhttp3:okhttp:5.0.0-alpha.14'
+    api "org.seleniumhq.selenium:selenium-java:4.15.0"
+    implementation 'io.github.bonigarcia:webdrivermanager:5.6.2'
+    implementation("io.github.bonigarcia:webdrivermanager:6.3.2")
     implementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.14'
     implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.18'
@@ -93,6 +96,9 @@ dependencies {
 
     // Use TestNG framework, also requires calling test.useTestNG() below
     testImplementation group: 'org.testng', name: 'testng', version: '7.11.0'
+
+    // Needed for testing restClient, mocking ability.
+    testImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.14'
 }
 
 configurations {
