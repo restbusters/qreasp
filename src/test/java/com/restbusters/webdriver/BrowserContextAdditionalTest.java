@@ -38,6 +38,20 @@ public class BrowserContextAdditionalTest {
     @BeforeMethod
     public void setup() {
         browser = BrowserContext.with(driver);
+        // Reset to safe defaults
+        browser.withDefaultTimeout(10)
+                .withScreenshotOnFailure(false)  // Disabled by default
+                .withDefaultRetry(RetryStrategy.NO_RETRY);
+    }
+
+    @AfterMethod
+    public void cleanup() {
+        try {
+            // Ensure we're back in main content
+            driver.switchTo().defaultContent();
+        } catch (Exception ignored) {
+            // Already in default content
+        }
     }
 
     // ========== SCREENSHOT ON FAILURE TEST ==========

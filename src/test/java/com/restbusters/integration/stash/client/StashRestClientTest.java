@@ -31,15 +31,10 @@ public class StashRestClientTest {
 
     @BeforeClass(alwaysRun = true)
     private void setUp() throws Exception {
-        //this.url = System.getenv("TC_AUTH_URL");
-        //this.url = "https://api.bitbucket.org";
         this.url = "http://localhost:8090";
         Assert.assertNotNull(url);
-        //this.token = System.getenv("TC_AUTH_TOKEN");
         this.token = "dummyToken";
         Assert.assertNotNull(token);
-        //this.stashRestClient = new StashRestClient(url, token, "DummyProject", "dummyRepoName");
-        //this.stashRestClient = new StashRestClient(url,  "dummyOne", "findDummyOne", "Restb", "m-test-rails");
         this.stashRestClient = new StashRestClient(url, "dummyToken", "myproject", "myrepo");
         String wireMockStubs = RBFileUtils.getFileOnClassPathAsString("wiremock/wiremock-stubs.json");
         this.wireMockManager = WireMockManager.getInstance(wireMockStubs);
