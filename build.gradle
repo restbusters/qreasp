@@ -14,6 +14,8 @@ plugins {
     id "com.adarshr.test-logger" version "4.0.0"
     id 'signing'
     id 'maven-publish'
+    // Plugin that builds a Central bundle + uploads it via Portal Token
+    id "io.github.boolivar.sonatype-portal-publish" version "0.1.0"
     id 'io.codearte.nexus-staging' version '0.30.0'
     id "io.freefair.lombok" version "8.13.1"
 }
@@ -33,7 +35,7 @@ compileJava {
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
 
-version = '0.1.2'
+version = '0.1.3'
 
 
 dependencies {
@@ -119,18 +121,23 @@ jar {
     exclude "META-INF/*.RSA"
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+/*task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
-}
-task javadocJar(type: Jar, dependsOn: javadoc) {
+}*/
+/*task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
-}
+}*/
 
 if (JavaVersion.current().isJava8Compatible()) {
     allprojects {
         tasks.withType(Javadoc) {
+            source = sourceSets.main.allJava.matching {
+                // …but ignore any zips that ended up under the source dirs
+                exclude '**/*.zip'
+                //ßexclude '**/*.jar' // optional but often a good idea
+            }
             options.addStringOption('Xdoclint:none', '-quiet')
         }
     }
@@ -160,23 +167,44 @@ signing {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        //mavenJava(MavenPublication) {
+        maven(MavenPublication) {
             from components.java
             customizePom(pom, rootProject)
 
-            artifact sourcesJar
-            artifact javadocJar
+            //artifact sourcesJar
+            //artifact javadocJar
         }
     }
     repositories {
         maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            if (admin) {
-                credentials {
-                    username sonatypeUsername
-                    password sonatypePassword
-                }
+            //url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            name = 'ossrh-staging-api'
+            //url = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+            //name="OSSRH"
+            //url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+            //url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            //url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+            credentials {
+                username = findProperty("sonatypeUsername") ?: System.getenv("sonatypeUsername")
+                password = findProperty("sonatypePassword") ?: System.getenv("sonatypePassword")
             }
+
+       /*     credentials {
+                username = project.findProperty('portalUser') ?: ''
+                //username = project.findProperty('portalToken') ?: ''
+                password = project.findProperty('portalToken') ?: ''
+            }*/
+            /*  if (admin) {
+                 credentials {
+                     username sonatypeUsername
+                     password sonatypePassword
+                 }
+
+            }*/
         }
     }
 }
@@ -246,6 +274,30 @@ def customizePom(pom, gradleProject) {
         }
     }
 }
+
+/**
+ * Sonatype Central Portal publishing via Portal Token.
+ *
+ * The plugin:
+ *  - Reads the 'mavenJava' publication above
+ *  - Creates a Central bundle (zip)
+ *  - Uploads it to https://central.sonatype.com/api/v1/publisher/upload
+ *
+ * Auth:
+ *  - username must literally be "token"
+ *  - password is your Portal Token from central.sonatype.com
+ */
+sonatypePublish {
+    // Directory where it stages artifacts & bundle zip
+    dir = layout.buildDirectory.dir("sonatypePublish")
+
+    // Optional nice display name for the bundle in the Portal
+    bundleName = "qreasp-${project.version}"
+
+    // true = auto-publish to Central; false = only upload, finish via Portal UI
+    autoPublish = true
+}
+
 
 testlogger {
     theme 'mocha' // project level
