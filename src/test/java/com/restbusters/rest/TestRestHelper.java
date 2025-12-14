@@ -79,7 +79,7 @@ public class TestRestHelper {
     public void testDoGetRequest() throws IOException {
         HttpRequest httpRequest = new HttpRequest(HttpMethods.GET.getValue(), this.commonUrl);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRequest);
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
 
     }
 
@@ -90,7 +90,7 @@ public class TestRestHelper {
         httpRequest.setRequestBody(this.requestBody);
         httpRequest.setContentType("application/xml");
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRequest);
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
     }
 
     @Test(enabled = false)
@@ -101,7 +101,7 @@ public class TestRestHelper {
         httpRequest.setContentType("application/json");
         Response response = RestClientHelper.getInstance().executeRequest(bearerClient, httpRequest);
         String respBody = response.body().string();
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
         String actualHeaderValue = JsonPath.read(respBody, "$.headers." + this.headerKey);
         Assert.assertEquals(this.headerValue, actualHeaderValue);
 
@@ -120,7 +120,7 @@ public class TestRestHelper {
         httpRequest.setHeaders(headersForRequest);
         Response response = RestClientHelper.getInstance().executeRequest(basicAuthClient, httpRequest);
         String respBody = response.body().string();
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
         String actualHeaderValue = JsonPath.read(respBody, "$.headers." + this.headerKey);
         Assert.assertEquals(this.headerValue, actualHeaderValue);
 
@@ -170,7 +170,7 @@ public class TestRestHelper {
         HttpRequest httpRequest = new HttpRequest(HttpMethods.PUT.getValue(), this.commonUrl);
         httpRequest.setRequestBody(this.requestBody);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRequest);
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
     }
 
 
@@ -179,7 +179,10 @@ public class TestRestHelper {
         HttpRequest httpRequest = new HttpRequest(HttpMethods.PATCH.getValue(), this.commonUrl);
         httpRequest.setRequestBody(this.requestBody);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRequest);
-        Assert.assertTrue(response.code() == 200);
+        System.out.println("testDoPatchRequest response code: " + response.code());
+        System.out.println("testDoPatchRequest response message: " + response.message());
+
+        Assert.assertEquals(response.code(), 200);
     }
 
     @Test
@@ -187,14 +190,14 @@ public class TestRestHelper {
         HttpRequest httpRequest = new HttpRequest(HttpMethods.DELETE.getValue(), this.commonUrl);
         httpRequest.setRequestBody(this.requestBody);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRequest);
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
     }
 
     @Test
     public void testDoDeleteRequestWithNoBody() throws IOException {
         HttpRequest httpRequest = new HttpRequest(HttpMethods.DELETE.getValue(), this.commonUrl);
         Response response = RestClientHelper.getInstance().executeRequest(okHttpClient, httpRequest);
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
     }
 
     @Test
@@ -232,7 +235,7 @@ public class TestRestHelper {
 // Use the client to make requests
         HttpRequest request = new HttpRequest(HttpMethods.GET.getValue(), "https://httpbin.org/anything");
         Response response = RestClientHelper.getInstance().executeRequest(client, request);
-        Assert.assertTrue(response.code() == 200);
+        Assert.assertEquals(response.code(), 200);
         String responseBody = response.body().string();
         String actualHeaderValue = JsonPath.read(responseBody, "$.headers." + myCustomHeader);
         Assert.assertEquals(actualHeaderValue, myCustomHeaderValue);
