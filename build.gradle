@@ -35,7 +35,7 @@ compileJava {
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
 
-version = '0.1.5'
+version = '0.1.6'
 
 
 dependencies {
@@ -47,8 +47,8 @@ dependencies {
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.22'
     implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.22'
     implementation group: 'org.aeonbits.owner', name: 'owner', version: '1.0.12'
-    implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.5.0'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.18'
+    implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.6.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20'
 
     //json/models
     implementation group: 'tools.jackson.core', name: 'jackson-core', version: '3.0.3'
@@ -64,8 +64,8 @@ dependencies {
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.34'
 
     //apache
-    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.14.0'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.20.0'
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.15.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.21.0'
     implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.5.0'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
