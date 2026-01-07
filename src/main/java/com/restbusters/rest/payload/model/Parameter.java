@@ -2,7 +2,10 @@
 package com.restbusters.rest.payload.model;
 
 import com.fasterxml.jackson.annotation.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashMap;
@@ -16,16 +19,20 @@ import java.util.Map;
 })
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Parameter {
 
     @JsonProperty("name")
-    public String name;
+    private String name;
     @JsonProperty("description")
-    public String description;
+    private String description;
     @JsonProperty("optional")
-    public Boolean optional;
+    private Boolean optional;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    @Builder.Default
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     public Parameter withName(String name) {
         this.name = name;

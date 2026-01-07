@@ -42,10 +42,18 @@ public class WireMockManager {
 
 
     public static synchronized WireMockManager getInstance(String listOfWireMockStubsAsJson) throws IOException {
-        if (instance == null) {
+        if (instance == null || !instance.isRunning()) {
             instance = new WireMockManager(listOfWireMockStubsAsJson);
         }
         return instance;
+    }
+
+    /**
+     * Check if the WireMock server is running.
+     * @return true if the server is running, false otherwise
+     */
+    public boolean isRunning() {
+        return wireMockServer != null && wireMockServer.isRunning();
     }
 
     public void startWireMock() {
@@ -53,7 +61,9 @@ public class WireMockManager {
     }
 
     public void stopWireMock() {
-        this.wireMockServer.stop();
+        if (wireMockServer != null && wireMockServer.isRunning()) {
+            this.wireMockServer.stop();
+        }
     }
 
     public void resetWireMock() {
@@ -71,6 +81,10 @@ public class WireMockManager {
     private void wireMockSetInitialState() throws IOException {
         wireMockServer = new WireMockServer(wireMockConfig().port(wireMockPort));
         startWireMock();
+
+        // Wait for WireMock to be ready
+        waitForWireMockReady();
+
         JSONArray jsonArray = JsonPath.read(this.jsonWireMockStubs, "$");
         for (Object stub : jsonArray) {
             String jsonStub = GlobalResourceManager.getInstance().getObjectMapper().writeValueAsString(stub);
@@ -82,6 +96,30 @@ public class WireMockManager {
                 logger.error(jsonStub);
             }
         }
+    }
+
+    private void waitForWireMockReady() {
+        int maxRetries = 10;
+        int retryDelayMs = 100;
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                HttpRequest healthCheck = new HttpRequest(HttpMethods.GET.getValue(), "http://localhost:" + wireMockPort + "/__admin/mappings");
+                Response response = RestClientHelper.getInstance().executeRequest(wireMockClient, healthCheck);
+                if (response.isSuccessful()) {
+                    logger.debug("WireMock is ready after {} attempts", i + 1);
+                    return;
+                }
+            } catch (Exception e) {
+                logger.debug("WireMock not ready yet, attempt {}/{}", i + 1, maxRetries);
+            }
+            try {
+                Thread.sleep(retryDelayMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        logger.warn("WireMock may not be fully ready after {} attempts", maxRetries);
     }
 }
 

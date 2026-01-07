@@ -34,15 +34,21 @@ public class WebDriverTest {
     @BeforeClass
     public void setupClass() {
         log.info("=== Setting up test class ===");
-        // Create driver using WebDriverHelper
-        driver = WebDriverHelper.createWebDriver("chrome", false);
+        // Create driver using WebDriverHelper in headless mode
+        driver = WebDriverHelper.createWebDriver("chrome", true);
         executor = new ActionExecutor();
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void tearDownClass() {
         log.info("=== Tearing down test class ===");
-        WebDriverHelper.quitDriver(driver);
+        if (driver != null) {
+            try {
+                WebDriverHelper.quitDriver(driver);
+            } catch (Exception e) {
+                log.warn("Error closing driver: {}", e.getMessage());
+            }
+        }
     }
 
     @BeforeMethod

@@ -12,11 +12,11 @@ import freemarker.template.TemplateException;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.ITestContext;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,17 +45,23 @@ public class PerformanceTestUtil {
             CountDownLatch latch = new CountDownLatch(threadPoolSize);
             AtomicInteger successCount = new AtomicInteger(0);
             AtomicInteger failureCount = new AtomicInteger(0);
-            List<HttpExecutionResult> iterationResults = new ArrayList<>();
+            // Use thread-safe list for concurrent access
+            List<HttpExecutionResult> iterationResults = Collections.synchronizedList(new ArrayList<>());
 
             for (int i = 0; i < threadPoolSize; i++) {
                 executorService.submit(() -> {
                     try {
                         Thread.sleep(ThreadLocalRandom.current().nextLong(startTimeRange, endTimeRange));
-                        logger.info("Executing request in thread: {}", Thread.currentThread().getName());
+                        logger.debug("Executing request in thread: {}", Thread.currentThread().getName());
                         HttpExecutionResult result = HttpRequestHelper.executeHttpRequest(client, request);
                         iterationResults.add(result);
-                        successCount.incrementAndGet();
+                        if (result.isSuccessful()) {
+                            successCount.incrementAndGet();
+                        } else {
+                            failureCount.incrementAndGet();
+                        }
                     } catch (Exception e) {
+                        logger.error("Error executing request in thread {}: {}", Thread.currentThread().getName(), e.getMessage());
                         failureCount.incrementAndGet();
                     } finally {
                         latch.countDown();

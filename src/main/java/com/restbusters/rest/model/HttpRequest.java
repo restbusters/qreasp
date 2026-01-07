@@ -1,6 +1,9 @@
 package com.restbusters.rest.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
@@ -11,19 +14,19 @@ import java.util.Map;
  */
 @Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class HttpRequest {
 
     private String httpMethod;
     private String url;
     private String uri;
-    private Map<String,String> urlParams;
-    private Map<String,String> queryParams;
-    private Map<String,String> headers;
+    private Map<String, String> urlParams;
+    private Map<String, String> queryParams;
+    private Map<String, String> headers;
     private String requestBody;
     private String contentType;
-
-    public HttpRequest(){;
-    }
 
     public HttpRequest(String httpMethod, String url) {
         this.httpMethod = httpMethod;

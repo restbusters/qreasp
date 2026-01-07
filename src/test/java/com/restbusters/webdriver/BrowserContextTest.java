@@ -29,13 +29,19 @@ public class BrowserContextTest {
     @BeforeSuite
     public void setupDriver() {
         log.info("Setting up WebDriver for test suite");
-        driver = DriverManager.createChromeDriver();
+        driver = DriverManager.createDriver(DriverManager.BrowserType.CHROME_HEADLESS);
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void tearDownDriver() {
         log.info("Tearing down WebDriver");
-        DriverManager.quitDriver(driver);
+        if (driver != null) {
+            try {
+                DriverManager.quitDriver(driver);
+            } catch (Exception e) {
+                log.warn("Error closing driver: {}", e.getMessage());
+            }
+        }
     }
 
     @BeforeMethod

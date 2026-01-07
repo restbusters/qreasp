@@ -42,33 +42,31 @@ public class RestClientHelper {
     }
 
     private void createSharedOkHttpClient() {
-        this.sharedOkHttpClient = new OkHttpClient();
-        this.sharedOkHttpClient.newBuilder()
+        this.sharedOkHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(180, TimeUnit.SECONDS)
                 .writeTimeout(180, TimeUnit.SECONDS)
                 .readTimeout(180, TimeUnit.SECONDS)
                 .build();
     }
 
-    private OkHttpClient buildClientFromShared(Object auth, Map<String, String> headers) {
+    private OkHttpClient buildClientFromShared(Interceptor auth, Map<String, String> headers) {
         return sharedOkHttpClient.newBuilder()
                 .addNetworkInterceptor(new LoggingInterceptor())
-                .addInterceptor(
-                        chain -> {
-                            Request request = chain.request().newBuilder()
-                                    .headers(Headers.of(headers))
-                                    .build();
-                            return chain.proceed(request);
-                        })
-                .addInterceptor((Interceptor) auth)
+                .addInterceptor(chain -> {
+                    Request request = chain.request().newBuilder()
+                            .headers(Headers.of(headers))
+                            .build();
+                    return chain.proceed(request);
+                })
+                .addInterceptor(auth)
                 .build();
     }
 
-    private OkHttpClient buildClientFromSharedWithUserInterceptor(Object auth, Object userDefinedInterceptor) {
+    private OkHttpClient buildClientFromSharedWithUserInterceptor(Interceptor auth, Interceptor userDefinedInterceptor) {
         return sharedOkHttpClient.newBuilder()
                 .addNetworkInterceptor(new LoggingInterceptor())
-                .addInterceptor((Interceptor) auth)
-                .addInterceptor((Interceptor) userDefinedInterceptor)
+                .addInterceptor(auth)
+                .addInterceptor(userDefinedInterceptor)
                 .build();
     }
 
@@ -84,78 +82,58 @@ public class RestClientHelper {
     }
 
     public OkHttpClient buildClientWithHeaders(Map<String, String> headers, Long connectTimeout, Long readTimeout, Long writeTimeout) {
-//        String hostname = "127.0.0.1";
-//        int port = 1080;
-//        Proxy proxy = new Proxy(Proxy.Type.HTTP,
-//                new InetSocketAddress(hostname, port));
-        OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
-        httpClient
-                //.proxy(proxy)
+        return sharedOkHttpClient.newBuilder()
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        Request original = chain.request();
-                        Request.Builder requestBuilder = original.newBuilder()
-                                .headers(Headers.of(headers));
-
-                        Request request = requestBuilder.build();
-                        return chain.proceed(request);
-                    }
-                });
-        return httpClient.build();
+                .addInterceptor(chain -> {
+                    Request request = chain.request().newBuilder()
+                            .headers(Headers.of(headers))
+                            .build();
+                    return chain.proceed(request);
+                })
+                .build();
     }
 
     public OkHttpClient buildClientWithHeaders(Map<String, String> headers) {
-        OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
-        httpClient
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        Request original = chain.request();
-                        Request.Builder requestBuilder = original.newBuilder()
-                                .headers(Headers.of(headers));
-
-                        Request request = requestBuilder.build();
-                        return chain.proceed(request);
-                    }
-                });
-
-        return httpClient.build();
+        return sharedOkHttpClient.newBuilder()
+                .addInterceptor(chain -> {
+                    Request request = chain.request().newBuilder()
+                            .headers(Headers.of(headers))
+                            .build();
+                    return chain.proceed(request);
+                })
+                .build();
     }
 
 
-    private OkHttpClient buildClientFromSharedWithBearerInterceptor(Object auth, @Nullable Map<String, String> headers) {
+    private OkHttpClient buildClientFromSharedWithBearerInterceptor(Interceptor auth, @Nullable Map<String, String> headers) {
         OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
         builder.addNetworkInterceptor(new LoggingInterceptor());
         if (headers != null) {
-            builder.addInterceptor(
-                    chain -> {
-                        Request request = chain.request().newBuilder()
-                                .headers(Headers.of(headers))
-                                .build();
-                        return chain.proceed(request);
-                    });
+            builder.addInterceptor(chain -> {
+                Request request = chain.request().newBuilder()
+                        .headers(Headers.of(headers))
+                        .build();
+                return chain.proceed(request);
+            });
         }
-        builder.addInterceptor((Interceptor) auth);
+        builder.addInterceptor(auth);
         return builder.build();
     }
 
-    private OkHttpClient buildClientFromSharedUserDefinedInterceptor(Object userInterceptor, @Nullable Map<String, String> headers) {
+    private OkHttpClient buildClientFromSharedUserDefinedInterceptor(Interceptor userInterceptor, @Nullable Map<String, String> headers) {
         OkHttpClient.Builder builder = sharedOkHttpClient.newBuilder();
         builder.addNetworkInterceptor(new LoggingInterceptor());
         if (headers != null) {
-            builder.addInterceptor(
-                    chain -> {
-                        Request request = chain.request().newBuilder()
-                                .headers(Headers.of(headers))
-                                .build();
-                        return chain.proceed(request);
-                    });
+            builder.addInterceptor(chain -> {
+                Request request = chain.request().newBuilder()
+                        .headers(Headers.of(headers))
+                        .build();
+                return chain.proceed(request);
+            });
         }
-        builder.addInterceptor((Interceptor) userInterceptor);
+        builder.addInterceptor(userInterceptor);
         return builder.build();
     }
 
@@ -165,11 +143,11 @@ public class RestClientHelper {
         return buildClientFromShared(new BasicAuthInterceptor(userName, password), headers);
     }
 
-    public OkHttpClient buildBasicAuthClientWithCustomInterceptor(String userName, String password, Object userDefinedInterceptor) {
+    public OkHttpClient buildBasicAuthClientWithCustomInterceptor(String userName, String password, Interceptor userDefinedInterceptor) {
         return buildClientFromSharedWithUserInterceptor(new BasicAuthInterceptor(userName, password), userDefinedInterceptor);
     }
 
-    public OkHttpClient buildBearerClientWithCustomInterceptor(String token, Object userDefinedInterceptor) {
+    public OkHttpClient buildBearerClientWithCustomInterceptor(String token, Interceptor userDefinedInterceptor) {
         return buildClientFromSharedWithUserInterceptor(new BearerAuthInterceptor(token), userDefinedInterceptor);
     }
 
@@ -232,51 +210,48 @@ public class RestClientHelper {
     }
 
 
+    /**
+     * @deprecated This method does not work as intended - the built client is discarded.
+     * Use {@link #registerInterceptor(OkHttpClient, Interceptor)} with {@link CustomHeaderInterceptor} instead.
+     */
+    @Deprecated
     public void addHeader(OkHttpClient okHttpClient, String headerName, String headerValue) {
         okHttpClient.newBuilder()
-                .addNetworkInterceptor(new Interceptor() {
-
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        Request original = chain.request();
-
-                        Request request = original.newBuilder()
-                                .header(headerName, headerValue)
-                                .method(original.method(), original.body())
-                                .build();
-
-                        return chain.proceed(request);
-                    }
+                .addNetworkInterceptor(chain -> {
+                    Request request = chain.request().newBuilder()
+                            .header(headerName, headerValue)
+                            .build();
+                    return chain.proceed(request);
                 }).build();
     }
 
+    /**
+     * @deprecated This method does not work as intended - the built client is discarded.
+     * Use {@link #buildClientWithHeaders(Map)} instead.
+     */
+    @Deprecated
     public void addHeaders(OkHttpClient okHttpClient, Map<String, String> headers) {
         okHttpClient.newBuilder()
-                .addNetworkInterceptor(new Interceptor() {
-
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        Request original = chain.request();
-
-                        Request request = original.newBuilder()
-                                .headers(Headers.of(headers))
-                                .method(original.method(), original.body())
-                                .build();
-
-                        return chain.proceed(request);
-                    }
+                .addNetworkInterceptor(chain -> {
+                    Request request = chain.request().newBuilder()
+                            .headers(Headers.of(headers))
+                            .build();
+                    return chain.proceed(request);
                 }).build();
     }
 
+    /**
+     * @deprecated This method does not work as intended - the built client is discarded and it adds a header instead of removing.
+     */
+    @Deprecated
     public void removeHeader(OkHttpClient okHttpClient, String headerName, String headerValue) {
         okHttpClient.newBuilder()
-                .addInterceptor(
-                        chain -> {
-                            Request request = chain.request().newBuilder()
-                                    .header(headerName, headerValue)
-                                    .build();
-                            return chain.proceed(request);
-                        }).build();
+                .addInterceptor(chain -> {
+                    Request request = chain.request().newBuilder()
+                            .header(headerName, headerValue)
+                            .build();
+                    return chain.proceed(request);
+                }).build();
     }
 
     public OkHttpClient registerLoggerInterceptor(OkHttpClient okHttpClient) {
@@ -298,24 +273,17 @@ public class RestClientHelper {
     }
 
     public OkHttpClient buildOkHttpClient(Map<String, String> headers) {
-        OkHttpClient.Builder httpClient = sharedOkHttpClient.newBuilder();
-        httpClient
+        return sharedOkHttpClient.newBuilder()
                 .connectTimeout(90, TimeUnit.SECONDS)
                 .writeTimeout(90, TimeUnit.SECONDS)
                 .readTimeout(90, TimeUnit.SECONDS)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        Request original = chain.request();
-                        Request.Builder requestBuilder = original.newBuilder()
-                                .headers(Headers.of(headers));
-
-                        Request request = requestBuilder.build();
-                        return chain.proceed(request);
-                    }
-                });
-
-        return httpClient.build();
+                .addInterceptor(chain -> {
+                    Request request = chain.request().newBuilder()
+                            .headers(Headers.of(headers))
+                            .build();
+                    return chain.proceed(request);
+                })
+                .build();
     }
 
 
@@ -422,7 +390,6 @@ public class RestClientHelper {
     }
 
     public String getOAuth2Token(String url, Map<String, String> formBodyPairs, String jsonPathExtractor) {
-
         if (MapUtils.isEmpty(formBodyPairs)) {
             return null;
         }
@@ -435,20 +402,14 @@ public class RestClientHelper {
                 .url(url)
                 .method(HttpMethods.POST.getValue(), requestBodyBuilder.build())
                 .build();
-        Response response = null;
         try {
-            response = this.sharedOkHttpClient.newCall(request).execute();
-            if (response.isSuccessful()) {
-                try {
-                    String body = response.body().string();
-                    String token = JsonPath.read(body, jsonPathExtractor);
-                    return token;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            Response response = this.sharedOkHttpClient.newCall(request).execute();
+            if (response.isSuccessful() && response.body() != null) {
+                String body = response.body().string();
+                return JsonPath.read(body, jsonPathExtractor);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Failed to get OAuth2 token from {}: {}", url, e.getMessage(), e);
         }
         return null;
     }

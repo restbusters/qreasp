@@ -1,6 +1,5 @@
 package com.restbusters.rest.payload;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,20 +8,13 @@ import com.jayway.jsonpath.Filter;
 import com.jayway.jsonpath.JsonPath;
 import com.restbusters.resource.GlobalResourceManager;
 import com.restbusters.rest.payload.model.PayloadTemplate;
-//import org.jtwig.JtwigModel;
-//import org.jtwig.JtwigTemplate;
-//import org.jtwig.environment.EnvironmentConfiguration;
-//import org.jtwig.environment.EnvironmentConfigurationBuilder;
-//import org.jtwig.json.JsonExtension;
-//import org.jtwig.json.configuration.JsonMapperProviderConfigurationBuilder;
-import freemarker.template.*;
-import freemarker.cache.*;
-
-import java.io.StringWriter;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
@@ -32,46 +24,30 @@ import java.util.Set;
 /**
  * @author Sasha Matsaylo on 10/15/18
  * @project qreasp
+ * @deprecated Use {@link FreeMarkerPayloadManager} instead. This class has incomplete functionality.
  */
-
+@Deprecated
 public class PayloadManager {
 
     private static PayloadManager instance;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    //private EnvironmentConfiguration configuration;
     private String payloadsAsJson;
     private List<PayloadTemplate> payloadTemplates;
     private ObjectMapper objectMapper = GlobalResourceManager.getInstance().getObjectMapper();
     private Map<String, Object> defaultMap;
 
-
-    // private PayloadManager(String jsonPayloads) {
-    //     configuration = EnvironmentConfigurationBuilder
-    //             .configuration()
-    //             .extensions()
-    //             .add(new JsonExtension(JsonMapperProviderConfigurationBuilder
-    //                     .jsonConfiguration()
-    //                     .build())
-    //             )
-    //             .and()
-    //             .build();
-    //     initPayloads(jsonPayloads);
-    // }
     private PayloadManager(String jsonPayloads) {
-
-         initPayloads(jsonPayloads);
+        initPayloads(jsonPayloads);
     }
 
     private void initPayloads(String jsonPayloads) {
+        this.payloadsAsJson = jsonPayloads;
         try {
-            this.payloadsAsJson = jsonPayloads;
-            this.payloadTemplates = objectMapper.readValue(this.payloadsAsJson, new TypeReference<List<PayloadTemplate>>() {
-            });
+            this.payloadTemplates = objectMapper.readValue(this.payloadsAsJson, new TypeReference<List<PayloadTemplate>>() {});
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Failed to parse payload templates: {}", e.getMessage(), e);
         }
     }
-
 
     public static synchronized PayloadManager getInstance(String jsonPayloads) throws IOException {
         if (instance == null) {
@@ -80,25 +56,16 @@ public class PayloadManager {
         return instance;
     }
 
-    // public String renderPayload(String payLoadTemplate, Map<String, Object>... templateReplacementMap) {
-    //     Map<String, Object> userSubstitutionPayloadParamsMap = null;
-    //     if (templateReplacementMap.length == 1) {
-    //         userSubstitutionPayloadParamsMap = templateReplacementMap[0];
-    //     } else {
-    //         setDefaultPayloadMap();
-    //         userSubstitutionPayloadParamsMap = this.defaultMap;
-    //     }
-    //     JtwigTemplate template = JtwigTemplate.inlineTemplate(payLoadTemplate, configuration);
-    //     JtwigModel model = JtwigModel.newModel(userSubstitutionPayloadParamsMap);
-    //     return template.render(model);
-    // }
-
-    public String renderPayload(String payLoadTemplate, Map<String, Object> ... templateReplacementMap) throws Exception {
-        //FreeMarker configuration setup
+    /**
+     * @deprecated This method is incomplete and does not render templates properly.
+     * Use {@link FreeMarkerPayloadManager#getPayload(Map, Map)} instead.
+     */
+    @Deprecated
+    public String renderPayload(String payLoadTemplate, Map<String, Object>... templateReplacementMap) throws Exception {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
         cfg.setDefaultEncoding("UTF-8");
 
-        Map<String, Object> userSubstitutionPayloadParamsMap = null;
+        Map<String, Object> userSubstitutionPayloadParamsMap;
         if (templateReplacementMap.length == 1) {
             userSubstitutionPayloadParamsMap = templateReplacementMap[0];
         } else {
@@ -106,16 +73,9 @@ public class PayloadManager {
             userSubstitutionPayloadParamsMap = this.defaultMap;
         }
 
-        // Load template from string
-        // StringTemplateLoader stringLoader = new StringTemplateLoader();
-        // stringLoader.putTemplate("payLoadTemplate", userSubstitutionPayloadParamsMap);
-        // cfg.setTemplateLoader(stringLoader);
-
         Template template = cfg.getTemplate(payLoadTemplate);
-
-        // Render the template with the data
         StringWriter writer = new StringWriter();
-        //template.process(userSubstitutionMap, writer);
+        template.process(userSubstitutionPayloadParamsMap, writer);
 
         return writer.toString();
     }
@@ -126,26 +86,18 @@ public class PayloadManager {
         }
     }
 
-    // public String renderPayload(Object model) {
-    //
-    //     JtwigTemplate jtwigTemplate = JtwigTemplate.inlineTemplate("{{ json_encode(variable) }}", configuration);
-    //     JtwigModel jtwigModel= JtwigModel.newModel().with("variable", model);
-    //     return jtwigTemplate.render(jtwigModel);
-    // }
-
-    //TODO - convert to FreeMarker
+    /**
+     * @deprecated This method is not implemented.
+     * Use {@link FreeMarkerPayloadManager#getPayload(Map, Map)} instead.
+     */
+    @Deprecated
     public String renderPayload(Object model) {
-
+        logger.warn("renderPayload(Object) is not implemented. Use FreeMarkerPayloadManager instead.");
         return null;
     }
 
     public Map<String, Object> getPayloadMetaData(Map<String, String> filterMap) {
-
-        Map<String, Object> result = findPayloadMetaData(filterMap);
-        if (result != null) {
-            return result;
-        }
-        return null;
+        return findPayloadMetaData(filterMap);
     }
 
     public String getPayloadMetaDataAsString(Map<String, String> filterMap) {
@@ -154,16 +106,16 @@ public class PayloadManager {
             try {
                 return objectMapper.writeValueAsString(result);
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                logger.error("Failed to serialize payload metadata: {}", e.getMessage(), e);
             }
         }
         return null;
     }
 
-    private Map<String,Object> findPayloadMetaData(Map<String, String> filterMap){
+    private Map<String, Object> findPayloadMetaData(Map<String, String> filterMap) {
         Filter filter = buildFilter(filterMap);
         List<Map<String, Object>> result = JsonPath.parse(this.payloadsAsJson).read("$[?]", filter);
-        if (result.size() > 0) {
+        if (!result.isEmpty()) {
             return result.get(0);
         }
         return null;
@@ -176,7 +128,6 @@ public class PayloadManager {
         for (Map.Entry<String, String> entry : entrySet) {
             if (setStart == 1) {
                 criteria = Criteria.where(entry.getKey()).eq(entry.getValue());
-
             } else {
                 criteria = criteria.and(entry.getKey()).eq(entry.getValue());
             }
@@ -185,13 +136,12 @@ public class PayloadManager {
         return Filter.filter(criteria);
     }
 
-    public String getPayloadTemplateAsString(Map<String, Object> payloadMetaData){
+    public String getPayloadTemplateAsString(Map<String, Object> payloadMetaData) {
         try {
             return objectMapper.writeValueAsString(payloadMetaData.get("payload"));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Failed to serialize payload template: {}", e.getMessage(), e);
         }
         return null;
     }
-
 }
