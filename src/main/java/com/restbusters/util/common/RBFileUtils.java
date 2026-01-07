@@ -48,11 +48,15 @@ public class RBFileUtils {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             InputStream inputStream = classLoader.getResourceAsStream(relativePath);
+            if (inputStream == null) {
+                logger.warn("Resource not found on classpath: {}", relativePath);
+                return null;
+            }
             fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             inputStream.close();
         }
         catch (IOException e) {
-            logger.error(e.getLocalizedMessage());
+            logger.error("Error reading file '{}': {}", relativePath, e.getLocalizedMessage());
         }
         return fileContent;
     }
@@ -63,11 +67,15 @@ public class RBFileUtils {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             InputStream inputStream = classLoader.getResourceAsStream(relativePath);
+            if (inputStream == null) {
+                logger.warn("Resource not found on classpath: {}", relativePath);
+                return contentBytes;
+            }
             contentBytes = IOUtils.toByteArray(inputStream);
             inputStream.close();
         }
         catch (IOException e) {
-            logger.error(e.getLocalizedMessage());
+            logger.error("Error reading file '{}': {}", relativePath, e.getLocalizedMessage());
         }
         return contentBytes;
     }

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -34,101 +33,86 @@ public class FreeMarkerPayloadManager {
 
     private static FreeMarkerPayloadManager instance;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private final GlobalResourceManager grm = GlobalResourceManager.getInstance();
     private String jsonPayloads;
     private List<PayloadTemplate> payloadTemplates;
-    private GlobalResourceManager grm = GlobalResourceManager.getInstance();
-    private StringTemplateLoader templateLoader = new StringTemplateLoader();
-    private Configuration cfg = new Configuration( Configuration.VERSION_2_3_30);
-    private Writer stringWriter = new StringWriter();
-
-
 
     private FreeMarkerPayloadManager(String jsonPayloads) {
-        this.jsonPayloads = jsonPayloads;
-        try {
-            this.payloadTemplates = grm.getObjectMapper().readValue(this.jsonPayloads, new TypeReference<List<PayloadTemplate>>(){});
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
         initPayloads(jsonPayloads);
     }
 
     public static synchronized FreeMarkerPayloadManager getInstance(String jsonPayloads) throws IOException {
         if (instance == null) {
-            instance = new FreeMarkerPayloadManager( jsonPayloads );
+            instance = new FreeMarkerPayloadManager(jsonPayloads);
         }
         return instance;
     }
 
     private void initPayloads(String jsonPayloads) {
+        this.jsonPayloads = jsonPayloads;
         try {
-            this.jsonPayloads = jsonPayloads;
-            this.payloadTemplates = grm.getObjectMapper().readValue(this.jsonPayloads, new TypeReference<List<PayloadTemplate>>() {
-            });
+            this.payloadTemplates = grm.getObjectMapper().readValue(this.jsonPayloads, new TypeReference<List<PayloadTemplate>>() {});
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Failed to parse payload templates: {}", e.getMessage(), e);
         }
     }
 
-    public String getPayload(Map<String,String> payloadFilter, @Nullable Map<String, Object> payLoad) {
+    public String getPayload(Map<String, String> payloadFilter, @Nullable Map<String, Object> payLoad) {
         if (payLoad == null) {
-            Map<String, Object> payload1 = new HashMap();
-            payLoad = payload1;
+            payLoad = new HashMap<>();
         }
 
-        Map<String,Object> payloadTemplateMetadata = findPayloadMetaData(payloadFilter);
+        Map<String, Object> payloadTemplateMetadata = findPayloadMetaData(payloadFilter);
         String payloadNameFromFilter = payloadFilter.get("payloadName");
         if (payloadTemplateMetadata != null) {
             try {
                 String payloadName = payloadTemplateMetadata.get("payloadName").toString();
-                String payloadTemplate = fetchTemplate(payloadTemplateMetadata.get("relativePath").toString());
+                Object relativePath = payloadTemplateMetadata.get("relativePath");
+                if (relativePath == null) {
+                    logger.error("Template '{}' has no relativePath defined", payloadName);
+                    return null;
+                }
+                String payloadTemplate = fetchTemplate(relativePath.toString());
+                if (payloadTemplate == null) {
+                    logger.error("Failed to fetch template from: {}", relativePath);
+                    return null;
+                }
+
+                // Create local Configuration for thread safety
+                Configuration localCfg = new Configuration(Configuration.VERSION_2_3_30);
+                localCfg.setDefaultEncoding(StandardCharsets.UTF_8.name());
                 StringTemplateLoader templateLoader = new StringTemplateLoader();
                 templateLoader.putTemplate(payloadName, payloadTemplate);
-                Configuration cfg = new Configuration( Configuration.VERSION_2_3_30);
-                cfg.setTemplateLoader(templateLoader);
-                Template template = cfg.getTemplate(payloadName, StandardCharsets.UTF_8.toString());
-                Writer stringWriter = new StringWriter();
+                localCfg.setTemplateLoader(templateLoader);
+
+                Template template = localCfg.getTemplate(payloadName, StandardCharsets.UTF_8.name());
+                StringWriter stringWriter = new StringWriter();
                 template.process(payLoad, stringWriter);
                 String result = stringWriter.toString();
                 stringWriter.flush();
                 return result;
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                logger.error("Failed to load or process template '{}': {}", payloadNameFromFilter, e.getMessage(), e);
             } catch (TemplateException e) {
-                e.printStackTrace();
+                logger.error("Template processing error for '{}': {}", payloadNameFromFilter, e.getMessage(), e);
             }
-        }
-        else {
+        } else {
             logger.warn("Template not found for: {}", payloadNameFromFilter);
         }
         return null;
     }
 
-
-//    public PayloadTemplate findPayload(String apiTitle, String operationId, @Nullable String payloadType) {
-//
-//        return this.payloadTemplates.stream()
-//                .filter(payload -> payload.getApiTitle().equalsIgnoreCase(apiTitle)
-//                        && payload.getOperationId().equalsIgnoreCase(operationId)
-//                        && payload.getType().equalsIgnoreCase(validateType(payloadType)) )
-//                .findFirst()
-//                .orElse(null);
-//    }
-
-    public final String validateType(String payloadType){
-        if(payloadType == null){
+    public final String validateType(String payloadType) {
+        if (payloadType == null) {
             payloadType = "default";
         }
         return payloadType;
     }
 
-
-    private Map<String,Object> findPayloadMetaData(Map<String, String> filterMap){
+    private Map<String, Object> findPayloadMetaData(Map<String, String> filterMap) {
         Filter filter = buildFilter(filterMap);
         List<Map<String, Object>> result = JsonPath.parse(this.jsonPayloads).read("$[?]", filter);
-        if (result.size() > 0) {
+        if (!result.isEmpty()) {
             return result.get(0);
         }
         return null;
@@ -141,25 +125,24 @@ public class FreeMarkerPayloadManager {
         for (Map.Entry<String, String> entry : entrySet) {
             if (setStart == 1) {
                 criteria = Criteria.where(entry.getKey()).eq(entry.getValue());
-
             } else {
-                criteria.and(entry.getKey()).eq(entry.getValue());
+                criteria = criteria.and(entry.getKey()).eq(entry.getValue());
             }
             setStart++;
         }
         return Filter.filter(criteria);
     }
 
-    public String getPayloadTemplateAsString(Map<String, Object> payloadMetaData){
+    public String getPayloadTemplateAsString(Map<String, Object> payloadMetaData) {
         try {
             return grm.getObjectMapper().writeValueAsString(payloadMetaData.get("payload"));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Failed to serialize payload template: {}", e.getMessage(), e);
         }
         return null;
     }
 
-    public String fetchTemplate(String freeMarkerTemplateLocation){
+    public String fetchTemplate(String freeMarkerTemplateLocation) {
         return RBFileUtils.getFileOnClassPathAsString(freeMarkerTemplateLocation);
     }
 }

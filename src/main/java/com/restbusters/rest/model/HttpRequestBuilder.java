@@ -5,15 +5,16 @@ import java.util.Map;
 /**
  * @author Sasha Matsaylo on 7/13/21
  * @project qreasp
+ * @deprecated Use {@link HttpRequest#builder()} instead. This class is kept for backward compatibility.
  */
+@Deprecated
 public class HttpRequestBuilder {
-
 
     private String httpMethod;
     private String url;
-    private Map<String,String> urlParams;
-    private Map<String,String> queryParams;
-    private Map<String,String> headers;
+    private Map<String, String> urlParams;
+    private Map<String, String> queryParams;
+    private Map<String, String> headers;
     private String requestBody;
     private String contentType;
 
@@ -21,7 +22,6 @@ public class HttpRequestBuilder {
         this.httpMethod = httpMethod;
         this.url = url;
     }
-
 
     public HttpRequestBuilder setUrlParams(Map<String, String> urlParams) {
         this.urlParams = urlParams;
@@ -49,29 +49,14 @@ public class HttpRequestBuilder {
     }
 
     public HttpRequest build() {
-        HttpRequest httpRequest = new HttpRequest(this.httpMethod, this.url);
-
-        if(this.urlParams != null){
-            httpRequest.setUrlParams(this.urlParams);
-        }
-
-        if(this.queryParams != null){
-            httpRequest.setQueryParams(this.queryParams);
-        }
-
-        if(this.headers != null){
-            httpRequest.setHeaders(this.headers);
-        }
-
-        if(this.requestBody != null){
-            httpRequest.setRequestBody(this.requestBody);
-        }
-
-        if(this.contentType != null){
-            httpRequest.setContentType(this.contentType);
-        }
-
-        return httpRequest;
-
+        return HttpRequest.builder()
+                .httpMethod(this.httpMethod)
+                .url(this.url)
+                .urlParams(this.urlParams)
+                .queryParams(this.queryParams)
+                .headers(this.headers)
+                .requestBody(this.requestBody)
+                .contentType(this.contentType)
+                .build();
     }
 }
