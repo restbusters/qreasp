@@ -38,9 +38,8 @@ public class HttpRequestHelperTest {
 
     @AfterClass(alwaysRun = true)
     public void tearDown() {
-        if (wireMockManager != null) {
-            wireMockManager.stopWireMock();
-        }
+        // Don't stop WireMock - let it run for other test classes using the singleton
+        // WireMockManager.getInstance() handles restarting if needed
     }
 
     @Test(description = "Execute GET request and verify successful response")

@@ -149,6 +149,9 @@ test {
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
+    // Exclude integration tests that require external services
+    exclude '**/TeamCityClientTest.class'
+    exclude '**/StashRestClientTest.class'
 }
 
 ext.admin = hasProperty('sonatypeUsername')

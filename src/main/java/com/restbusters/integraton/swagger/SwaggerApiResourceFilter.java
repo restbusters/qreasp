@@ -17,23 +17,24 @@ public class SwaggerApiResourceFilter {
     public static SwaggerApiResource fetchApiResource(List<SwaggerDescriptor> swaggerDescriptors, String apiTitle, String operationIdOrSummary) throws RecordNotFound {
         Optional<SwaggerDescriptor> swaggerDescriptor = swaggerDescriptors
                 .stream()
-                .filter(sd -> sd.getApiTitle().equalsIgnoreCase(apiTitle))
+                .filter(sd -> sd.getApiTitle() != null && sd.getApiTitle().equalsIgnoreCase(apiTitle))
                 .findFirst();
-        if(!swaggerDescriptor.isPresent()){
+        if (!swaggerDescriptor.isPresent()) {
             throw new RecordNotFound("Failed to find swagger descriptor by apiTitle " + apiTitle);
         }
+        // First try to match by operationId
         Optional<SwaggerApiResource> swaggerApiResource = swaggerDescriptor.get().getSwaggerApiResources()
                 .stream()
-                .filter(sd -> sd.getOperationId().equalsIgnoreCase(operationIdOrSummary))
+                .filter(sd -> sd.getOperationId() != null && sd.getOperationId().equalsIgnoreCase(operationIdOrSummary))
                 .findFirst();
-        if(swaggerApiResource.isPresent()){
+        if (swaggerApiResource.isPresent()) {
             return swaggerApiResource.get();
         }
+        // Then try to match by summary
         swaggerApiResource = swaggerDescriptor.get().getSwaggerApiResources()
                 .stream()
-                .filter(sd -> sd.getSummary().equalsIgnoreCase(operationIdOrSummary))
+                .filter(sd -> sd.getSummary() != null && sd.getSummary().equalsIgnoreCase(operationIdOrSummary))
                 .findFirst();
         return swaggerApiResource.orElseThrow(() -> new RecordNotFound("Failed to find swagger api resource by " + operationIdOrSummary));
-
     }
 }

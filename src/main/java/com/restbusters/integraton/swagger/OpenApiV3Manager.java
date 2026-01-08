@@ -26,6 +26,7 @@ import com.restbusters.integraton.swagger.model.OpenApiParseException;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,12 +52,26 @@ public class OpenApiV3Manager {
         return instance;
     }
 
+    private String getServerUrl(OpenAPI openAPI) {
+        if (openAPI.getServers() != null && !openAPI.getServers().isEmpty()) {
+            return openAPI.getServers().get(0).getUrl();
+        }
+        logger.warn("No servers defined in OpenAPI spec, using empty string");
+        return "";
+    }
+
+    private Map<String, Schema> getSchemas(OpenAPI openAPI) {
+        if (openAPI.getComponents() != null) {
+            return openAPI.getComponents().getSchemas();
+        }
+        return null;
+    }
 
     private List<SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
         List<SwaggerApiResource> apiResourceList = new ArrayList<>();
         Paths path = openAPI.getPaths();
-        Map<String, Schema> schemas = openAPI.getComponents().getSchemas();
-        String serverUrl = openAPI.getServers().get(0).getUrl();
+        Map<String, Schema> schemas = getSchemas(openAPI);
+        String serverUrl = getServerUrl(openAPI);
         path.entrySet().forEach(entry -> {
             PathItem pathItem = entry.getValue();
             String resourcePath = serverUrl + entry.getKey();
@@ -112,48 +127,44 @@ public class OpenApiV3Manager {
     }
 
     public SwaggerDescriptor getSwaggerDescriptorFromUrl(String swaggerUrl) throws OpenApiParseException {
-        io.swagger.v3.oas.models.OpenAPI openAPI = new OpenAPIV3Parser().read(swaggerUrl);
-        if(openAPI == null){
-            throw new OpenApiParseException("Failed to build openapi");
+        OpenAPI openAPI = new OpenAPIV3Parser().read(swaggerUrl);
+        if (openAPI == null) {
+            throw new OpenApiParseException("Failed to build openapi from URL: " + swaggerUrl);
         }
-
-        SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
-        swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
-        swaggerDescriptor.setServerUrl(openAPI.getServers().get(0).getUrl());
-        swaggerDescriptor.setSwaggerApiResources(buildSwaggerResources(openAPI));
-        return swaggerDescriptor;
-
-
+        return buildDescriptor(openAPI);
     }
 
     public SwaggerDescriptor getSwaggerDescriptor(String swaggerContent) throws OpenApiParseException {
-        io.swagger.v3.oas.models.OpenAPI openAPI = new OpenAPIV3Parser().readContents(swaggerContent, null, null).getOpenAPI();
-        if(openAPI == null){
-            throw new OpenApiParseException("Failed to build openapi");
+        OpenAPI openAPI = new OpenAPIV3Parser().readContents(swaggerContent, null, null).getOpenAPI();
+        if (openAPI == null) {
+            throw new OpenApiParseException("Failed to build openapi from content");
         }
+        return buildDescriptor(openAPI);
+    }
 
+    private SwaggerDescriptor buildDescriptor(OpenAPI openAPI) {
         SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
-        swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
-        swaggerDescriptor.setServerUrl(openAPI.getServers().get(0).getUrl());
+        if (openAPI.getInfo() != null) {
+            swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
+        }
+        swaggerDescriptor.setServerUrl(getServerUrl(openAPI));
         swaggerDescriptor.setSwaggerApiResources(buildSwaggerResources(openAPI));
         return swaggerDescriptor;
-
-
     }
 
     public List<SwaggerDescriptor> getSwaggerApiResources(List<String> swaggerUrls) {
-        List<SwaggerDescriptor> swaggerDescriptors = new ArrayList<>();
+        List<SwaggerDescriptor> swaggerDescriptors = Collections.synchronizedList(new ArrayList<>());
         swaggerUrls.stream().parallel().forEach(url -> {
-            SwaggerDescriptor swaggerDescriptor = null;
             try {
-                swaggerDescriptors.add(getSwaggerDescriptor(url));
+                SwaggerDescriptor descriptor = getSwaggerDescriptor(url);
+                if (descriptor != null) {
+                    swaggerDescriptors.add(descriptor);
+                }
             } catch (Exception e) {
-                logger.error("Failed to obtains swagger resource for url: {}", url);
-                e.printStackTrace();
+                logger.error("Failed to obtain swagger resource for url: {}", url, e);
             }
         });
         return swaggerDescriptors;
-
     }
 
 
@@ -168,7 +179,7 @@ public class OpenApiV3Manager {
             apiResource.setOperationParameters(setOperationParameter(operation.getParameters()));
         }
         if (!StringUtils.isEmpty(operation.getSummary())) {
-            apiResource.setSummary(operation.getOperationId());
+            apiResource.setSummary(operation.getSummary());
         }
         if (!StringUtils.isEmpty(operation.getDescription())) {
             apiResource.setDescription(operation.getDescription());
@@ -192,26 +203,22 @@ public class OpenApiV3Manager {
         return operationParametersList;
     }
 
-    private String buildRequestBody(Map<String, Schema> schemas, Operation operation){
-        if(operation.getRequestBody() != null){
-            Schema model = buildSchema(schemas, operation);
-            if(model != null){
-                Example example = ExampleBuilder.fromSchema(model, schemas);
-                SimpleModule simpleModule = new SimpleModule().addSerializer(new JsonNodeExampleSerializer());
-                Json.mapper().registerModule(simpleModule);
-                try {
-                    return Json.mapper().writeValueAsString(example);
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-            else {
-                //here we can provide predefined schema
-                return "our predefined schema";
-            }
+    private String buildRequestBody(Map<String, Schema> schemas, Operation operation) {
+        if (operation.getRequestBody() == null) {
+            return null;
         }
-        else {
+        Schema model = buildSchema(schemas, operation);
+        if (model == null) {
+            logger.debug("No schema found for request body, using empty placeholder");
+            return null;
+        }
+        Example example = ExampleBuilder.fromSchema(model, schemas);
+        SimpleModule simpleModule = new SimpleModule().addSerializer(new JsonNodeExampleSerializer());
+        Json.mapper().registerModule(simpleModule);
+        try {
+            return Json.mapper().writeValueAsString(example);
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to serialize request body example: {}", e.getMessage(), e);
             return null;
         }
     }
