@@ -1,20 +1,101 @@
-# QREASP - Quality, Release and Automation support library
+# QREASP
+## Quality, Release and Automation Support
 
-🧪 API test automation framework (Java-based)
-This framework provides a robust and flexible solution for automating API tests, written in Java. It leverages templating for easy test case creation and offers seamless integration with key development and project management tools using Gradle as its build system.
-✨ Features
-- Templating: Utilize templates for creating API test requests and assertions, simplifying test case development and promoting consistency.
-- Jira Integration: Automate the creation and updating of Jira issues based on test results, improving issue tracking and collaboration.
-- Stash Integration: (Assuming Stash for code management) Integrates with Stash for version control of test scripts and related files.
-- TeamCity Integration: Easily integrate the framework with TeamCity for continuous integration and automated test execution within your build pipelines.
-- Swagger Integration: Utilize Swagger definitions to generate or validate API requests and responses, streamlining API test creation and ensuring adherence to API specifications.
+---
 
-🚀 Getting started
-- Clone the Repository: Clone this repository to your local machine.
-- Prerequisites: Ensure you have Java and Gradle installed.
-- Build the Project: Build the project using Gradle to download dependencies and compile the code.
-  Run cd qreasp and execute the following command to build the project and execute tests
-  - ./gradlew clean build
-- Configure Integrations: Configure the framework with your Jira, Stash, and TeamCity instances as needed       (e.g., provide API credentials or configuration files).
-- Create/Modify Tests: Create new API test cases using the provided templates and data files, or modify existing ones to suit your needs.
-- Run Tests: Execute API tests locally via Gradle or integrate them with your TeamCity build configurations for automated runs.
+## What is QREASP?
+
+**QREASP (Quality, Release and Automation Support)** is a **unified Java-based automation framework** for **Web UI (Selenium)** and **REST API test automation**.
+
+It is designed for **enterprise-grade quality assurance**, providing:
+- Advanced Selenium WebDriver wrapper logic
+- A template-driven API testing framework
+- Native integrations with **Jira**, **TeamCity**, **Swagger/OpenAPI**, and **Stash**
+- Gradle-based builds suitable for CI/CD pipelines
+
+QREASP helps teams reduce fragmentation, improve automation stability, and produce reliable quality signals for release decisions.
+
+---
+
+## Why QREASP?
+
+Many teams maintain multiple automation frameworks that are:
+- Hard to maintain
+- Inconsistent across projects
+- Poorly integrated into release pipelines
+
+QREASP provides a **single, consistent automation foundation** that enables:
+- Unified UI and API automation
+- Reusable, standardized patterns
+- Enterprise traceability and reporting
+- CI/CD-ready execution from day one
+
+---
+
+## Core Capabilities
+
+### Web UI Automation (Selenium)
+- Selenium WebDriver wrappers to reduce flakiness
+- Centralized waits, retries, and error handling
+- Page Object best practices
+- Cleaner and more readable test code
+
+---
+
+### API Test Automation (Java-Based)
+- Robust and flexible API automation framework
+- Template-driven request and assertion model
+- Consistent structure for functional and regression tests
+- Swagger/OpenAPI-aligned test generation and validation
+- Built and executed using **Gradle**
+
+---
+
+### Integrations
+
+| Tool | Purpose |
+|------|---------|
+| Jira | Automatic creation and updates of issues based on test results |
+| TeamCity | CI/CD execution and reporting |
+| Swagger / OpenAPI | API contract validation and test generation |
+| Stash | Version control for test scripts and related assets |
+
+---
+
+### Quality & Release Support
+- CI-friendly execution model
+- Environment-aware testing (INT, Staging, Prod)
+- Rich build, commit, and environment metadata
+- Designed to support quality gates and release validation workflows
+
+---
+
+## Design Principles
+
+- Java-first and enterprise-ready
+- Framework over ad-hoc scripts
+- Reusable, extensible, and maintainable
+- CI/CD native
+- Minimal configuration with sensible defaults
+
+---
+
+## Getting Started
+
+### 1. Clone the Repository
+Clone the repository to your local machine.
+
+---
+
+### 2. Prerequisites
+Ensure the following are installed:
+- Java
+- Gradle
+
+---
+
+### 3. Build the Project
+
+```bash
+cd qreasp
+./gradlew clean build

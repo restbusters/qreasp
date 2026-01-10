@@ -35,7 +35,7 @@ compileJava {
 group = 'com.restbusters'
 description = 'Quality, Release and Automation support'
 
-version = '0.1.6'
+version = '0.1.7'
 
 
 dependencies {
@@ -44,17 +44,17 @@ dependencies {
     implementation 'io.github.bonigarcia:webdrivermanager:6.3.3'
     implementation 'com.squareup.okhttp3:mockwebserver:5.3.2'
     implementation 'org.slf4j:slf4j-api:2.0.17'
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.22'
-    implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.22'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.24'
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.24'
     implementation group: 'org.aeonbits.owner', name: 'owner', version: '1.0.12'
     implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.6.0'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
 
     //json/models
     implementation group: 'tools.jackson.core', name: 'jackson-core', version: '3.0.3'
     implementation group: 'tools.jackson.core', name: 'jackson-databind', version: '3.0.3'
-    implementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.9.0'
-    implementation group: 'net.minidev', name: 'json-smart', version: '2.5.2'
+    implementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.10.0'
+    implementation group: 'net.minidev', name: 'json-smart', version: '2.6.0'
 
     //jira
     api 'io.atlassian.fugue:fugue:6.1.2'
