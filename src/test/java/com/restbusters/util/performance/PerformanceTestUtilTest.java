@@ -36,9 +36,8 @@ public class PerformanceTestUtilTest {
 
     @AfterClass(alwaysRun = true)
     public void tearDown() {
-        if (wireMockManager != null) {
-            wireMockManager.stopWireMock();
-        }
+        // Don't stop WireMock - let it run for other test classes using the singleton
+        // WireMockManager.getInstance() handles restarting if needed
     }
 
     // ==================== Integration Tests ====================

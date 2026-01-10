@@ -1,7 +1,7 @@
 # Changelog: feature/rest-refactor
 
 ## Summary
-Refactored `src/main/java/com/restbusters/rest` module and related utilities to fix bugs, improve thread safety, add performance metrics, and expand test coverage.
+Refactored `src/main/java/com/restbusters/rest` module, swagger integration, and related utilities to fix bugs, improve thread safety, add performance metrics, and expand test coverage.
 
 ---
 
@@ -20,6 +20,18 @@ Refactored `src/main/java/com/restbusters/rest` module and related utilities to 
 | `RBFileUtils.java` | 66 | Same NPE bug in byte array method | Added null check |
 | `PerformanceTestUtil.java` | 50 | Thread-safety: `ArrayList` accessed by multiple threads | Changed to `Collections.synchronizedList()` |
 | `WireMockManager.java` | 44-48 | Race condition in singleton when server stopped | Added `isRunning()` check and `waitForWireMockReady()` |
+
+### Swagger Module Bugs Fixed
+
+| File | Line | Issue | Fix |
+|------|------|-------|-----|
+| `SwaggerManager.java` | 155 | Thread-safety: `ArrayList` used with parallel stream | Changed to `Collections.synchronizedList()` |
+| `OpenApiV3Manager.java` | 146 | Same thread-safety bug | Changed to `Collections.synchronizedList()` |
+| `OpenApiV3Manager.java` | 171 | Wrong value: sets `operationId` instead of `summary` | Fixed: `setSummary(operation.getSummary())` |
+| `SwaggerManager.java` | 52, 134 | NPE risk: no null check for `getServers()` | Added `getServerUrl()` helper with null check |
+| `OpenApiV3Manager.java` | 59 | Same NPE risk for servers | Added `getServerUrl()` helper with null check |
+| `SwaggerApiResourceFilter.java` | 27, 34 | NPE if `operationId` or `summary` is null | Added null checks before `equalsIgnoreCase()` |
+| `SwaggerApiResource.java` | 22 | JSON property `"queryParams"` mismatched field `pathParams` | Fixed: `@JsonProperty("pathParams")` |
 
 ### WebDriver Tests - Browser Cleanup
 - Changed all WebDriver tests to use `CHROME_HEADLESS` mode
@@ -101,6 +113,14 @@ Added `@Builder` annotation to:
 - `Payload.java`
 - Deprecated `HttpRequestBuilder.java` (kept for backward compatibility)
 
+### Swagger Module
+- `SwaggerApiResource.java` - Added `@Builder`, `@NoArgsConstructor`, `@AllArgsConstructor`
+- `SwaggerDescriptor.java` - Added `@Builder`, `@NoArgsConstructor`, `@AllArgsConstructor`
+- `OperationParameters.java` - Added `@Builder`, `@NoArgsConstructor`, `@AllArgsConstructor`
+- `SwaggerManager.java` - Replaced `System.out.println` and `e.printStackTrace()` with proper logging
+- `OpenApiV3Manager.java` - Replaced `e.printStackTrace()` with proper logging
+- Removed dead code: `normalizeSwaggerApiResource()`, `getNormalizedPathParams()`, `isBracesInPath()`, `getServiceUrl()`, `getNewDescriptor()`
+
 ---
 
 ## New Tests
@@ -168,6 +188,14 @@ Added `@Builder` annotation to:
 - `src/main/java/com/restbusters/util/common/RBFileUtils.java`
 - `src/main/java/com/restbusters/util/performance/PerformanceTestUtil.java`
 - `src/main/java/com/restbusters/util/wiremock/WireMockManager.java`
+
+### Swagger Integration
+- `src/main/java/com/restbusters/integraton/swagger/SwaggerManager.java`
+- `src/main/java/com/restbusters/integraton/swagger/OpenApiV3Manager.java`
+- `src/main/java/com/restbusters/integraton/swagger/SwaggerApiResourceFilter.java`
+- `src/main/java/com/restbusters/integraton/swagger/model/SwaggerApiResource.java`
+- `src/main/java/com/restbusters/integraton/swagger/model/SwaggerDescriptor.java`
+- `src/main/java/com/restbusters/integraton/swagger/model/OperationParameters.java`
 
 ### Test Source
 - `src/test/java/com/restbusters/http/helper/HttpRequestHelperTest.java` (NEW)

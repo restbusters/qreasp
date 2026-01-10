@@ -1,6 +1,9 @@
 package com.restbusters.integraton.swagger.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import okhttp3.OkHttpClient;
 
 import java.util.List;
@@ -11,6 +14,9 @@ import java.util.List;
  */
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SwaggerDescriptor {
 
     private String apiTitle;

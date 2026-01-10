@@ -18,9 +18,8 @@ import com.restbusters.integraton.swagger.model.OpenApiParseException;
 //import v2.io.swagger.parser.SwaggerException;
 
 import java.lang.invoke.MethodHandles;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -49,7 +48,7 @@ public class SwaggerManager {
     private List<SwaggerApiResource> buildSwaggerResources(OpenAPI openAPI) {
         List<SwaggerApiResource> apiResourceList = new ArrayList<>();
         Paths path = openAPI.getPaths();
-        String serverUrl = openAPI.getServers().get(0).getUrl();
+        String serverUrl = getServerUrl(openAPI);
         path.entrySet().forEach(entry -> {
             PathItem pathItem = entry.getValue();
             String resourcePath = serverUrl + entry.getKey();
@@ -89,11 +88,10 @@ public class SwaggerManager {
 
     public SwaggerDescriptor getSwaggerDescriptor(String url) {
         OpenAPI openAPI = null;
-        try{
-          openAPI = initOpenApi(url, "HTTP");
-        }
-        catch(OpenApiParseException e){
-          System.out.println("OpenApiParseException" + e.getMessage());
+        try {
+            openAPI = initOpenApi(url, "HTTP");
+        } catch (OpenApiParseException e) {
+            logger.error("OpenApiParseException: {}", e.getMessage(), e);
         }
         return buildDescriptor(openAPI);
     }
@@ -101,20 +99,23 @@ public class SwaggerManager {
 
     public SwaggerDescriptor getSwaggerDescriptorFromSwaggerContent(String swaggerContent) {
         OpenAPI openAPI = null;
-        try{
-          openAPI = initOpenApi(swaggerContent, "JSON");
-        }
-        catch(OpenApiParseException e){
-          System.out.println("OpenApiParseException" + e.getMessage());
+        try {
+            openAPI = initOpenApi(swaggerContent, "JSON");
+        } catch (OpenApiParseException e) {
+            logger.error("OpenApiParseException: {}", e.getMessage(), e);
         }
         return buildDescriptor(openAPI);
     }
 
-    private SwaggerDescriptor getNewDescriptor(){
-        return new SwaggerDescriptor();
+    private String getServerUrl(OpenAPI openAPI) {
+        if (openAPI.getServers() != null && !openAPI.getServers().isEmpty()) {
+            return openAPI.getServers().get(0).getUrl();
+        }
+        logger.warn("No servers defined in OpenAPI spec, using empty string");
+        return "";
     }
 
-    private OpenAPI initOpenApi(String content, String type) throws OpenApiParseException{
+    private OpenAPI initOpenApi(String content, String type) throws OpenApiParseException {
         OpenAPI openAPI = null;
         if(type.equalsIgnoreCase("HTTP")){
             openAPI = new OpenAPIV3Parser().read(content);
@@ -128,41 +129,35 @@ public class SwaggerManager {
         return openAPI;
     }
 
-    private SwaggerDescriptor buildDescriptor( OpenAPI openAPI){
+    private SwaggerDescriptor buildDescriptor(OpenAPI openAPI) {
+        if (openAPI == null) {
+            logger.error("Cannot build descriptor from null OpenAPI");
+            return null;
+        }
         SwaggerDescriptor swaggerDescriptor = new SwaggerDescriptor();
-        swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
-        swaggerDescriptor.setServerUrl(openAPI.getServers().get(0).getUrl());
+        if (openAPI.getInfo() != null) {
+            swaggerDescriptor.setApiTitle(openAPI.getInfo().getTitle());
+        }
+        swaggerDescriptor.setServerUrl(getServerUrl(openAPI));
         swaggerDescriptor.setApiVersion(openAPI.getOpenapi());
         swaggerDescriptor.setSwaggerApiResources(this.buildSwaggerResources(openAPI));
         return swaggerDescriptor;
     }
 
 
-    private String getServiceUrl(String serviceUrl){
-        String host = null;
-        try {
-            URL url = new URL(serviceUrl);
-            host = url.getProtocol() + "//" + url.getHost();
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return host;
-    }
-
     public List<SwaggerDescriptor> getSwaggerApiResources(List<String> swaggerUrls) {
-        List<SwaggerDescriptor> swaggerDescriptors = new ArrayList<>();
+        List<SwaggerDescriptor> swaggerDescriptors = Collections.synchronizedList(new ArrayList<>());
         swaggerUrls.stream().parallel().forEach(url -> {
-            SwaggerDescriptor swaggerDescriptor = null;
             try {
-                swaggerDescriptors.add(getSwaggerDescriptor(url));
+                SwaggerDescriptor descriptor = getSwaggerDescriptor(url);
+                if (descriptor != null) {
+                    swaggerDescriptors.add(descriptor);
+                }
             } catch (Exception e) {
-                logger.error("Failed to obtains swagger resource for url: {}", url);
-                e.printStackTrace();
+                logger.error("Failed to obtain swagger resource for url: {}", url, e);
             }
         });
         return swaggerDescriptors;
-
     }
 
 
@@ -187,51 +182,16 @@ public class SwaggerManager {
 
     private List<OperationParameters> setOperationParameter(List<Parameter> parameters) {
         List<OperationParameters> operationParametersList = new ArrayList<>();
-        parameters.stream().forEach(
-                parameter -> {
-                    OperationParameters operationParameters = new OperationParameters();
-                    operationParameters.setDescription(parameter.getDescription());
-                    operationParameters.setIn(parameter.getIn());
-                    operationParameters.setName(parameter.getName());
-                    if (!StringUtils.isEmpty(parameter.getRequired())) {
-                        operationParameters.setRequired(parameter.getRequired());
-                    }
-                    operationParametersList.add(operationParameters);
-                });
+        parameters.forEach(parameter -> {
+            OperationParameters operationParameters = new OperationParameters();
+            operationParameters.setDescription(parameter.getDescription());
+            operationParameters.setIn(parameter.getIn());
+            operationParameters.setName(parameter.getName());
+            if (!StringUtils.isEmpty(parameter.getRequired())) {
+                operationParameters.setRequired(parameter.getRequired());
+            }
+            operationParametersList.add(operationParameters);
+        });
         return operationParametersList;
     }
-
-    private void normalizeSwaggerApiResource(SwaggerApiResource swaggerApiResource, String serverUrl) {
-
-        swaggerApiResource.setPathParams(getNormalizedPathParams(swaggerApiResource.getResourcePath()));
-    }
-
-
-    private List<String> getNormalizedPathParams(String path) {
-
-        List<String> params= new ArrayList<>();
-
-        if (isBracesInPath(path)) {
-
-            int openBracePos = path.indexOf("{");
-
-            do {
-                int closeBracePos = path.indexOf("}", openBracePos);
-                if (closeBracePos == -1) {
-                    logger.info("Invalid Resource Path Braces in path: " + path);
-                }
-                else {
-                    params.add(path.substring(openBracePos + 1, closeBracePos));
-                    openBracePos = path.indexOf("{", closeBracePos + 1);
-                }
-            } while(openBracePos != -1);
-        }
-        return params;
-    }
-
-
-    private boolean isBracesInPath(String path) {
-        return path.contains("{") && path.contains("}");
-    }
-
 }
