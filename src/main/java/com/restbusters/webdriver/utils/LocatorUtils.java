@@ -70,22 +70,27 @@ public class LocatorUtils {
             case CLASS_NAME:
             case "classname":
             case "class":
+            case "class_name":
                 return By.className(value);
             case TAG_NAME:
             case "tagname":
             case "tag":
+            case "tag_name":
                 return By.tagName(value);
             case LINK_TEXT:
             case "linktext":
             case "link":
+            case "link_text":
                 return By.linkText(value);
             case PARTIAL_LINK_TEXT:
             case "partiallinktext":
             case "partiallink":
+            case "partial_link_text":
                 return By.partialLinkText(value);
             case CSS_SELECTOR:
             case "cssselector":
             case "css selector":
+            case "css_selector":
                 return By.cssSelector(value);
             case XPATH:
                 return By.xpath(value);
