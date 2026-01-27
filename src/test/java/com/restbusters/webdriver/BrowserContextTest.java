@@ -273,11 +273,13 @@ public class BrowserContextTest {
     public void testValidateTitle() {
         log.info("Testing VALIDATE_TITLE action");
 
-        browser.navigateTo("https://www.google.com");
+        // Use example.com for stable title validation (Google's title can vary)
+        browser.navigateTo("https://www.example.com");
 
-        ExecutionResult result = browser.validateTitle("Google");
+        ExecutionResult result = browser.validateTitle("Example Domain");
 
-        assertTrue(result.isSuccessful(), "Title validation should succeed");
+        assertTrue(result.isSuccessful(), "Title validation should succeed. Actual title: " +
+                driver.getTitle());
         log.info("Validate title test passed");
     }
 
@@ -285,7 +287,8 @@ public class BrowserContextTest {
     public void testFillFormWorkflow() {
         log.info("Testing complete form filling workflow");
 
-        browser.navigateTo("https://www.google.com");
+        // Use DuckDuckGo for more stable form testing (Google has regional variations and consent popups)
+        browser.navigateTo("https://duckduckgo.com");
 
         // Now we can use the constructor since FormData is fixed
         List<FormData> formFields = Arrays.asList(
@@ -305,14 +308,14 @@ public class BrowserContextTest {
 
     @Test(priority = 17, description = "Test complete search workflow")
     public void testCompleteSearchWorkflow() {
-        log.info("Testing complete Google search workflow");
+        log.info("Testing complete search workflow");
 
         // Configure browser
         browser.withDefaultTimeout(15)
                 .withScreenshotOnFailure(true);
 
-        // Navigate to Google
-        ExecutionResult navResult = browser.navigateTo("https://www.google.com");
+        // Use DuckDuckGo for stable testing (Google has consent popups and regional variations)
+        ExecutionResult navResult = browser.navigateTo("https://duckduckgo.com");
         assertTrue(navResult.isSuccessful(), "Navigation should succeed");
 
         // Wait for search box
@@ -338,10 +341,11 @@ public class BrowserContextTest {
     public void testDoubleClickAction() {
         log.info("Testing DOUBLE_CLICK action");
 
-        browser.navigateTo("https://www.google.com");
+        // Use example.com for more stable testing (Google has regional variations)
+        browser.navigateTo("https://www.example.com");
 
-        browser.waitForElement(LocatorType.NAME, "q");
-        ExecutionResult result = browser.doubleClick(LocatorType.NAME, "q");
+        browser.waitForElement(LocatorType.TAG_NAME, "h1");
+        ExecutionResult result = browser.doubleClick(LocatorType.TAG_NAME, "h1");
 
         assertTrue(result.isSuccessful(), "Double click should succeed");
         log.info("Double click test passed");
